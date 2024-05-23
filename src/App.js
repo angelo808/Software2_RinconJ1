@@ -3,6 +3,7 @@ import Layout from './Componentes/Layout/layout';
 import Home from './Paginas/Home/home';
 /*import Abouts from './Paginas/About/About';}*/
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import MisEtapas from './Paginas/MisEtapas/misEtapas';
 
 const homeSidebarItems = [
   { label: 'Información', href: '#home' },
@@ -11,18 +12,12 @@ const homeSidebarItems = [
   { label: 'Registrarse', href: '#contact' }
 ];
 
-/*const aboutSidebarItems = [
-  { label: 'Nuestra Historia', href: '#history' },
-  { label: 'Misión', href: '#mission' },
-  { label: 'Visión', href: '#vision' },
-  { label: 'Valores', href: '#values' }
-];*/
-
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomeLayout />} />
+        <Route path="/mis-etapas" element={<MisEtapas/>}/>
       </Routes>
     </Router>
   );
