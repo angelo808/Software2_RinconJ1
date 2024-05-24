@@ -1,17 +1,22 @@
 import React from 'react';
-import './agencia.css';
+import Layout from '../../Componentes/Layout/layout';
 
-function Agencia() {
-  
+const titulos = [
+  { label: 'Información', href: '#etapa1' },
+  { label: 'Test', href: '#etapa2' },
+  { label: 'Seleccionar', href: '#etapa3' },
+  { label: 'Registro', href: '#etapa3' }
+];
+
+function Test() {
   return (
-    <div className="home">
-        <div className="home-content">
-      <h2>Agencia</h2>
-      <hr></hr>
-      <p>En este espacio se colocan las agencias.</p>
-    </div>
-    </div>
+    <Layout sidebarItems={titulos}>
+      <div>
+        <h2>Agencia</h2>
+        <p>Aqui puedes ver la informacion de las agencias</p>
+      </div>
+    </Layout>
   );
 }
 
-export default Agencia;
+export default Test;

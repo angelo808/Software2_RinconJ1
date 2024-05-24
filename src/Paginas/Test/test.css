@@ -1,0 +1,25 @@
+.test {
+    padding: 20px;
+  }
+  
+  .question {
+    margin-bottom: 20px;
+  }
+  
+  .question h3 {
+    margin: 0;
+  }
+  
+  .question label {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  .results {
+    margin-top: 20px;
+  }
+  
+  .review-question {
+    margin-bottom: 20px;
+  }
+  
