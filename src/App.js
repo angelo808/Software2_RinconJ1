@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MisEtapas from './Paginas/MisEtapas/misEtapas';
 import Test from './Paginas/Test/test';
 import Agencia from './Paginas/Agencia/agencia'
+import Seleccionar from './Paginas/Selección/selección'
 
 function App() {
   return (
@@ -13,9 +14,11 @@ function App() {
         <Route path="/" element={<Agencia/>} />
         <Route path="/mis-etapas" element={<MisEtapas/>}/>
         <Route path="/test" element={<Test/>}/>
+        <Route path="/seleccionar-agencia" element={<Seleccionar/>}/>
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

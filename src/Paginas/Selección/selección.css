@@ -1,0 +1,11 @@
+/* Agrega estas reglas CSS a tu archivo CSS correspondiente */
+
+.imagenes-con-botones {
+    display: flex; /* Usa flexbox para colocar los elementos en fila */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan a la siguiente línea si no hay suficiente espacio */
+  }
+  
+  .imagen-con-boton {
+    margin-right: 20px; /* Agrega un margen entre las imágenes y los botones */
+  }
+  

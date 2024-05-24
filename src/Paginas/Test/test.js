@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Layout from '../../Componentes/Layout/layout';
+import Button from '../../Componentes/Button/Button'
 import './test.css'
-
+///            <button type="submit">Enviar</button>
 const titulos = [
   { label: 'Información', href: '#etapa1' },
   { label: 'Test', href: '#etapa2' },
@@ -67,7 +68,7 @@ function Test() {
                 ))}
               </div>
             ))}
-            <button type="submit">Enviar</button>
+            <Button>Enviar resultados</Button>
           </form>
         ) : (
           <div className="results">
