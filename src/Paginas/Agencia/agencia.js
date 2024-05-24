@@ -1,7 +1,8 @@
 import React from 'react';
 import './agencia.css';
 
-function Home() {
+function Agencia() {
+  
   return (
     <div className="home">
         <div className="home-content">
@@ -13,4 +14,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Agencia;

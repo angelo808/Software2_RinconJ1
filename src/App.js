@@ -5,6 +5,7 @@ import Home from './Paginas/Agencia/agencia';
 /*import Abouts from './Paginas/About/About';}*/
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MisEtapas from './Paginas/MisEtapas/misEtapas';
+import Test from './Paginas/Test/test';
 
 const homeSidebarItems = [
   { label: 'Información', href: '#home' },
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeLayout />} />
         <Route path="/mis-etapas" element={<MisEtapas/>}/>
+        <Route path="/test" element={<Test/>}/>
       </Routes>
     </Router>
   );
