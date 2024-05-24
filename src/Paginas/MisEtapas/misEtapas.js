@@ -25,9 +25,9 @@ function MisEtapas() {
         <h3>Bienvenidos a "Mis Etapas" en "El Rincon del J1" </h3>
         <p>Tu viaje de Work and Travel tiene tres actos principales : Agencia, Empleador y Embajada.</p>
         <p>Escoge la etapa en la que estás actualmente, y prepárate para la experiencia de tu vida.</p>
-        <Button onClick={handleClick}>Botón de Ejemplo</Button>
-        <Button onClick={handleClick}>Mis Etapas</Button> 
-        <Button onClick={handleClick}>Mis Foros</Button> 
+        <Button to="/">Agencia</Button>
+        <Button onClick={handleClick}>Empleador</Button> 
+        <Button onClick={handleClick}>Embajada</Button> 
       </div>
     </LayoutMisEtapas>
   );

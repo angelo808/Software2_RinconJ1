@@ -1,17 +1,23 @@
+
 .layout {
   display: grid;
   grid-template-rows: auto auto 1fr;
   grid-template-columns: 1fr;
   height: 100vh;
+
+  
+
 }
 
 .content {
   display: flex;
   height: 100%;
+
 }
 
 .main-content {
   flex-grow: 1;
   padding: 20px;
-  background-color: #f1f1f1;
+  background-color: #f5ebe0;
+
 }

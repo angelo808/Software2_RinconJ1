@@ -1,6 +1,7 @@
 import React from 'react';
+import './Assets/estilos/index.css'
 import Layout from './Componentes/Layout/layout';
-import Home from './Paginas/Home/home';
+import Home from './Paginas/Agencia/agencia';
 /*import Abouts from './Paginas/About/About';}*/
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MisEtapas from './Paginas/MisEtapas/misEtapas';
@@ -30,6 +31,8 @@ function HomeLayout() {
     </Layout>
   );
 }
+
+
 
 
 export default App;

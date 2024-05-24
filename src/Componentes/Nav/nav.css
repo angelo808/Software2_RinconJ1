@@ -1,6 +1,6 @@
+
 .nav {
-    background-color: #343a40;
-    color: #fff;
+    background-color: #000000;
     padding: 10px 20px;
     display: flex;
     justify-content: center;
@@ -21,7 +21,7 @@
   }
   
   .nav a {
-    color: #fff;
+    color: #ffffff;
     text-decoration: none;
     font-weight: 600;
   }

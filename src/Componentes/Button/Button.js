@@ -1,9 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Button.css'
 
-function Boton({ onClick, children, className }) {
+function Boton({ to, children, className }) {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    if (to){
+      navigate(to)
+    }
+  }
   return (
-    <button className={className} onClick={onClick}>
+    <button className={className} onClick={handleClick}>
       {children}
     </button>
   );
