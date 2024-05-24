@@ -2,34 +2,37 @@ import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { Link, Navigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { USERS } from "../data/users";
 
 const Formulario = () => {
-    const {register, handleSubmit, reset} = useForm();
-    const {user, addUser} = useContext(UserContext);
+  const { register, handleSubmit, reset } = useForm();
+  const { user, addUser } = useContext(UserContext);
 
-    const onSubmit = (data) => {
-        fetch('/data/users.json')//simula una consulta a una base de datos
-        .then(response => response.json())
-        .then(users => {
-            const userLogin = users.find(u => u.username === data.userAccount && u.password === data.userPassword);
-            if (userLogin) {
-                addUser(userLogin.id, userLogin.name, userLogin.email, userLogin.occupation); // Asigna el usuario al contexto global
-                alert('Inicio de sesión exitosa!');
-            } else {
-                alert('¡Credenciales no válidas!');
-            }
-            reset();
-        });
+  const onSubmit = (data) => {
+    const userLogin = USERS.find(
+      (u) => u.username === data.userAccount && u.password === data.userPassword
+    );
+    if (userLogin) {
+      addUser(
+        userLogin.id,
+        userLogin.name,
+        userLogin.email,
+        userLogin.occupation
+      ); // Asigna el usuario al contexto global
+      alert("Inicio de sesión exitosa!");
+    } else {
+      alert("¡Credenciales no válidas!");
     }
+    reset();
+  };
 
-    if(user !== null){
-        return <Navigate to="/inicio" />
-    }
-  
+  if (user !== null) {
+    return <Navigate to="/inicio" />;
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto">
-
         <div className="mb-4">
           <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
             Usuario
@@ -37,7 +40,7 @@ const Formulario = () => {
           <input
             type="text"
             id="userAccount"
-            {...register('userAccount')}
+            {...register("userAccount")}
             className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Ingresa tu usuario"
           />
@@ -53,7 +56,7 @@ const Formulario = () => {
           <input
             type="password"
             id="userPassword"
-            {...register('userPassword')}
+            {...register("userPassword")}
             className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Ingresa tu contraseña"
           />

@@ -5,6 +5,7 @@ import Login from '../pages/Login'
 import { UserProvider } from '../context/UserContext'
 import ProtectedRoutes from '../components/ProtectedRoutes'
 import HomeUser from '../pages/HomeUser'
+import Register from '../pages/Register'
 
 const MyRoutes = () => {
   return (
@@ -13,6 +14,7 @@ const MyRoutes = () => {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/iniciar-sesion" element={<Login />} />
+            <Route path="/registro-de-usuario" element={<Register />} />
 
             {/*Rutas protegidas*/}
             <Route element={<ProtectedRoutes />}>
