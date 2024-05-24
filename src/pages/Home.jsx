@@ -6,7 +6,9 @@ const Home = () => {
   return (
     <div className='container m-auto'>
         <Header/>
-        <main className='flex flex-col items-center mt-6'>
+        <main className='flex mt-6'>
+            <div className='w-1/4 h-home bg-firstImg bg-no-repeat bg-center bg-cover'></div>
+            <div className='flex flex-col items-center'>
             <img className='w-1/2' src={logo} alt="logo" />
             <h1 className='text-4xl text-center m-6'>¡Bienvenido al Rincón del J1!</h1>
             <p className='text-xl text-center my-6'>
@@ -15,6 +17,7 @@ const Home = () => {
             <p className='text-xl text-center my-6'>
               ¡Únete a nuestra comunidad y haz que tu experiencia sea inolvidable!
             </p>
+            </div>
         </main>
     </div>
   )
