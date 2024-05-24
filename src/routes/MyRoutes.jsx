@@ -1,15 +1,28 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from '../pages/Home'
+import Login from '../pages/Login'
+import { UserProvider } from '../context/UserContext'
+import ProtectedRoutes from '../components/ProtectedRoutes'
+import HomeUser from '../pages/HomeUser'
+import Register from '../pages/Register'
 
 const MyRoutes = () => {
   return (
-    <BrowserRouter>
+    <UserProvider>
+      <BrowserRouter>
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<h1>Login</h1>} />
+            <Route path="/iniciar-sesion" element={<Login />} />
+            <Route path="/registro-de-usuario" element={<Register />} />
+
+            {/*Rutas protegidas*/}
+            <Route element={<ProtectedRoutes />}>
+              <Route path="/inicio" element={<HomeUser />} />
+            </Route>
         </Routes>
     </BrowserRouter>
+    </UserProvider>
   )
 }
 
