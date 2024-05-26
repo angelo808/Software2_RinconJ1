@@ -1,6 +1,6 @@
 import Formulario from "../components/Formulario";
 
-const Login = () => {
+const Login = () => {//Este componente es una página de inicio de sesión que contiene un formulario de inicio de sesión.
   return (
     <div className="container m-auto p-4">
 

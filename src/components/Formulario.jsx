@@ -4,11 +4,11 @@ import { Link, Navigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { USERS } from "../data/users";
 
-const Formulario = () => {
+const Formulario = () => {// Formulario de inicio de sesión
   const { register, handleSubmit, reset } = useForm();
   const { user, addUser } = useContext(UserContext);
 
-  const onSubmit = (data) => {
+  const onSubmit = (data) => {// Función que se ejecuta al enviar el formulario
     const userLogin = USERS.find(
       (u) => u.username === data.userAccount && u.password === data.userPassword
     );
@@ -17,7 +17,8 @@ const Formulario = () => {
         userLogin.id,
         userLogin.name,
         userLogin.email,
-        userLogin.occupation
+        userLogin.occupation,
+        userLogin.photo
       ); // Asigna el usuario al contexto global
       alert("Inicio de sesión exitosa!");
     } else {

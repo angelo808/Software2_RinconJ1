@@ -2,7 +2,7 @@ import React from 'react'
 import RegistrationForm from '../components/RegistrationForm'
 import logo from '../assets/logo.PNG'
 
-const Register = () => {
+const Register = () => {//Página de registro de usuario
   return (
     <div className="container m-auto p-4">
         <div className='flex flex-col items-center text-lg font-bold text-neutral-500 m-4'>
