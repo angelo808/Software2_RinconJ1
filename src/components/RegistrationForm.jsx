@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { USERS } from "../data/users";
 
-const RegistrationForm = () => {
+const RegistrationForm = () => {// Formulario de registro de usuario
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
 
-  const onSubmitRegistro = (data) => {
+  const onSubmitRegistro = (data) => {// Función que se ejecuta al enviar el formulario
     const userRegister = USERS.find((u) => u.username === data.userAccount);
     if (userRegister) {
       alert("El usuario ya está registrado!");
