@@ -67,7 +67,7 @@ const UserInfo = ({
           <div className="w-96 h-auto absolute top-16 -right-5 bg-customColor p-4 rounded-lg shadow-lg z-10">
             <div className="flex items-center mb-4">
               <img
-                src={user.foto || "https://via.placeholder.com/600"}
+                src={user.photo || "https://via.placeholder.com/600"}
                 alt="Profile"
                 className="w-16 h-16 rounded-full mr-4"
               />
