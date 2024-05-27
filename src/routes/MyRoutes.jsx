@@ -10,7 +10,7 @@ import Header from "../components/Header";
 import Profile from "../pages/Profile";
 import ChangePassword from "../components/ChangePassword";
 
-import Forum from "../pages/Forum";
+import Forum from "../components/Forum/Forum";
 
 const MyRoutes = () => {
   //Rutas de la aplicación
@@ -27,10 +27,10 @@ const MyRoutes = () => {
           {/*Rutas protegidas*/}
           <Route element={<ProtectedRoutes />}>
             <Route path="/inicio" element={<HomeUser />} />
+            <Route path="/mis-foros" element={<Forum />} />
             <Route path="/perfil" element={<Profile />}>
               <Route path="cambiar-contrasenia" element={<ChangePassword />} />
             </Route>
-            <Route path="/foros-agencia" element={<Forum />} />
           </Route>
         </Routes>
       </BrowserRouter>

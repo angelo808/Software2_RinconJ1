@@ -1,8 +1,5 @@
 import React from "react";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
-import Forum from "./components/Forum";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import MyRoutes from "./routes/MyRoutes.jsx";
 
@@ -23,12 +20,9 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        {/* <Header /> */}
-        <MyRoutes />
-      </Router>
-    </ThemeProvider>
+    <>
+      <MyRoutes />
+    </>
   );
 }
 

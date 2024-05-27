@@ -1,15 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const UserInfo = ({ user, isInfoVisible, toggleInfoVisibility, handleProfile, handleLogout}) => {
+const UserInfo = ({
+  user,
+  isInfoVisible,
+  toggleInfoVisibility,
+  handleProfile,
+  handleLogout,
+}) => {
   return (
     <div className="flex items-center text-lg font-bold text-neutral-500">
       <div className="mx-4 hover:scale-105 hover:text-black">
-        <Link to="">Mis etapas</Link>
+        <Link to="mis-etapas">Mis etapas</Link>
       </div>
 
       <div className="mx-4 hover:scale-105 hover:text-black">
-        <Link to="">Mis foros</Link>
+        <Link to="mis-foros">Mis foros</Link>
       </div>
 
       <div className="mx-4 relative text-black" onClick={toggleInfoVisibility}>
@@ -58,7 +64,7 @@ const UserInfo = ({ user, isInfoVisible, toggleInfoVisibility, handleProfile, ha
         )}
 
         {isInfoVisible && (
-          <div className="w-96 h-auto absolute top-16 -right-5 bg-customColor p-4 rounded-lg shadow-lg">
+          <div className="w-96 h-auto absolute top-16 -right-5 bg-customColor p-4 rounded-lg shadow-lg z-10">
             <div className="flex items-center mb-4">
               <img
                 src={user.foto || "https://via.placeholder.com/600"}
@@ -72,10 +78,16 @@ const UserInfo = ({ user, isInfoVisible, toggleInfoVisibility, handleProfile, ha
               </div>
             </div>
             <div className="flex justify-between">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleProfile} >
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleProfile}
+              >
                 Ver Perfil
               </button>
-              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleLogout} >
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleLogout}
+              >
                 Cerrar sesión
               </button>
             </div>

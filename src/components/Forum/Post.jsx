@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
-import Comment from './Comment';
-import { Card, CardContent, CardActions, Button, Typography, Box, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import React, { useState } from "react";
+import Comment from "../Comment";
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Typography,
+  Box,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 const Post = ({ post, setPosts, posts, currentUser }) => {
   const [newCommentOpen, setNewCommentOpen] = useState(false);
-  const [newCommentContent, setNewCommentContent] = useState('');
+  const [newCommentContent, setNewCommentContent] = useState("");
 
   // Estado para likes y dislikes
   const [likes, setLikes] = useState(0);
@@ -14,40 +27,50 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
   const [userReaction, setUserReaction] = useState(null); // Puede ser 'like', 'dislike', o null
 
   const handleAddComment = () => {
-    const updatedPosts = posts.map(p => {
+    const updatedPosts = posts.map((p) => {
       if (p.id === post.id) {
-        return { ...p, comments: [...p.comments, { id: p.comments.length, user: currentUser, text: newCommentContent }] };
+        return {
+          ...p,
+          comments: [
+            ...p.comments,
+            {
+              id: p.comments.length,
+              user: currentUser,
+              text: newCommentContent,
+            },
+          ],
+        };
       }
       return p;
     });
     setPosts(updatedPosts);
     setNewCommentOpen(false);
-    setNewCommentContent('');
+    setNewCommentContent("");
   };
 
   const handleLike = () => {
-    if (userReaction === 'like') {
+    if (userReaction === "like") {
       setLikes(likes - 1);
       setUserReaction(null);
     } else {
-      if (userReaction === 'dislike') {
+      if (userReaction === "dislike") {
         setDislikes(dislikes - 1);
       }
       setLikes(likes + 1);
-      setUserReaction('like');
+      setUserReaction("like");
     }
   };
 
   const handleDislike = () => {
-    if (userReaction === 'dislike') {
+    if (userReaction === "dislike") {
       setDislikes(dislikes - 1);
       setUserReaction(null);
     } else {
-      if (userReaction === 'like') {
+      if (userReaction === "like") {
         setLikes(likes - 1);
       }
       setDislikes(dislikes + 1);
-      setUserReaction('dislike');
+      setUserReaction("dislike");
     }
   };
 
@@ -60,13 +83,13 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
               sx={{
                 width: 40,
                 height: 40,
-                backgroundColor: '#00aaff',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontSize: '1.5rem',
+                backgroundColor: "#00aaff",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontSize: "1.5rem",
                 mr: 2,
               }}
             >
@@ -79,23 +102,41 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
           </Box>
           {post.image && (
             <Box mb={2}>
-              <img src={post.image} alt="Post" style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'cover' }} />
+              <img
+                src={post.image}
+                alt="Post"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "300px",
+                  objectFit: "cover",
+                }}
+              />
             </Box>
           )}
           <Typography variant="body1">{post.content}</Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" onClick={() => setNewCommentOpen(true)}>Comentar</Button>
-          <IconButton size="small" onClick={handleLike} color={userReaction === 'like' ? 'primary' : 'default'}>
+          <Button size="small" onClick={() => setNewCommentOpen(true)}>
+            Comentar
+          </Button>
+          <IconButton
+            size="small"
+            onClick={handleLike}
+            color={userReaction === "like" ? "primary" : "default"}
+          >
             <ThumbUpIcon /> {likes}
           </IconButton>
-          <IconButton size="small" onClick={handleDislike} color={userReaction === 'dislike' ? 'primary' : 'default'}>
+          <IconButton
+            size="small"
+            onClick={handleDislike}
+            color={userReaction === "dislike" ? "primary" : "default"}
+          >
             <ThumbDownIcon /> {dislikes}
           </IconButton>
         </CardActions>
       </Card>
 
-      {post.comments.map(comment => (
+      {post.comments.map((comment) => (
         <Comment key={comment.id} comment={comment} />
       ))}
 
@@ -119,6 +160,6 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
       </Dialog>
     </Box>
   );
-}
+};
 
 export default Post;
