@@ -1,0 +1,37 @@
+[
+    {
+      "nombre": "Juan Perez",
+      "correo": "juan.perez@example.com",
+      "contraseña": "contraseña123",
+      "imagen": "",
+      "activo": true
+    },
+    {
+      "nombre": "Ana Gomez",
+      "correo": "ana.gomez@example.com",
+      "contraseña": "segura456",
+      "imagen": "",
+      "activo": false
+    },
+    {
+      "nombre": "Luis Martinez",
+      "correo": "luis.martinez@example.com",
+      "contraseña": "miClave789",
+      "imagen": "",
+      "activo": true
+    },
+    {
+      "nombre": "Maria Rodriguez",
+      "correo": "maria.rodriguez@example.com",
+      "contraseña": "password101",
+      "imagen": "",
+      "activo": false
+    },
+    {
+      "nombre": "Carlos Fernandez",
+      "correo": "carlos.fernandez@example.com",
+      "contraseña": "clave202",
+      "imagen": "",
+      "activo": true
+    }
+]
