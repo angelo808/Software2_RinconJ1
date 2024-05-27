@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { BLOQUEADO } from "../../constants";
 import Post from "./Post";
 import {
   Container,
@@ -9,6 +10,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
+  Modal,
+  Typography,
 } from "@mui/material";
 
 const Forum = () => {
@@ -19,8 +23,17 @@ const Forum = () => {
   const [newPostImage, setNewPostImage] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Esta variable representará al usuario actualmente registrado
-  const currentUser = "UsuarioActual"; // Placeholder, cambiar cuando se implemente autenticación
+  const [nombreAgencia, setNombreAgencia] = useState(BLOQUEADO);
+  const [nombreUsuario, setNombreUsuario] = useState("");
+
+  useEffect(() => {
+    // setIsLoading(true);
+    const nombreAgencia = localStorage.getItem("nombreAgencia") || BLOQUEADO;
+    const nombreUsuario = localStorage.getItem("nombreUsuario") || BLOQUEADO;
+    setNombreAgencia(nombreAgencia);
+    setNombreUsuario(nombreUsuario);
+    // setIsLoading(false);
+  }, []);
 
   const handleCreatePost = () => {
     setPosts([
@@ -29,7 +42,7 @@ const Forum = () => {
         id: posts.length,
         title: newPostTitle,
         content: newPostContent,
-        author: currentUser,
+        author: nombreUsuario,
         image: newPostImage,
         comments: [],
       },
@@ -56,11 +69,15 @@ const Forum = () => {
 
   return (
     <Container>
-      <Box mt={4} display="flex" justifyContent="space-between">
+      <h2 className="text-4xl font-bold text-secondary my-4">
+        FORO AGENCIA: {nombreAgencia}
+      </h2>
+      <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
+
+      <Box className="flex flex-row my-4 items-center">
         <TextField
           fullWidth
-          label="Buscar"
-          variant="outlined"
+          label="Buscar por nombre de post..."
           value={searchTerm}
           onChange={handleSearchChange}
         />
@@ -70,9 +87,10 @@ const Forum = () => {
           sx={{ ml: 2 }}
           onClick={() => setNewPostOpen(true)}
         >
-          CREAR POST
+          <p className="text-white font-bold">CREAR POST</p>
         </Button>
       </Box>
+      <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 
       {filteredPosts.map((post) => (
         <Post
@@ -80,13 +98,34 @@ const Forum = () => {
           post={post}
           setPosts={setPosts}
           posts={posts}
-          currentUser={currentUser}
+          currentUser={nombreUsuario}
         />
       ))}
 
-      <Dialog open={newPostOpen} onClose={() => setNewPostOpen(false)}>
-        <DialogTitle>Crear Nuevo Post</DialogTitle>
-        <DialogContent>
+      <Modal
+        open={newPostOpen}
+        onClose={() => setNewPostOpen(false)}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            bgcolor: "#F6F4F3",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            backgroundColor: "#F6F4F3",
+          }}
+        >
+          <Typography id="modal-title" variant="h6" component="h2" mb={2}>
+            Crear Nuevo Post
+          </Typography>
+
           <TextField
             autoFocus
             margin="dense"
@@ -123,12 +162,14 @@ const Forum = () => {
               />
             </Box>
           )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNewPostOpen(false)}>Cancelar</Button>
-          <Button onClick={handleCreatePost}>Crear</Button>
-        </DialogActions>
-      </Dialog>
+          <div className="flex justify-end">
+            <Button color="error" onClick={() => setNewPostOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleCreatePost}>Crear</Button>
+          </div>
+        </Box>
+      </Modal>
     </Container>
   );
 };

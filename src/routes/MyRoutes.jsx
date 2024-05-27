@@ -10,7 +10,7 @@ import Header from "../components/Header";
 import Profile from "../pages/Profile";
 import ChangePassword from "../components/ChangePassword";
 
-import Forum from "../components/Forum/Forum";
+import Forum from "../components/Forum/ForumAgencia";
 import { ForumLandingPage } from "../components/Forum/ForumLandingPage";
 
 const MyRoutes = () => {

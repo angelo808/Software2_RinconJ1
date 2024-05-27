@@ -16,6 +16,7 @@ const theme = createTheme({
     },
     text: {
       primary: "#000000",
+      secondary: "#31241E",
     },
     button: {
       primary: "#52A1BD", // Celeste

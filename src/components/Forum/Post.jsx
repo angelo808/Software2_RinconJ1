@@ -76,7 +76,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
 
   return (
     <Box>
-      <Card sx={{ mt: 4 }}>
+      <Card sx={{ mt: 4, backgroundColor: "#D1C8C1" }}>
         <CardContent>
           <Box display="flex" alignItems="center" mb={2}>
             <Box
