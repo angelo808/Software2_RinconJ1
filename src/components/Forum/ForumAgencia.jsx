@@ -16,7 +16,10 @@ import {
 } from "@mui/material";
 
 const Forum = () => {
-  const [posts, setPosts] = useState([]);
+  const [isLoadingAgencia, setIsLoadingAgencia] = useState(true);
+  const [posts, setPosts] = useState(
+    JSON.parse(localStorage.getItem("posts")) || []
+  );
   const [newPostOpen, setNewPostOpen] = useState(false);
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
@@ -27,16 +30,16 @@ const Forum = () => {
   const [nombreUsuario, setNombreUsuario] = useState("");
 
   useEffect(() => {
-    // setIsLoading(true);
+    setIsLoadingAgencia(true);
     const nombreAgencia = localStorage.getItem("nombreAgencia") || BLOQUEADO;
     const nombreUsuario = localStorage.getItem("nombreUsuario") || BLOQUEADO;
     setNombreAgencia(nombreAgencia);
     setNombreUsuario(nombreUsuario);
-    // setIsLoading(false);
+    setIsLoadingAgencia(false);
   }, []);
 
   const handleCreatePost = () => {
-    setPosts([
+    const updatedPosts = [
       ...posts,
       {
         id: posts.length,
@@ -46,10 +49,13 @@ const Forum = () => {
         image: newPostImage,
         comments: [],
       },
-    ]);
+    ];
+
+    setPosts(updatedPosts);
     setNewPostOpen(false);
     setNewPostTitle("");
     setNewPostContent("");
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
     setNewPostImage(null);
   };
 
@@ -70,7 +76,7 @@ const Forum = () => {
   return (
     <Container>
       <h2 className="text-4xl font-bold text-secondary my-4">
-        FORO AGENCIA: {nombreAgencia}
+        FORO AGENCIA: {!isLoadingAgencia && nombreAgencia}
       </h2>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 

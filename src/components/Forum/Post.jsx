@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Modal,
 } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
@@ -45,6 +46,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
     });
     setPosts(updatedPosts);
     setNewCommentOpen(false);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
     setNewCommentContent("");
   };
 
@@ -72,6 +74,35 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
       setDislikes(dislikes + 1);
       setUserReaction("dislike");
     }
+
+    const updatedPosts = posts.map((post) => {
+      if (post.id === postId) {
+        const userReaction = post.reactions?.find(
+          (reaction) => reaction.user === currentUser.email
+        );
+        if (userReaction) {
+          if (userReaction.type === type) {
+            post.reactions = post.reactions.filter(
+              (reaction) => reaction.user !== currentUser.email
+            );
+          } else {
+            post.reactions = post.reactions.map((reaction) =>
+              reaction.user === currentUser.email
+                ? { ...reaction, type }
+                : reaction
+            );
+          }
+        } else {
+          post.reactions = [
+            ...(post.reactions || []),
+            { user: currentUser.email, type },
+          ];
+        }
+      }
+      return post;
+    });
+    setPosts(updatedPosts);
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
   return (
@@ -140,9 +171,30 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
         <Comment key={comment.id} comment={comment} />
       ))}
 
-      <Dialog open={newCommentOpen} onClose={() => setNewCommentOpen(false)}>
-        <DialogTitle>Agregar Comentario</DialogTitle>
-        <DialogContent>
+      <Modal
+        open={newCommentOpen}
+        onClose={() => setNewCommentOpen(false)}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            bgcolor: "#F6F4F3",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            backgroundColor: "#F6F4F3",
+          }}
+        >
+          <Typography id="modal-title" variant="h6" component="h2" mb={2}>
+            Agregar Comentario
+          </Typography>
+
           <TextField
             autoFocus
             margin="dense"
@@ -152,12 +204,14 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
             value={newCommentContent}
             onChange={(e) => setNewCommentContent(e.target.value)}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNewCommentOpen(false)}>Cancelar</Button>
-          <Button onClick={handleAddComment}>Agregar</Button>
-        </DialogActions>
-      </Dialog>
+          <div className="flex justify-end">
+            <Button color="error" onClick={() => setNewCommentOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleAddComment}>Agregar</Button>
+          </div>
+        </Box>
+      </Modal>
     </Box>
   );
 };
