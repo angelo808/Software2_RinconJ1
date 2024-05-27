@@ -3,12 +3,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/users');
+const cors = require('cors'); // Importa el paquete cors
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors()); // Configura CORS
 app.use(express.json());
 app.use('/assets', express.static('src/assets'));
 app.use('/api/users', userRoutes); // Añadir esta línea
