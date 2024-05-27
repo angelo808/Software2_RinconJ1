@@ -11,6 +11,7 @@ import Profile from "../pages/Profile";
 import ChangePassword from "../components/ChangePassword";
 
 import Forum from "../components/Forum/Forum";
+import { ForumLandingPage } from "../components/Forum/ForumLandingPage";
 
 const MyRoutes = () => {
   //Rutas de la aplicación
@@ -27,7 +28,8 @@ const MyRoutes = () => {
           {/*Rutas protegidas*/}
           <Route element={<ProtectedRoutes />}>
             <Route path="/inicio" element={<HomeUser />} />
-            <Route path="/mis-foros" element={<Forum />} />
+            <Route path="/mis-foros" element={<ForumLandingPage />} />
+            <Route path="/mis-foros-agencia" element={<Forum />} />
             <Route path="/perfil" element={<Profile />}>
               <Route path="cambiar-contrasenia" element={<ChangePassword />} />
             </Route>

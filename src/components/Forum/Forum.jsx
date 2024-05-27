@@ -1,30 +1,42 @@
-import React, { useState } from 'react';
-import Post from './Post';
-import { Container, TextField, Button, Box, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import React, { useState } from "react";
+import Post from "./Post";
+import {
+  Container,
+  TextField,
+  Button,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 const Forum = () => {
   const [posts, setPosts] = useState([]);
   const [newPostOpen, setNewPostOpen] = useState(false);
-  const [newPostTitle, setNewPostTitle] = useState('');
-  const [newPostContent, setNewPostContent] = useState('');
+  const [newPostTitle, setNewPostTitle] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
   const [newPostImage, setNewPostImage] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Esta variable representará al usuario actualmente registrado
-  const currentUser = 'UsuarioActual'; // Placeholder, cambiar cuando se implemente autenticación
+  const currentUser = "UsuarioActual"; // Placeholder, cambiar cuando se implemente autenticación
 
   const handleCreatePost = () => {
-    setPosts([...posts, {
-      id: posts.length,
-      title: newPostTitle,
-      content: newPostContent,
-      author: currentUser,
-      image: newPostImage,
-      comments: []
-    }]);
+    setPosts([
+      ...posts,
+      {
+        id: posts.length,
+        title: newPostTitle,
+        content: newPostContent,
+        author: currentUser,
+        image: newPostImage,
+        comments: [],
+      },
+    ]);
     setNewPostOpen(false);
-    setNewPostTitle('');
-    setNewPostContent('');
+    setNewPostTitle("");
+    setNewPostContent("");
     setNewPostImage(null);
   };
 
@@ -38,7 +50,7 @@ const Forum = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredPosts = posts.filter(post =>
+  const filteredPosts = posts.filter((post) =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -52,13 +64,24 @@ const Forum = () => {
           value={searchTerm}
           onChange={handleSearchChange}
         />
-        <Button variant="contained" color="primary" sx={{ ml: 2 }} onClick={() => setNewPostOpen(true)}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ ml: 2 }}
+          onClick={() => setNewPostOpen(true)}
+        >
           CREAR POST
         </Button>
       </Box>
 
-      {filteredPosts.map(post => (
-        <Post key={post.id} post={post} setPosts={setPosts} posts={posts} currentUser={currentUser} />
+      {filteredPosts.map((post) => (
+        <Post
+          key={post.id}
+          post={post}
+          setPosts={setPosts}
+          posts={posts}
+          currentUser={currentUser}
+        />
       ))}
 
       <Dialog open={newPostOpen} onClose={() => setNewPostOpen(false)}>
@@ -85,11 +108,19 @@ const Forum = () => {
             accept="image/*"
             type="file"
             onChange={handleImageChange}
-            style={{ marginTop: '16px' }}
+            style={{ marginTop: "16px" }}
           />
           {newPostImage && (
             <Box mt={2}>
-              <img src={newPostImage} alt="Preview" style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'cover' }} />
+              <img
+                src={newPostImage}
+                alt="Preview"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "300px",
+                  objectFit: "cover",
+                }}
+              />
             </Box>
           )}
         </DialogContent>
@@ -100,6 +131,6 @@ const Forum = () => {
       </Dialog>
     </Container>
   );
-}
+};
 
 export default Forum;
