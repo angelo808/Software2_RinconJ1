@@ -1,3 +1,4 @@
+// Elimina las importaciones innecesarias
 import React, { useState, useEffect } from "react";
 import { BLOQUEADO } from "../../constants";
 import Post from "./Post";
@@ -6,10 +7,6 @@ import {
   TextField,
   Button,
   Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   Modal,
   Typography,
@@ -42,7 +39,7 @@ const Forum = () => {
       posts.filter(
         (post) =>
           post.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          post.agency == nombreAgencia
+          post.agency === nombreAgencia
       )
     );
   }, [posts, searchTerm]);
