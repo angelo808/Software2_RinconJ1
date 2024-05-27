@@ -28,15 +28,24 @@ const Forum = () => {
 
   const [nombreAgencia, setNombreAgencia] = useState(BLOQUEADO);
   const [nombreUsuario, setNombreUsuario] = useState("");
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
   useEffect(() => {
     setIsLoadingAgencia(true);
     const nombreAgencia = localStorage.getItem("nombreAgencia") || BLOQUEADO;
     const nombreUsuario = localStorage.getItem("nombreUsuario") || BLOQUEADO;
+
     setNombreAgencia(nombreAgencia);
     setNombreUsuario(nombreUsuario);
     setIsLoadingAgencia(false);
-  }, []);
+    setFilteredPosts(
+      posts.filter(
+        (post) =>
+          post.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          post.agency == nombreAgencia
+      )
+    );
+  }, [posts, searchTerm]);
 
   const handleCreatePost = () => {
     const updatedPosts = [
@@ -51,6 +60,7 @@ const Forum = () => {
         likes: 0,
         dislikes: 0,
         reactions: [],
+        agency: nombreAgencia,
       },
     ];
 
@@ -71,10 +81,6 @@ const Forum = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
-  const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <Container>
