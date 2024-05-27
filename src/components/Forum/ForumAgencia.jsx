@@ -48,6 +48,9 @@ const Forum = () => {
         author: nombreUsuario,
         image: newPostImage,
         comments: [],
+        likes: 0,
+        dislikes: 0,
+        reactions: [],
       },
     ];
 

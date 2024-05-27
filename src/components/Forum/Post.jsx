@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Comment from "../Comment";
 import {
   Card,
@@ -8,10 +8,6 @@ import {
   Typography,
   Box,
   TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
   Modal,
 } from "@mui/material";
@@ -23,9 +19,9 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
   const [newCommentContent, setNewCommentContent] = useState("");
 
   // Estado para likes y dislikes
-  const [likes, setLikes] = useState(0);
-  const [dislikes, setDislikes] = useState(0);
-  const [userReaction, setUserReaction] = useState(null); // Puede ser 'like', 'dislike', o null
+  const [likes, setLikes] = useState(post.likes);
+  const [dislikes, setDislikes] = useState(post.dislikes);
+  const [userReaction, setUserReaction] = useState(null);
 
   const handleAddComment = () => {
     const updatedPosts = posts.map((p) => {
@@ -51,59 +47,89 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
   };
 
   const handleLike = () => {
+    let new_dislikes = 0,
+      new_likes = 0,
+      new_user_reaction = userReaction;
+
     if (userReaction === "like") {
-      setLikes(likes - 1);
-      setUserReaction(null);
+      new_likes = likes - 1;
+      setLikes(new_likes);
+
+      new_user_reaction = null;
+      setUserReaction(new_user_reaction);
     } else {
       if (userReaction === "dislike") {
-        setDislikes(dislikes - 1);
+        new_dislikes = dislikes - 1;
+        setDislikes(new_dislikes);
       }
-      setLikes(likes + 1);
-      setUserReaction("like");
+      new_likes = likes + 1;
+      setLikes(new_likes);
+      new_user_reaction = "like";
+      setUserReaction(new_user_reaction);
     }
+
+    const updatedPosts = posts.map((p) => {
+      if (p.id === post.id) {
+        return {
+          ...p,
+          likes: new_likes,
+          dislikes: new_dislikes,
+          reactions: [
+            ...p.reactions.filter((r) => r.user !== currentUser),
+            { user: currentUser, reaction: new_user_reaction },
+          ],
+        };
+      }
+      return p;
+    });
+    setPosts(updatedPosts);
+
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
   const handleDislike = () => {
+    let new_dislikes = 0,
+      new_likes = 0,
+      new_user_reaction;
     if (userReaction === "dislike") {
-      setDislikes(dislikes - 1);
-      setUserReaction(null);
+      new_dislikes = dislikes - 1;
+      setDislikes(new_dislikes);
+      new_user_reaction = null;
+      setUserReaction(new_user_reaction);
     } else {
       if (userReaction === "like") {
-        setLikes(likes - 1);
+        new_likes = likes - 1;
+        setLikes(new_likes);
       }
-      setDislikes(dislikes + 1);
-      setUserReaction("dislike");
+      new_dislikes = dislikes + 1;
+      setDislikes(new_dislikes);
+      new_user_reaction = "dislike";
+      setUserReaction(new_user_reaction);
     }
+    const updatedPosts = posts.map((p) => {
+      if (p.id === post.id) {
+        return {
+          ...p,
+          likes: new_likes,
+          dislikes: new_dislikes,
+          reactions: [
+            ...p.reactions.filter((r) => r.user !== currentUser),
 
-    const updatedPosts = posts.map((post) => {
-      if (post.id === postId) {
-        const userReaction = post.reactions?.find(
-          (reaction) => reaction.user === currentUser.email
-        );
-        if (userReaction) {
-          if (userReaction.type === type) {
-            post.reactions = post.reactions.filter(
-              (reaction) => reaction.user !== currentUser.email
-            );
-          } else {
-            post.reactions = post.reactions.map((reaction) =>
-              reaction.user === currentUser.email
-                ? { ...reaction, type }
-                : reaction
-            );
-          }
-        } else {
-          post.reactions = [
-            ...(post.reactions || []),
-            { user: currentUser.email, type },
-          ];
-        }
+            { user: currentUser, reaction: new_user_reaction },
+          ],
+        };
       }
-      return post;
+      return p;
     });
     setPosts(updatedPosts);
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
+
+  useEffect(() => {
+    setUserReaction(
+      post.reactions.filter((p) => p.user == currentUser)[0]?.reaction
+    );
+  }, [post.reactions, currentUser]);
 
   return (
     <Box>
