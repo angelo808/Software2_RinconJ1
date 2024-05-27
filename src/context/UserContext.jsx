@@ -1,21 +1,26 @@
 import { createContext, useState } from "react";
-
+import axios from "axios"; 
 export const UserContext = createContext();//Crea un contexto de usuario
 
 export const UserProvider = ({children}) => {//Provee el contexto de usuario a los componentes hijos
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const addUser = (id, nombre, correo, especialidad, foto) => {//Agrega un usuario al estado
-        setUser({id, nombre, correo, especialidad, foto});
-        setIsLoggedIn(true);
-        console.log(isLoggedIn);
-    }
-    const removeUser = () => {//Elimina un usuario del estado
-      setUser(null);
-      setIsLoggedIn(false);
-      console.log(user);
-      console.log(isLoggedIn);
+    const addUser = async (username, password) => {
+      try {
+          const response = await axios.post('/api/users/login', { username, password });
+          const userData = response.data;
+          setUser(userData);
+          setIsLoggedIn(true);
+          localStorage.setItem('user', JSON.stringify(userData));
+      } catch (error) {
+          console.error("Login failed", error);
+      }
+  };
+    const removeUser = () => {
+        setUser(null);
+        setIsLoggedIn(false);
+        localStorage.removeItem('user');
     };
 
     const updateUserPhoto = (newPhoto) => {//Actualiza la foto de un usuario

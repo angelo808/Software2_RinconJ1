@@ -1,6 +1,19 @@
 
 const User = require('../models/userModel');
 
+exports.loginUser = async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const user = await User.findOne({ username, password });
+        if (user) {
+            res.status(200).json(user);
+        } else {
+            res.status(400).json({ message: 'Invalid credentials' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
     try {
