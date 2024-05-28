@@ -8,7 +8,7 @@ export const UserProvider = ({children}) => {//Provee el contexto de usuario a l
 
     const addUser = async (username, password) => {
       try {
-          const response = await axios.post('/api/users/login', { username, password });
+          const response = await axios.post('http://localhost:5000/api/users/login', { username, password });
           const userData = response.data;
           setUser(userData);
           setIsLoggedIn(true);

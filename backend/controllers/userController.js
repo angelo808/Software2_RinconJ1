@@ -1,11 +1,11 @@
-
 const User = require('../models/userModel');
 
+// Método para iniciar sesión
 exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username });
-        if (user && (await bcrypt.compare(password, user.password))) {
+        const user = await User.findOne({ username, password });
+        if (user) {
             res.status(200).json(user);
         } else {
             res.status(401).json({ message: 'Invalid credentials' });
@@ -14,6 +14,7 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
     try {
