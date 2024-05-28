@@ -18,14 +18,21 @@ exports.loginUser = async (req, res) => {
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
     try {
-        const newUser = new User(req.body);
+        const { username, password, name, email, occupation, photo } = req.body;
+        const newUser = new User({
+            username,
+            password,
+            name,
+            email,
+            occupation,
+            photo
+        });
         await newUser.save();
         res.status(201).json(newUser);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
 };
-
 // Obtener todos los usuarios
 exports.getUsers = async (req, res) => {
     try {
