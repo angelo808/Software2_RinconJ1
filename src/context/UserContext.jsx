@@ -1,11 +1,18 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import axios from "axios"; 
-
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+            setIsLoggedIn(true);
+        }
+    }, []);
 
     const addUser = async (username, password, name, email, occupation, photo) => {
         try {
@@ -34,7 +41,9 @@ export const UserProvider = ({ children }) => {
 
     const updateUserPhoto = (newPhoto) => {
         if (user) {
-            setUser({ ...user, photo: newPhoto });
+            const updatedUser = { ...user, photo: newPhoto };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
         }
     };
 

@@ -33,6 +33,7 @@ exports.createUser = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
+
 // Obtener todos los usuarios
 exports.getUsers = async (req, res) => {
     try {
@@ -59,10 +60,15 @@ exports.getUserById = async (req, res) => {
 // Actualizar un usuario
 exports.updateUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const user = await User.findById(req.params.id);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
+        // Aquí es donde actualizas la contraseña sin bcrypt
+        Object.assign(user, req.body);
+        await user.save();
+
         res.status(200).json(user);
     } catch (err) {
         res.status(400).json({ error: err.message });

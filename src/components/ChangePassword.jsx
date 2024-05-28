@@ -1,29 +1,34 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { USERS } from '../data/users';  
+import axios from 'axios';
 import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
-const ChangePassword = () => {//Componente para cambiar la contraseña
-
+const ChangePassword = () => {
   const navigate = useNavigate();
-  const {user} = useContext(UserContext);
-  const {register, handleSubmit, reset} = useForm();
+  const { user } = useContext(UserContext);
+  const { register, handleSubmit, reset } = useForm();
 
-  const onClose = () => {//Función para cerrar el modal
+  const onClose = () => {
     navigate(-1);
   };
 
-  const handleSave = (data) => {//Función para guardar la nueva contraseña
-    if((data.newPassword === data.confirmPassword && (data.newPassword !== '' && data.confirmPassword !== ''))){
-      const userUpdate = USERS.find(u => u.id === user.id);
-      userUpdate.password = data.newPassword;
-      alert('Contraseña actualizada correctamente');
-      reset();
-      onClose();
-      return;
+  const handleSave = async (data) => {
+    if (data.newPassword === data.confirmPassword && data.newPassword !== '') {
+      try {
+        await axios.put(`http://localhost:5000/api/users/${user._id}`, {
+          password: data.newPassword,
+        });
+        alert('Contraseña actualizada correctamente');
+        reset();
+        onClose();
+      } catch (error) {
+        console.error('Error actualizando la contraseña:', error);
+        alert('Error actualizando la contraseña');
+      }
+    } else {
+      alert("Las contraseñas no coinciden o están vacías");
     }
-    alert("Las contraseñas no coinciden o están vacías");
   };
 
   return (
@@ -73,4 +78,4 @@ const ChangePassword = () => {//Componente para cambiar la contraseña
   )
 }
 
-export default ChangePassword
+export default ChangePassword;
