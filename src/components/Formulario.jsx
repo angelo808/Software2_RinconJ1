@@ -7,10 +7,10 @@ import { UserContext } from "../context/UserContext";
 const Formulario = () => {
   // Formulario de inicio de sesión
   const { register, handleSubmit, reset } = useForm();
-  const { user, addUser } = useContext(UserContext);
+  const { user, loginUser } = useContext(UserContext);
 
   const onSubmit = async (data) => {
-    await addUser(data.userAccount, data.userPassword);
+    await loginUser(data.userAccount, data.userPassword);
     reset();
   };
 

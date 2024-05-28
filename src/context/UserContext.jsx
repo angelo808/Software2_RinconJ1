@@ -32,6 +32,18 @@ export const UserProvider = ({ children }) => {
             console.error("Registration failed", error);
         }
     };
+    const loginUser = async (username, password) => {
+        try {
+            const response = await axios.post('http://localhost:5000/api/users/login', { username, password });
+            console.log('Login response:', response.data); // Para depuración
+            const userData = response.data;
+            setUser(userData);
+            setIsLoggedIn(true);
+            localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+            console.error("Login failed", error);
+        }
+    };
 
     const removeUser = () => {
         setUser(null);
@@ -48,7 +60,7 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, addUser, removeUser, isLoggedIn, updateUserPhoto }}>
+        <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto }}>
             {children}
         </UserContext.Provider>
     );
