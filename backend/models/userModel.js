@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema({
     photo: {
         type: String, // Almacena la URL de la foto del usuario
         default: null
+    },
+    selectedAgency: {
+        type: String,
+        default: null
     }
 });
 
