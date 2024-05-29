@@ -14,7 +14,7 @@ import SelectAgency from "../pages/SeleccionarAgencia";
 import Quiz from "../pages/Cuestionario";
 import MisEtapas from "../pages/Etapas";
 import Home from "../pages/Home";
-
+import Agencia from "../pages/Agencia";
 const MyRoutes = () => {
   //Rutas de la aplicación
 
@@ -37,7 +37,8 @@ const MyRoutes = () => {
             </Route>
             <Route path="/mis-etapas" element={<MisEtapas />} />
             <Route path="/seleccionar-agencia" element={<SelectAgency />} />
-            <Route path="/cuestionario" element={<Quiz />} />
+            <Route path="/cuestionario" element={<Quiz />}/>
+            <Route path="/agencia" element={<Agencia />} />
           </Route>
         </Routes>
       </BrowserRouter>

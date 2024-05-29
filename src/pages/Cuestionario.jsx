@@ -1,9 +1,10 @@
-// src/pages/Quiz.jsx
+// src/pages/Cuestionario.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Cuestionario = () => {
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '' });
+  const [recommendation, setRecommendation] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -12,16 +13,19 @@ const Cuestionario = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let recommendation = '';
+    let rec = '';
     if (answers.q1 === 'A' && answers.q2 === 'A' && answers.q3 === 'A' && answers.q4 === 'A') {
-      recommendation = 'INTEJ';
+      rec = 'INTEJ';
     } else if (answers.q1 === 'B' && answers.q2 === 'B' && answers.q3 === 'B' && answers.q4 === 'B') {
-      recommendation = 'USE';
+      rec = 'USE';
     } else {
-      recommendation = 'USE'; // Default recommendation
+      rec = 'USE'; // Default recommendation
     }
+    setRecommendation(rec);
     // Aquí puedes guardar la recomendación en el estado global o backend
-    console.log('Recomendación:', recommendation);
+  };
+
+  const handleSelectAgency = () => {
     navigate('/seleccionar-agencia');
   };
 
@@ -87,6 +91,17 @@ const Cuestionario = () => {
         </div>
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Obtener Recomendación</button>
       </form>
+      {recommendation && (
+        <div className="mt-8">
+          <p className="text-xl">Te sugerimos ir a la agencia {recommendation}</p>
+          <button 
+            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+            onClick={handleSelectAgency}
+          >
+            Seleccionar Agencia
+          </button>
+        </div>
+      )}
     </div>
   );
 };

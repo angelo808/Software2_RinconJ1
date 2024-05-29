@@ -1,13 +1,11 @@
-// src/pages/SelectAgency.jsx
-import React, { useState, useContext } from 'react';
+// src/pages/SeleccionarAgencia.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { UserContext } from '../context/UserContext';
 
 const SeleccionarAgencia = () => {
-  const [selectedAgency, setSelectedAgency] = useState(null);
+  const [selectedAgency, setSelectedAgency] = useState('');
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
 
   const handleSelection = (e) => {
     setSelectedAgency(e.target.value);
@@ -17,15 +15,13 @@ const SeleccionarAgencia = () => {
     e.preventDefault();
     if (selectedAgency) {
       try {
-        const response = await axios.post('http://localhost:5000/api/users/select-agency', {
-          userId: user._id,
-          agency: selectedAgency
-        });
+        const user = JSON.parse(localStorage.getItem('user'));
+        const response = await axios.put(`http://localhost:5000/api/users/${user._id}`, { agency: selectedAgency });
         const updatedUser = response.data;
-        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
         navigate('/mis-foros');
       } catch (error) {
-        console.error('Failed to select agency', error);
+        console.error('Error updating user:', error);
       }
     } else {
       alert('Seleccione una agencia');
@@ -55,4 +51,5 @@ const SeleccionarAgencia = () => {
 };
 
 export default SeleccionarAgencia;
+
 
