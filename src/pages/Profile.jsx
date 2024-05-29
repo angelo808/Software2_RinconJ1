@@ -1,34 +1,43 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { Link, Outlet } from "react-router-dom";
 
-const Profile = () => {//Página de perfil de usuario
+const Profile = () => {
   const { user, updateUserPhoto } = useContext(UserContext);
-  const [newPhoto, setNewPhoto] = useState(user.foto);
+  const [newPhoto, setNewPhoto] = useState(user?.photo);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handlePhotoChange = (e) => {//Actualiza el estado newPhoto con la nueva imagen seleccionada por el usuario
-    const file = e.target.files[0];//extrae el archivo seleccionado del evento
-    const reader = new FileReader();//objeto FileReader: se utiliza para leer el contenido de los archivos seleccionados
+  useEffect(() => {
+    if (user) {
+      setNewPhoto(user.photo);
+    }
+  }, [user]);
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
 
     reader.onloadend = () => {
-        setNewPhoto(reader.result); //se actualiza el estado newPhoto
+      setNewPhoto(reader.result);
     };
 
     if (file) {
-        reader.readAsDataURL(file); //lee el contenido del archivo seleccionado
-      }
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleEditClick = () => {//Cambia el estado isEditing para mostrar o ocultar el formulario de edición
+  const handleEditClick = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleSaveClick = () => {//Actualiza la foto del usuario con la nueva imagen
+  const handleSaveClick = () => {
     updateUserPhoto(newPhoto);
-
     setIsEditing(false);
   };
+
+  if (!user) {
+    return <p>Cargando...</p>;
+  }
 
   return (
     <div className="flex container m-auto">
@@ -37,7 +46,7 @@ const Profile = () => {//Página de perfil de usuario
       <section className="p-4 m-6 bg-customColor">
         <div className="w-80 flex items-center flex-col">
           <img
-            src={user.foto || "https://via.placeholder.com/600"}
+            src={user.photo || "https://via.placeholder.com/600"}
             alt="Profile"
             className="w-64 h-64 rounded-full"
           />
@@ -63,25 +72,27 @@ const Profile = () => {//Página de perfil de usuario
               onClick={handleEditClick}
               className="bg-blue-500 text-white px-4 py-2 m-4 rounded"
             >
-              Editar Photo
+              Editar Foto
             </button>
           )}
         </div>
 
-        <div >
+        <div>
           <h1 className="text-3xl text-start">
-            <b>ID: {user.id}</b>
+            <b>ID: {user._id}</b>
           </h1>
           <p className="text-xl text-start my-6">
-            <b>Nombre:</b> {user.nombre}
+            <b>Nombre:</b> {user.name}
           </p>
           <p className="text-xl text-start my-6">
-            <b>Correo:</b> {user.correo}
+            <b>Correo:</b> {user.email}
           </p>
           <p className="text-xl text-start my-6">
-            <b>Especialidad:</b> {user.especialidad}
+            <b>Profesión:</b> {user.occupation}
           </p>
-          <div className="text-red-500 text-end hover:font-bold"><Link to={'cambiar-contrasenia'}>Cambiar contraseña</Link></div>
+          <div className="text-red-500 text-end hover:font-bold">
+            <Link to={'cambiar-contrasenia'}>Cambiar contraseña</Link>
+          </div>
         </div>
       </section>
 

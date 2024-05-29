@@ -1,0 +1,32 @@
+/* HomeUser.css */
+p {
+    font-weight: normal;
+    color: #000;
+}
+
+.section-title {
+    font-weight: bold;
+}
+
+ul {
+    list-style-type: square;
+    margin: 10px 0;
+    padding: 0 20px;
+}
+
+ul li {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.content-container {
+    font-weight: normal;
+    max-width: 80%;
+    margin: auto;
+}
+
+.responsive-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}

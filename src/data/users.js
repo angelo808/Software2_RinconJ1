@@ -1,5 +1,5 @@
-import img from "../assets/imgUser/user1.jpg";
-export const USERS = [
+
+const USERS = [
   {
     "id": "1",
     "username": "user1",
@@ -7,7 +7,7 @@ export const USERS = [
     "name": "John Doe",
     "email": "john@example.com",
     "occupation": "Software Engineer",
-    "photo" : img
+    "photo" : "/assets/imgUser/user1.jpg"
   },
   {
     "id": "2 ",
@@ -19,3 +19,4 @@ export const USERS = [
     "photo" : null
   }
 ];
+module.exports = { USERS };

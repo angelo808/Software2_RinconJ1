@@ -127,7 +127,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
 
   useEffect(() => {
     setUserReaction(
-      post.reactions.filter((p) => p.user == currentUser)[0]?.reaction
+      post.reactions.filter((p) => p.user === currentUser)[0]?.reaction
     );
   }, [post.reactions, currentUser]);
 
