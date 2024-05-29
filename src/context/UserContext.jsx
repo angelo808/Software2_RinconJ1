@@ -58,9 +58,24 @@ export const UserProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(updatedUser));
         }
     };
+    const updateUserAgency = async (agency) => {
+        if (user) {
+            try {
+                const response = await axios.put('http://localhost:5000/api/users/update-agency', {
+                    userId: user._id,
+                    agency
+                });
+                const updatedUser = response.data;
+                setUser(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+            } catch (error) {
+                console.error("Failed to update agency", error);
+            }
+        }
+    };
 
     return (
-        <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, setUser }}>
+        <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, setUser, updateUserAgency }}>
             {children}
         </UserContext.Provider>
     );

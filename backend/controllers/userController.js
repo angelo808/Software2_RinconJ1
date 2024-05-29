@@ -14,6 +14,18 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+exports.updateUserAgency = async (req, res) => {
+    try {
+        const { username, agency } = req.body;
+        const user = await User.findOneAndUpdate( {username}, { agency }, { new: true });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
@@ -87,18 +99,3 @@ exports.deleteUser = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
-exports.selectAgency = async (req, res) => {
-    try {
-        const { userId, agency } = req.body;
-        const user = await User.findById(userId);
-        if (user) {
-            user.selectedAgency = agency;
-            await user.save();
-            res.status(200).json(user);
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-}

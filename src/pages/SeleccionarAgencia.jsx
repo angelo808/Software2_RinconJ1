@@ -16,7 +16,10 @@ const SeleccionarAgencia = () => {
     if (selectedAgency) {
       try {
         const user = JSON.parse(localStorage.getItem('user'));
-        const response = await axios.put(`http://localhost:5000/api/users/${user._id}`, { agency: selectedAgency });
+        const response = await axios.put('http://localhost:5000/api/users/update-agency', {
+          username: user.username,
+          agency: selectedAgency
+        });
         const updatedUser = response.data;
         localStorage.setItem('user', JSON.stringify(updatedUser));
         navigate('/mis-foros');
