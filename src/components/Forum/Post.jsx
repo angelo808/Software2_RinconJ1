@@ -9,8 +9,8 @@ import Comment from "../Comment";
 const Post = ({ post, setPosts, posts, currentUser }) => {
   const [newCommentOpen, setNewCommentOpen] = useState(false);
   const [newCommentContent, setNewCommentContent] = useState("");
-  const [likes, setLikes] = useState(post.likes);
-  const [dislikes, setDislikes] = useState(post.dislikes);
+  const [likes, setLikes] = useState(post.likes || 0);
+  const [dislikes, setDislikes] = useState(post.dislikes || 0);
   const [userReaction, setUserReaction] = useState(null);
 
   const handleAddComment = async () => {
@@ -34,7 +34,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
     setPosts(updatedPosts);
     setNewCommentOpen(false);
     setNewCommentContent("");
-    
+
     try {
       await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
         comments: [...post.comments, { author: currentUser, text: newCommentContent }]
@@ -71,7 +71,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
           likes: new_likes,
           dislikes: new_dislikes,
           reactions: [
-            ...p.reactions.filter((r) => r.user !== currentUser),
+            ...(p.reactions || []).filter((r) => r.user !== currentUser),
             { user: currentUser, reaction: new_user_reaction },
           ],
         };
@@ -86,7 +86,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
         likes: new_likes,
         dislikes: new_dislikes,
         reactions: [
-          ...post.reactions.filter((r) => r.user !== currentUser),
+          ...(post.reactions || []).filter((r) => r.user !== currentUser),
           { user: currentUser, reaction: new_user_reaction },
         ],
       });
@@ -122,7 +122,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
           likes: new_likes,
           dislikes: new_dislikes,
           reactions: [
-            ...p.reactions.filter((r) => r.user !== currentUser),
+            ...(p.reactions || []).filter((r) => r.user !== currentUser),
             { user: currentUser, reaction: new_user_reaction },
           ],
         };
@@ -137,7 +137,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
         likes: new_likes,
         dislikes: new_dislikes,
         reactions: [
-          ...post.reactions.filter((r) => r.user !== currentUser),
+          ...(post.reactions || []).filter((r) => r.user !== currentUser),
           { user: currentUser, reaction: new_user_reaction },
         ],
       });
@@ -214,7 +214,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
         </CardActions>
       </Card>
 
-      {post.comments.map((comment) => (
+      {(post.comments || []).map((comment) => (
         <Comment key={comment.id} comment={comment} />
       ))}
 
@@ -264,4 +264,5 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
 };
 
 export default Post;
+
 

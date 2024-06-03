@@ -7,6 +7,6 @@ router.post('/', postController.createPost);
 router.get('/:id', postController.getPostById);
 router.put('/:id', postController.updatePost);
 router.delete('/:id', postController.deletePost);
-router.post('/like', likePost);
-router.post('/dislike', dislikePost);
+router.post('/like', postController.likePost);
+router.post('/dislike', postController.dislikePost);
 module.exports = router;
