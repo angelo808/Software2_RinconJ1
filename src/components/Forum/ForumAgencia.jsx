@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Post from "./Post";
 import {
   Container,
@@ -23,33 +23,40 @@ const Forum = () => {
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const nombreAgencia = localStorage.getItem("nombreAgencia") || "BLOQUEADO";
-        const nombreUsuario = localStorage.getItem("nombreUsuario") || "BLOQUEADO";
-        setNombreAgencia(nombreAgencia);
-        setNombreUsuario(nombreUsuario);
+  const fetchUserAndPosts = useCallback(async () => {
+    try {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (!storedUser) return; // Evitar fetch si no hay usuario almacenado
 
-        const response = await axios.get(`http://localhost:5000/api/posts?agency=${nombreAgencia}`);
-        setPosts(response.data);
-        setIsLoadingAgencia(false);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
-    
-    fetchPosts();
+      const userId = storedUser._id;
+      
+      const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
+      const user = userResponse.data;
+      
+      setNombreAgencia(user.selectedAgency || "BLOQUEADO");
+      setNombreUsuario(user.username);
+
+      const postsResponse = await axios.get(`http://localhost:5000/api/posts?agency=${user.selectedAgency}`);
+      setPosts(postsResponse.data);
+      setIsLoadingAgencia(false);
+    } catch (error) {
+      console.error("Error fetching posts or user data:", error);
+    }
   }, []);
 
   useEffect(() => {
-    setFilteredPosts(
-      posts.filter(
+    fetchUserAndPosts();
+  }, [fetchUserAndPosts]);
+
+  useEffect(() => {
+    if (nombreAgencia) {
+      const filtered = posts.filter(
         (post) =>
           post.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
           post.agency === nombreAgencia
-      )
-    );
+      );
+      setFilteredPosts(filtered);
+    }
   }, [posts, searchTerm, nombreAgencia]);
 
   const handleCreatePost = async () => {
@@ -67,7 +74,7 @@ const Forum = () => {
       };
 
       const response = await axios.post('http://localhost:5000/api/posts', newPost);
-      setPosts([...posts, response.data]);
+      setPosts((prevPosts) => [...prevPosts, response.data]);
       setNewPostOpen(false);
       setNewPostTitle("");
       setNewPostContent("");
@@ -86,8 +93,6 @@ const Forum = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
-  
 
   return (
     <Container>
