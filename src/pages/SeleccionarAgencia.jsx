@@ -15,7 +15,7 @@ const SeleccionarAgencia = () => {
         if (selectedAgency) {
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
-                const response = await axios.put('http://localhost:5000/api/users/update-agency', { userId: user._id, selectedAgency: selectedAgency });
+                const response = await axios.put('http://localhost:5001/api/users/update-agency', { userId: user._id, selectedAgency: selectedAgency });
                 const updatedUser = response.data;
                 localStorage.setItem('user', JSON.stringify(updatedUser));
                 navigate('/mis-foros');
@@ -41,6 +41,9 @@ const SeleccionarAgencia = () => {
                         <option value="">Seleccione una opción</option>
                         <option value="INTEJ">Agencia INTEJ</option>
                         <option value="USE">Agencia USE</option>
+                        <option value="ATENEA">Agencia ATENEA</option>
+                        <option value="GOWEX">Agencia GOWEX</option>
+                        <option value="APK">Agencia APK</option>
                     </select>
                 </div>
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Confirmar Selección</button>
