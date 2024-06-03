@@ -21,11 +21,11 @@ const Comment = ({ comment }) => {
                 mr: 2,
               }}
             >
-              {comment.user.charAt(0)}
+              {comment.author.charAt(0)}
             </Box>
             <Box>
               <Typography variant="body1">
-                <strong>{comment.user}</strong>
+                <strong>{comment.author}</strong>
               </Typography>
               <Typography variant="body2">{comment.text}</Typography>
             </Box>

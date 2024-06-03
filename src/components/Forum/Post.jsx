@@ -1,205 +1,138 @@
 import React, { useState, useEffect } from "react";
-import Comment from "../Comment";
+import Post from "./Post";
 import {
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Typography,
-  Box,
+  Container,
   TextField,
-  IconButton,
+  Button,
+  Box,
+  Divider,
   Modal,
+  Typography,
 } from "@mui/material";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const Post = ({ post, setPosts, posts, currentUser }) => {
-  const [newCommentOpen, setNewCommentOpen] = useState(false);
-  const [newCommentContent, setNewCommentContent] = useState("");
+const Forum = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
+  const [newPostOpen, setNewPostOpen] = useState(false);
+  const [newPostTitle, setNewPostTitle] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
+  const [newPostImage, setNewPostImage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-  // Estado para likes y dislikes
-  const [likes, setLikes] = useState(post.likes);
-  const [dislikes, setDislikes] = useState(post.dislikes);
-  const [userReaction, setUserReaction] = useState(null);
-
-  const handleAddComment = () => {
-    const updatedPosts = posts.map((p) => {
-      if (p.id === post.id) {
-        return {
-          ...p,
-          comments: [
-            ...p.comments,
-            {
-              id: p.comments.length,
-              user: currentUser,
-              text: newCommentContent,
-            },
-          ],
-        };
-      }
-      return p;
-    });
-    setPosts(updatedPosts);
-    setNewCommentOpen(false);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
-    setNewCommentContent("");
-  };
-
-  const handleLike = () => {
-    let new_dislikes = 0,
-      new_likes = 0,
-      new_user_reaction = userReaction;
-
-    if (userReaction === "like") {
-      new_likes = likes - 1;
-      setLikes(new_likes);
-
-      new_user_reaction = null;
-      setUserReaction(new_user_reaction);
-    } else {
-      if (userReaction === "dislike") {
-        new_dislikes = dislikes - 1;
-        setDislikes(new_dislikes);
-      }
-      new_likes = likes + 1;
-      setLikes(new_likes);
-      new_user_reaction = "like";
-      setUserReaction(new_user_reaction);
-    }
-
-    const updatedPosts = posts.map((p) => {
-      if (p.id === post.id) {
-        return {
-          ...p,
-          likes: new_likes,
-          dislikes: new_dislikes,
-          reactions: [
-            ...p.reactions.filter((r) => r.user !== currentUser),
-            { user: currentUser, reaction: new_user_reaction },
-          ],
-        };
-      }
-      return p;
-    });
-    setPosts(updatedPosts);
-
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
-  };
-
-  const handleDislike = () => {
-    let new_dislikes = 0,
-      new_likes = 0,
-      new_user_reaction;
-    if (userReaction === "dislike") {
-      new_dislikes = dislikes - 1;
-      setDislikes(new_dislikes);
-      new_user_reaction = null;
-      setUserReaction(new_user_reaction);
-    } else {
-      if (userReaction === "like") {
-        new_likes = likes - 1;
-        setLikes(new_likes);
-      }
-      new_dislikes = dislikes + 1;
-      setDislikes(new_dislikes);
-      new_user_reaction = "dislike";
-      setUserReaction(new_user_reaction);
-    }
-    const updatedPosts = posts.map((p) => {
-      if (p.id === post.id) {
-        return {
-          ...p,
-          likes: new_likes,
-          dislikes: new_dislikes,
-          reactions: [
-            ...p.reactions.filter((r) => r.user !== currentUser),
-
-            { user: currentUser, reaction: new_user_reaction },
-          ],
-        };
-      }
-      return p;
-    });
-    setPosts(updatedPosts);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
-  };
+  const [nombreAgencia, setNombreAgencia] = useState("");
+  const [nombreUsuario, setNombreUsuario] = useState("");
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
   useEffect(() => {
-    setUserReaction(
-      post.reactions.filter((p) => p.user === currentUser)[0]?.reaction
-    );
-  }, [post.reactions, currentUser]);
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    setNombreAgencia(storedUser.selectedAgency);
+    setNombreUsuario(storedUser.username);
+    fetchPosts(storedUser.selectedAgency);
+  }, []);
+
+  const fetchPosts = async (agency) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/posts?agency=${agency}`);
+      setPosts(response.data);
+      setFilteredPosts(response.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreatePost = async () => {
+    const newPost = {
+      title: newPostTitle,
+      content: newPostContent,
+      author: nombreUsuario,
+      image: newPostImage,
+      agency: nombreAgencia,
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/posts', newPost);
+      const updatedPosts = [...posts, response.data];
+      setPosts(updatedPosts);
+      setFilteredPosts(updatedPosts);
+      setNewPostOpen(false);
+      setNewPostTitle("");
+      setNewPostContent("");
+      setNewPostImage(null);
+    } catch (error) {
+      console.error('Error creating post:', error);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setNewPostImage(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+    setFilteredPosts(posts.filter(post =>
+      post.title.toLowerCase().includes(searchTerm) &&
+      post.agency === nombreAgencia
+    ));
+  };
+
+  const handleGoHome = () => {
+    navigate('/inicio');
+  };
 
   return (
-    <Box>
-      <Card sx={{ mt: 4, backgroundColor: "#D1C8C1" }}>
-        <CardContent>
-          <Box display="flex" alignItems="center" mb={2}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                backgroundColor: "#00aaff",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontSize: "1.5rem",
-                mr: 2,
-              }}
-            >
-              {post.author.charAt(0)}
-            </Box>
-            <Box>
-              <Typography variant="h6">{post.title}</Typography>
-              <Typography variant="subtitle1">por {post.author}</Typography>
-            </Box>
-          </Box>
-          {post.image && (
-            <Box mb={2}>
-              <img
-                src={post.image}
-                alt="Post"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "300px",
-                  objectFit: "cover",
-                }}
-              />
-            </Box>
-          )}
-          <Typography variant="body1">{post.content}</Typography>
-        </CardContent>
-        <CardActions>
-          <Button size="small" onClick={() => setNewCommentOpen(true)}>
-            Comentar
-          </Button>
-          <IconButton
-            size="small"
-            onClick={handleLike}
-            color={userReaction === "like" ? "primary" : "default"}
-          >
-            <ThumbUpIcon /> {likes}
-          </IconButton>
-          <IconButton
-            size="small"
-            onClick={handleDislike}
-            color={userReaction === "dislike" ? "primary" : "default"}
-          >
-            <ThumbDownIcon /> {dislikes}
-          </IconButton>
-        </CardActions>
-      </Card>
+    <Container>
+      <h2 className="text-4xl font-bold text-secondary my-4">
+        FORO AGENCIA: {nombreAgencia}
+      </h2>
+      <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 
-      {post.comments.map((comment) => (
-        <Comment key={comment.id} comment={comment} />
+      <Box className="flex flex-row my-4 items-center">
+        <TextField
+          fullWidth
+          label="Buscar por nombre de post..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ ml: 2 }}
+          onClick={() => setNewPostOpen(true)}
+        >
+          <p className="text-white font-bold">CREAR POST</p>
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ ml: 2 }}
+          onClick={handleGoHome}
+        >
+          <p className="text-white font-bold">VOLVER A HOME</p>
+        </Button>
+      </Box>
+      <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
+
+      {filteredPosts.map((post) => (
+        <Post
+          key={post._id}
+          post={post}
+          setPosts={setPosts}
+          posts={posts}
+          currentUser={nombreUsuario}
+        />
       ))}
 
       <Modal
-        open={newCommentOpen}
-        onClose={() => setNewCommentOpen(false)}
+        open={newPostOpen}
+        onClose={() => setNewPostOpen(false)}
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
       >
@@ -218,28 +151,56 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
           }}
         >
           <Typography id="modal-title" variant="h6" component="h2" mb={2}>
-            Agregar Comentario
+            Crear Nuevo Post
           </Typography>
 
           <TextField
             autoFocus
             margin="dense"
-            label="Contenido del Comentario"
+            label="Título del Post"
             type="text"
             fullWidth
-            value={newCommentContent}
-            onChange={(e) => setNewCommentContent(e.target.value)}
+            value={newPostTitle}
+            onChange={(e) => setNewPostTitle(e.target.value)}
           />
+          <TextField
+            margin="dense"
+            label="Descripción del Post"
+            type="text"
+            fullWidth
+            value={newPostContent}
+            onChange={(e) => setNewPostContent(e.target.value)}
+          />
+          <input
+            accept="image/*"
+            type="file"
+            onChange={handleImageChange}
+            style={{ marginTop: "16px" }}
+          />
+          {newPostImage && (
+            <Box mt={2}>
+              <img
+                src={newPostImage}
+                alt="Preview"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "300px",
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
+          )}
           <div className="flex justify-end">
-            <Button color="error" onClick={() => setNewCommentOpen(false)}>
+            <Button color="error" onClick={() => setNewPostOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleAddComment}>Agregar</Button>
+            <Button onClick={handleCreatePost}>Crear</Button>
           </div>
         </Box>
       </Modal>
-    </Box>
+    </Container>
   );
 };
 
-export default Post;
+export default Forum;
+

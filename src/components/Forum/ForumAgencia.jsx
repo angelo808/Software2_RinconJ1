@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { BLOQUEADO } from "../../constants";
 import Post from "./Post";
 import {
   Container,
@@ -10,32 +9,42 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import { useNavigate } from 'react-router-dom'; // Importa el hook useNavigate
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Importa axios
 
 const Forum = () => {
   const [isLoadingAgencia, setIsLoadingAgencia] = useState(true);
-  const [posts, setPosts] = useState(
-    JSON.parse(localStorage.getItem("posts")) || []
-  );
+  const [posts, setPosts] = useState([]);
   const [newPostOpen, setNewPostOpen] = useState(false);
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostImage, setNewPostImage] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate(); // Usa el hook useNavigate
-
-  const [nombreAgencia, setNombreAgencia] = useState(BLOQUEADO);
+  const navigate = useNavigate();
+  const [nombreAgencia, setNombreAgencia] = useState("");
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
 
   useEffect(() => {
-    setIsLoadingAgencia(true);
-    const nombreAgencia = localStorage.getItem("nombreAgencia") || BLOQUEADO;
-    const nombreUsuario = localStorage.getItem("nombreUsuario") || BLOQUEADO;
+    const fetchPosts = async () => {
+      try {
+        const nombreAgencia = localStorage.getItem("nombreAgencia") || "BLOQUEADO";
+        const nombreUsuario = localStorage.getItem("nombreUsuario") || "BLOQUEADO";
+        setNombreAgencia(nombreAgencia);
+        setNombreUsuario(nombreUsuario);
 
-    setNombreAgencia(nombreAgencia);
-    setNombreUsuario(nombreUsuario);
-    setIsLoadingAgencia(false);
+        const response = await axios.get(`http://localhost:5000/api/posts?agency=${nombreAgencia}`);
+        setPosts(response.data);
+        setIsLoadingAgencia(false);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+    
+    fetchPosts();
+  }, []);
+
+  useEffect(() => {
     setFilteredPosts(
       posts.filter(
         (post) =>
@@ -43,31 +52,31 @@ const Forum = () => {
           post.agency === nombreAgencia
       )
     );
-  }, [posts, searchTerm]);
+  }, [posts, searchTerm, nombreAgencia]);
 
-  const handleCreatePost = () => {
-    const updatedPosts = [
-      ...posts,
-      {
-        id: posts.length,
+  const handleCreatePost = async () => {
+    try {
+      const newPost = {
         title: newPostTitle,
         content: newPostContent,
         author: nombreUsuario,
         image: newPostImage,
+        agency: nombreAgencia,
         comments: [],
         likes: 0,
         dislikes: 0,
         reactions: [],
-        agency: nombreAgencia,
-      },
-    ];
+      };
 
-    setPosts(updatedPosts);
-    setNewPostOpen(false);
-    setNewPostTitle("");
-    setNewPostContent("");
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
-    setNewPostImage(null);
+      const response = await axios.post('http://localhost:5000/api/posts', newPost);
+      setPosts([...posts, response.data]);
+      setNewPostOpen(false);
+      setNewPostTitle("");
+      setNewPostContent("");
+      setNewPostImage(null);
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
   };
 
   const handleImageChange = (e) => {
@@ -80,7 +89,7 @@ const Forum = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleGoHome = () => { // Función para navegar a la página de inicio
+  const handleGoHome = () => {
     navigate('/inicio');
   };
 
@@ -110,7 +119,7 @@ const Forum = () => {
           variant="contained"
           color="secondary"
           sx={{ ml: 2 }}
-          onClick={handleGoHome} // Usa la función para navegar a HOME
+          onClick={handleGoHome}
         >
           <p className="text-white font-bold">VOLVER A HOME</p>
         </Button>
@@ -119,7 +128,7 @@ const Forum = () => {
 
       {filteredPosts.map((post) => (
         <Post
-          key={post.id}
+          key={post._id}
           post={post}
           setPosts={setPosts}
           posts={posts}
