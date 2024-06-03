@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
 
     const addUser = async (username, password, name, email, occupation, photo, selectedAgency) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/users', {
+            const response = await axios.post('http://localhost:5001/api/users', {
                 username,
                 password,
                 name,
@@ -35,7 +35,7 @@ export const UserProvider = ({ children }) => {
     };
     const loginUser = async (username, password) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/users/login', { username, password });
+            const response = await axios.post('http://localhost:5001/api/users/login', { username, password });
             console.log('Login response:', response.data); // Para depuración
             const userData = response.data;
             setUser(userData);
@@ -62,7 +62,7 @@ export const UserProvider = ({ children }) => {
     const updateUserAgency = async (userId,agency) => {
         if (user) {
             try {
-                const response = await axios.put('http://localhost:5000/api/users/update-agency', { userId, selectedAgency: agency });
+                const response = await axios.put('http://localhost:5001/api/users/update-agency', { userId, selectedAgency: agency });
                 const updatedUser = response.data;
                 setUser(updatedUser);
                 localStorage.setItem('user', JSON.stringify(updatedUser));

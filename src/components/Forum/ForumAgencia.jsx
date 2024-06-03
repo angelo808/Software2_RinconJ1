@@ -22,13 +22,13 @@ const Forum = () => {
 
       const userId = storedUser._id;
 
-      const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
+      const userResponse = await axios.get(`http://localhost:5001/api/users/${userId}`);
       const user = userResponse.data;
 
       setNombreAgencia(user.selectedAgency || "BLOQUEADO");
       setNombreUsuario(user.username);
 
-      const postsResponse = await axios.get(`http://localhost:5000/api/posts?agency=${user.selectedAgency}`);
+      const postsResponse = await axios.get(`http://localhost:5001/api/posts?agency=${user.selectedAgency}`);
       setPosts(postsResponse.data);
       setIsLoadingAgencia(false);
     } catch (error) {
@@ -63,7 +63,7 @@ const Forum = () => {
         reactions: [],
       };
 
-      const response = await axios.post('http://localhost:5000/api/posts', newPost);
+      const response = await axios.post('http://localhost:5001/api/posts', newPost);
       setPosts((prevPosts) => [...prevPosts, response.data]);
       setNewPostOpen(false);
       setNewPostTitle("");

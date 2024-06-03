@@ -16,7 +16,7 @@ const ChangePassword = () => {
   const handleSave = async (data) => {
     if (data.newPassword === data.confirmPassword && data.newPassword !== '') {
       try {
-        await axios.put(`http://localhost:5000/api/users/${user._id}`, {
+        await axios.put(`http://localhost:5001/api/users/${user._id}`, {
           password: data.newPassword,
         });
         alert('Contraseña actualizada correctamente');

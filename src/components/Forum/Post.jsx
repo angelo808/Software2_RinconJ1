@@ -17,7 +17,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/comments/post/${post._id}`);
+        const response = await axios.get(`http://localhost:5001/api/comments/post/${post._id}`);
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -37,7 +37,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
     const newComment = { author: currentUser, text: newCommentContent, postId: post._id };
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/comments`, newComment);
+      const response = await axios.post(`http://localhost:5001/api/comments`, newComment);
       const updatedComment = response.data;
 
       setComments((prevComments) => [...prevComments, updatedComment]);
@@ -86,7 +86,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
     setPosts(updatedPosts);
 
     try {
-      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
+      await axios.put(`http://localhost:5001/api/posts/${post._id}`, {
         likes: new_likes,
         dislikes: new_dislikes,
         reactions: [
@@ -137,7 +137,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
     setPosts(updatedPosts);
 
     try {
-      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
+      await axios.put(`http://localhost:5001/api/posts/${post._id}`, {
         likes: new_likes,
         dislikes: new_dislikes,
         reactions: [
