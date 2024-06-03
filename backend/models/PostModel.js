@@ -1,4 +1,4 @@
-// models/postModel.js
+
 const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
@@ -17,10 +17,6 @@ const PostSchema = new mongoose.Schema({
     image: {
         type: String,
     },
-    comments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-    }],
     likes: {
         type: Number,
         default: 0,
@@ -33,6 +29,10 @@ const PostSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    reactions: [{
+        user: String,
+        reaction: String,
+      }],
 });
 
 const Post = mongoose.model('Post', PostSchema);

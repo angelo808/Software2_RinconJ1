@@ -14,31 +14,25 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
   const [userReaction, setUserReaction] = useState(null);
 
   const handleAddComment = async () => {
-    const updatedPosts = posts.map((p) => {
-      if (p._id === post._id) {
-        return {
-          ...p,
-          comments: [
-            ...p.comments,
-            {
-              id: p.comments.length,
-              author: currentUser,
-              text: newCommentContent,
-            },
-          ],
-        };
-      }
-      return p;
-    });
-
-    setPosts(updatedPosts);
-    setNewCommentOpen(false);
-    setNewCommentContent("");
+    const newComment = { author: currentUser, text: newCommentContent, postId: post._id };
 
     try {
-      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
-        comments: [...post.comments, { author: currentUser, text: newCommentContent }]
+      const response = await axios.post(`http://localhost:5000/api/comments`, newComment);
+      const updatedComment = response.data;
+
+      const updatedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return {
+            ...p,
+            comments: [...p.comments, updatedComment],
+          };
+        }
+        return p;
       });
+
+      setPosts(updatedPosts);
+      setNewCommentOpen(false);
+      setNewCommentContent("");
     } catch (error) {
       console.error("Error adding comment:", error);
     }
@@ -215,7 +209,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
       </Card>
 
       {(post.comments || []).map((comment) => (
-        <Comment key={comment.id} comment={comment} />
+        <Comment key={comment._id} comment={comment} />
       ))}
 
       <Modal
@@ -264,5 +258,4 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
 };
 
 export default Post;
-
 
