@@ -9,7 +9,6 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Importa axios
 
 const Forum = () => {
@@ -20,7 +19,6 @@ const Forum = () => {
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostImage, setNewPostImage] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
   const [nombreAgencia, setNombreAgencia] = useState("");
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
@@ -89,9 +87,7 @@ const Forum = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleGoHome = () => {
-    navigate('/inicio');
-  };
+  
 
   return (
     <Container>
@@ -114,14 +110,6 @@ const Forum = () => {
           onClick={() => setNewPostOpen(true)}
         >
           <p className="text-white font-bold">CREAR POST</p>
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{ ml: 2 }}
-          onClick={handleGoHome}
-        >
-          <p className="text-white font-bold">VOLVER A HOME</p>
         </Button>
       </Box>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
