@@ -55,3 +55,63 @@ exports.deletePost = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+exports.likePost = async (req, res) => {
+    const { postId, userId } = req.body;
+  
+    try {
+      const post = await Post.findById(postId);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+  
+      const existingReaction = post.reactions.find(r => r.user === userId);
+  
+      if (existingReaction) {
+        if (existingReaction.reaction === 'like') {
+          post.likes -= 1;
+          post.reactions = post.reactions.filter(r => r.user !== userId);
+        } else {
+          post.dislikes -= 1;
+          post.likes += 1;
+          existingReaction.reaction = 'like';
+        }
+      } else {
+        post.likes += 1;
+        post.reactions.push({ user: userId, reaction: 'like' });
+      }
+  
+      await post.save();
+      res.status(200).json(post);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
+  exports.dislikePost = async (req, res) => {
+    const { postId, userId } = req.body;
+  
+    try {
+      const post = await Post.findById(postId);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+  
+      const existingReaction = post.reactions.find(r => r.user === userId);
+  
+      if (existingReaction) {
+        if (existingReaction.reaction === 'dislike') {
+          post.dislikes -= 1;
+          post.reactions = post.reactions.filter(r => r.user !== userId);
+        } else {
+          post.likes -= 1;
+          post.dislikes += 1;
+          existingReaction.reaction = 'dislike';
+        }
+      } else {
+        post.dislikes += 1;
+        post.reactions.push({ user: userId, reaction: 'dislike' });
+      }
+  
+      await post.save();
+      res.status(200).json(post);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  

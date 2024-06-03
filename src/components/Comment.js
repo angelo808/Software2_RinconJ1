@@ -2,6 +2,10 @@ import React from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 
 const Comment = ({ comment }) => {
+  if (!comment || !comment.author) {
+    return null; // Retorna null si comment o comment.author no están definidos
+  }
+
   return (
     <Box mt={2} ml={4}>
       <Card sx={{ backgroundColor: "#D1C8C1" }}>
@@ -37,3 +41,4 @@ const Comment = ({ comment }) => {
 };
 
 export default Comment;
+

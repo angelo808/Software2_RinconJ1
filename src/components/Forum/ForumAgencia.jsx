@@ -1,15 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Post from "./Post";
-import {
-  Container,
-  TextField,
-  Button,
-  Box,
-  Divider,
-  Modal,
-  Typography,
-} from "@mui/material";
-import axios from 'axios'; // Importa axios
+import { Container, TextField, Button, Box, Divider, Modal, Typography } from "@mui/material";
+import axios from "axios";
 
 const Forum = () => {
   const [isLoadingAgencia, setIsLoadingAgencia] = useState(true);
@@ -26,13 +18,13 @@ const Forum = () => {
   const fetchUserAndPosts = useCallback(async () => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (!storedUser) return; // Evitar fetch si no hay usuario almacenado
+      if (!storedUser) return;
 
       const userId = storedUser._id;
-      
+
       const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
       const user = userResponse.data;
-      
+
       setNombreAgencia(user.selectedAgency || "BLOQUEADO");
       setNombreUsuario(user.username);
 
@@ -49,14 +41,12 @@ const Forum = () => {
   }, [fetchUserAndPosts]);
 
   useEffect(() => {
-    if (nombreAgencia) {
-      const filtered = posts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          post.agency === nombreAgencia
-      );
-      setFilteredPosts(filtered);
-    }
+    const filtered = posts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        post.agency === nombreAgencia
+    );
+    setFilteredPosts(filtered);
   }, [posts, searchTerm, nombreAgencia]);
 
   const handleCreatePost = async () => {

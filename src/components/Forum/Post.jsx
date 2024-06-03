@@ -1,38 +1,28 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Typography,
-  Box,
-  TextField,
-  IconButton,
-  Modal,
-} from "@mui/material";
+import { Box, Card, CardContent, CardActions, Button, Typography, TextField, Modal } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import Comment from "../Comment"
+import IconButton from "@mui/material/IconButton";
+import axios from "axios";
+import Comment from "../Comment";
 
 const Post = ({ post, setPosts, posts, currentUser }) => {
   const [newCommentOpen, setNewCommentOpen] = useState(false);
   const [newCommentContent, setNewCommentContent] = useState("");
-
-  // Estado para likes y dislikes
   const [likes, setLikes] = useState(post.likes);
   const [dislikes, setDislikes] = useState(post.dislikes);
   const [userReaction, setUserReaction] = useState(null);
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     const updatedPosts = posts.map((p) => {
-      if (p.id === post.id) {
+      if (p._id === post._id) {
         return {
           ...p,
           comments: [
             ...p.comments,
             {
               id: p.comments.length,
-              user: currentUser,
+              author: currentUser,
               text: newCommentContent,
             },
           ],
@@ -40,36 +30,42 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
       }
       return p;
     });
+
     setPosts(updatedPosts);
     setNewCommentOpen(false);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
     setNewCommentContent("");
+    
+    try {
+      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
+        comments: [...post.comments, { author: currentUser, text: newCommentContent }]
+      });
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   };
 
-  const handleLike = () => {
-    let new_dislikes = 0,
-      new_likes = 0,
-      new_user_reaction = userReaction;
+  const handleLike = async () => {
+    let new_dislikes = dislikes,
+        new_likes = likes,
+        new_user_reaction = userReaction;
 
     if (userReaction === "like") {
-      new_likes = likes - 1;
-      setLikes(new_likes);
-
+      new_likes -= 1;
       new_user_reaction = null;
-      setUserReaction(new_user_reaction);
     } else {
       if (userReaction === "dislike") {
-        new_dislikes = dislikes - 1;
-        setDislikes(new_dislikes);
+        new_dislikes -= 1;
       }
-      new_likes = likes + 1;
-      setLikes(new_likes);
+      new_likes += 1;
       new_user_reaction = "like";
-      setUserReaction(new_user_reaction);
     }
 
+    setLikes(new_likes);
+    setDislikes(new_dislikes);
+    setUserReaction(new_user_reaction);
+
     const updatedPosts = posts.map((p) => {
-      if (p.id === post.id) {
+      if (p._id === post._id) {
         return {
           ...p,
           likes: new_likes,
@@ -82,54 +78,77 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
       }
       return p;
     });
+
     setPosts(updatedPosts);
 
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
+    try {
+      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
+        likes: new_likes,
+        dislikes: new_dislikes,
+        reactions: [
+          ...post.reactions.filter((r) => r.user !== currentUser),
+          { user: currentUser, reaction: new_user_reaction },
+        ],
+      });
+    } catch (error) {
+      console.error("Error updating post reactions:", error);
+    }
   };
 
-  const handleDislike = () => {
-    let new_dislikes = 0,
-      new_likes = 0,
-      new_user_reaction;
+  const handleDislike = async () => {
+    let new_dislikes = dislikes,
+        new_likes = likes,
+        new_user_reaction = userReaction;
+
     if (userReaction === "dislike") {
-      new_dislikes = dislikes - 1;
-      setDislikes(new_dislikes);
+      new_dislikes -= 1;
       new_user_reaction = null;
-      setUserReaction(new_user_reaction);
     } else {
       if (userReaction === "like") {
-        new_likes = likes - 1;
-        setLikes(new_likes);
+        new_likes -= 1;
       }
-      new_dislikes = dislikes + 1;
-      setDislikes(new_dislikes);
+      new_dislikes += 1;
       new_user_reaction = "dislike";
-      setUserReaction(new_user_reaction);
     }
+
+    setLikes(new_likes);
+    setDislikes(new_dislikes);
+    setUserReaction(new_user_reaction);
+
     const updatedPosts = posts.map((p) => {
-      if (p.id === post.id) {
+      if (p._id === post._id) {
         return {
           ...p,
           likes: new_likes,
           dislikes: new_dislikes,
           reactions: [
             ...p.reactions.filter((r) => r.user !== currentUser),
-
             { user: currentUser, reaction: new_user_reaction },
           ],
         };
       }
       return p;
     });
+
     setPosts(updatedPosts);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
+
+    try {
+      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
+        likes: new_likes,
+        dislikes: new_dislikes,
+        reactions: [
+          ...post.reactions.filter((r) => r.user !== currentUser),
+          { user: currentUser, reaction: new_user_reaction },
+        ],
+      });
+    } catch (error) {
+      console.error("Error updating post reactions:", error);
+    }
   };
 
   useEffect(() => {
     if (post.reactions) {
-      setUserReaction(
-        post.reactions.filter((p) => p.user === currentUser)[0]?.reaction
-      );
+      setUserReaction(post.reactions.find((r) => r.user === currentUser)?.reaction || null);
     }
   }, [post.reactions, currentUser]);
 
@@ -245,3 +264,4 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
 };
 
 export default Post;
+
