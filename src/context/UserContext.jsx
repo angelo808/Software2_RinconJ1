@@ -14,7 +14,7 @@ export const UserProvider = ({ children }) => {
         }
     }, []);
 
-    const addUser = async (username, password, name, email, occupation, photo) => {
+    const addUser = async (username, password, name, email, occupation, photo, selectedAgency) => {
         try {
             const response = await axios.post('http://localhost:5000/api/users', {
                 username,

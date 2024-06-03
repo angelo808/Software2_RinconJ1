@@ -12,6 +12,26 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
   const [likes, setLikes] = useState(post.likes || 0);
   const [dislikes, setDislikes] = useState(post.dislikes || 0);
   const [userReaction, setUserReaction] = useState(null);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/comments/post/${post._id}`);
+        setComments(response.data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, [post._id]);
+
+  useEffect(() => {
+    if (post.reactions) {
+      setUserReaction(post.reactions.find((r) => r.user === currentUser)?.reaction || null);
+    }
+  }, [post.reactions, currentUser]);
 
   const handleAddComment = async () => {
     const newComment = { author: currentUser, text: newCommentContent, postId: post._id };
@@ -20,17 +40,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
       const response = await axios.post(`http://localhost:5000/api/comments`, newComment);
       const updatedComment = response.data;
 
-      const updatedPosts = posts.map((p) => {
-        if (p._id === post._id) {
-          return {
-            ...p,
-            comments: [...p.comments, updatedComment],
-          };
-        }
-        return p;
-      });
-
-      setPosts(updatedPosts);
+      setComments((prevComments) => [...prevComments, updatedComment]);
       setNewCommentOpen(false);
       setNewCommentContent("");
     } catch (error) {
@@ -140,12 +150,6 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
     }
   };
 
-  useEffect(() => {
-    if (post.reactions) {
-      setUserReaction(post.reactions.find((r) => r.user === currentUser)?.reaction || null);
-    }
-  }, [post.reactions, currentUser]);
-
   return (
     <Box>
       <Card sx={{ mt: 4, backgroundColor: "#D1C8C1" }}>
@@ -208,7 +212,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
         </CardActions>
       </Card>
 
-      {(post.comments || []).map((comment) => (
+      {(comments || []).map((comment) => (
         <Comment key={comment._id} comment={comment} />
       ))}
 

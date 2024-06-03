@@ -7,9 +7,8 @@ exports.createComment = async (req, res) => {
     const newComment = new Comment({ author, text, postId });
     await newComment.save();
 
-    const post = await Post.findById(postId);
-    post.comments.push(newComment._id);
-    await post.save();
+    // Añade el comentario al post correspondiente
+    await Post.findByIdAndUpdate(postId, { $push: { comments: newComment._id } });
 
     res.status(201).json(newComment);
   } catch (error) {
@@ -26,4 +25,5 @@ exports.getCommentsByPostId = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
