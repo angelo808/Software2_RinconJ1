@@ -16,16 +16,23 @@ exports.loginUser = async (req, res) => {
 };
 exports.updateUserAgency = async (req, res) => {
     try {
-        const { username, agency } = req.body;
-        const user = await User.findOneAndUpdate( {username}, { agency }, { new: true });
+        const { userId, selectedAgency } = req.body;
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { selectedAgency: selectedAgency },
+            { new: true }
+        );
+
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ message: 'User not found' });
         }
+
         res.status(200).json(user);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
+
 
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
