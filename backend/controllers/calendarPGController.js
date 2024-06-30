@@ -13,7 +13,6 @@ const createCalendarEvent = async (req, res) => {
       userId,
     } = req.body;
 
-    console.log("trying...");
     const eventDate = new Date(date);
     const eventStartHour = new Date(`${date}T${startHour}:00Z`);
     const eventEndHour = new Date(`${date}T${endHour}:00Z`);
@@ -31,7 +30,6 @@ const createCalendarEvent = async (req, res) => {
         },
       },
     });
-    console.log("solved");
     return res.status(200).json(newEvent);
   } catch (err) {
     console.error("Error creating calendar event:", err.message);
