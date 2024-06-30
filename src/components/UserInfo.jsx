@@ -18,6 +18,10 @@ const UserInfo = ({
         <Link to="mis-foros">Mis foros</Link>
       </div>
 
+      <div className="mx-4 hover:scale-105 hover:text-black">
+        <Link to="mi-calendario">Mi Calendario</Link>
+      </div>
+
       <div className="mx-4 relative text-black" onClick={toggleInfoVisibility}>
         {isInfoVisible ? (
           <svg
@@ -88,7 +92,7 @@ const UserInfo = ({
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                 onClick={handleLogout}
               >
-                Cerrar sesión
+                Cerrar sesiÃ³n
               </button>
             </div>
           </div>
