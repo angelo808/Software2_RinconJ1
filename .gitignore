@@ -6,6 +6,12 @@
 .pnp.js
 .DS_Store
 
+
+/backend/node_modules
+/backend/package-lock.json
+package-lock.json
+
+
 # testing
 /coverage
 

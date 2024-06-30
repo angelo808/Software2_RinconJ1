@@ -99,11 +99,6 @@ const Forum = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleGoHome = () => {
-    // Función para navegar a la página de inicio
-    navigate("/inicio");
-  };
-
   return (
     <Container>
       <h2 className="text-4xl font-bold text-secondary my-4">
@@ -125,14 +120,6 @@ const Forum = () => {
           onClick={() => setNewPostOpen(true)}
         >
           <p className="text-white font-bold">CREAR POST</p>
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{ ml: 2 }}
-          onClick={handleGoHome} // Usa la función para navegar a HOME
-        >
-          <p className="text-white font-bold">VOLVER A HOME</p>
         </Button>
       </Box>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />

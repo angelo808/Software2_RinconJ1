@@ -1,10 +1,11 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const { Pool } = require("pg");
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/users");
+const userRoutesPG = require("./routes/usersPG");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
-const cors = require("cors"); // Importa el paquete cors
+const cors = require("cors"); // Import the cors package
 
 dotenv.config();
 
@@ -14,18 +15,27 @@ const PORT = process.env.PORT || 5001;
 app.use(express.json());
 app.use(cors());
 app.use("/assets", express.static("src/assets"));
-app.use("/api/users", userRoutes); // Ruta de usuarios
-app.use("/api/posts", postRoutes); // Rutas de posts
-app.use("/api", commentRoutes); //Rutas de comentarios
+app.use("/api/users", userRoutesPG); // User routes
+// app.use("/api/users", userRoutes); // User routes
+app.use("/api/posts", postRoutes); // Post routes
+app.use("/api", commentRoutes); // Comment routes
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error(err));
+// Create a new pool instance
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URI,
+});
+
+// Test the database connection
+pool.connect((err, client, release) => {
+  if (err) {
+    return console.error("Error acquiring client", err.stack);
+  }
+  console.log("PostgreSQL connected");
+  release();
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = pool;
