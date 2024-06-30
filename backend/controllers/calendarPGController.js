@@ -3,17 +3,18 @@ const prisma = require("../prismaClient");
 // Create a new calendar event
 const createCalendarEvent = async (event) => {
   const { name, description, date, startHour, endHour, type, userId } = event;
-  return await prisma.calendarEvent.create({
-    data: {
-      name,
-      description,
-      date,
-      startHour,
-      endHour,
-      type,
-      userId,
-    },
-  });
+  console.log(event);
+  //   return await prisma.calendarEvent.create({
+  //     data: {
+  //       name,
+  //       description,
+  //       date,
+  //       startHour,
+  //       endHour,
+  //       type,
+  //       userId,
+  //     },
+  //   });
 };
 
 // Get a calendar event by ID

@@ -18,7 +18,7 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 import { Fragment, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
@@ -79,7 +79,7 @@ const handleDelete = async (deleteId) => {
   let scheduler = Scheduler;
   return await new Promise((res) => {
     axiosBase()
-      .delete(`/calendario/${deleteId}/`)
+      .delete(`/events/${deleteId}/`)
       .then((response) => {
         toast.success("El horario fue eliminado exitosamente");
         res(deleteId);
@@ -142,7 +142,7 @@ const PanelRegistro = ({ scheduler }) => {
     return await new Promise((res) => {
       if (action == "create") {
         axiosBase()
-          .post("/calendario/", datosEvento2)
+          .post("/events/", datosEvento2)
           .then((response) => {
             toast.success("El horario fue registrado exitosamente");
             const data = response.data;
@@ -164,7 +164,7 @@ const PanelRegistro = ({ scheduler }) => {
           });
       } else if (action == "edit") {
         axiosBase()
-          .patch(`/calendario/${event?.event_id}/`, datosEvento2)
+          .patch(`/events/${event?.event_id}/`, datosEvento2)
           .then((response) => {
             toast.success("El horario fue editado exitosamente");
             const data = response.data;
@@ -212,13 +212,13 @@ const PanelRegistro = ({ scheduler }) => {
     }
 
     if (horaFin <= horaIni) {
-      //   toast.warn("La hora de inicio no puede ser mayor a la de finalización");
+      toast.warn("La hora de inicio no puede ser mayor a la de finalización");
       setError("");
       return null;
     }
 
     if (timeInicio <= timeAct) {
-      //   toast.warn("No se puede registrar una disponibilidad en el pasado");
+      toast.warn("No se puede registrar una disponibilidad en el pasado");
       setError("");
       return null;
     }
@@ -501,88 +501,91 @@ const PanelRegistro = ({ scheduler }) => {
 
 export const Calendar = () => {
   return (
-    <Scheduler
-      view="month"
-      customEditor={(scheduler) => <PanelRegistro scheduler={scheduler} />}
-      onDelete={(deleteId) => handleDelete(deleteId)}
-      events={[
-        {
-          event_id: 1,
-          title: "Reunion 1",
-          start: new Date("2024/6/29 00:00"),
-          end: new Date("2024/6/29 24:00"),
-        },
-        {
-          event_id: 2,
-          title: "Event 2",
-          start: new Date("2021/5/4 10:00"),
-          end: new Date("2021/5/4 11:00"),
-        },
-      ]}
-      locale={es}
-      translations={{
-        navigation: {
-          month: "Mes",
-          week: "Semana",
-          day: "Día",
-          today: "Hoy",
-        },
-        form: {
-          addTitle: "Añadir horario",
-          editTitle: "Editar horario",
-          confirm: "Confirmar",
-          delete: "Eliminar",
-          cancel: "Cancelar",
-        },
-        event: {
-          title: "Título",
-          start: "Hora de inicio",
-          end: "Hora de fin",
-          allDay: "Todo el día",
-        },
-        validation: {
-          required: "Requerido",
-          invalidEmail: "Correo no válido",
-          onlyNumbers: "Solo números están permitidos",
-          min: "Mínimo 3 letras",
-          max: "Máximo 3 letras",
-        },
-        moreEvents: "Más...",
-        loading: "Cargando...",
-      }}
-      draggable={false}
-      week={{
-        weekDays: [0, 1, 2, 3, 4, 5, 6],
-        weekStartOn: 1,
-        startHour: 6,
-        endHour: 24,
-        step: 60,
-        cellRenderer: ({ height, start, onClick, ...props }) => {
-          // Fake some condition up
-          const time = new Date();
+    <>
+      <Scheduler
+        view="month"
+        customEditor={(scheduler) => <PanelRegistro scheduler={scheduler} />}
+        onDelete={(deleteId) => handleDelete(deleteId)}
+        events={[
+          {
+            event_id: 1,
+            title: "Reunion 1",
+            start: new Date("2024/6/29 00:00"),
+            end: new Date("2024/6/29 24:00"),
+          },
+          {
+            event_id: 2,
+            title: "Event 2",
+            start: new Date("2021/5/4 10:00"),
+            end: new Date("2021/5/4 11:00"),
+          },
+        ]}
+        locale={es}
+        translations={{
+          navigation: {
+            month: "Mes",
+            week: "Semana",
+            day: "Día",
+            today: "Hoy",
+          },
+          form: {
+            addTitle: "Añadir horario",
+            editTitle: "Editar horario",
+            confirm: "Confirmar",
+            delete: "Eliminar",
+            cancel: "Cancelar",
+          },
+          event: {
+            title: "Título",
+            start: "Hora de inicio",
+            end: "Hora de fin",
+            allDay: "Todo el día",
+          },
+          validation: {
+            required: "Requerido",
+            invalidEmail: "Correo no válido",
+            onlyNumbers: "Solo números están permitidos",
+            min: "Mínimo 3 letras",
+            max: "Máximo 3 letras",
+          },
+          moreEvents: "Más...",
+          loading: "Cargando...",
+        }}
+        draggable={false}
+        week={{
+          weekDays: [0, 1, 2, 3, 4, 5, 6],
+          weekStartOn: 1,
+          startHour: 6,
+          endHour: 24,
+          step: 60,
+          cellRenderer: ({ height, start, onClick, ...props }) => {
+            // Fake some condition up
+            const time = new Date();
 
-          const disabled = start < time;
-          const restProps = disabled ? {} : props;
-          return (
-            <Button
-              style={{
-                height: "100%",
-                background: disabled ? "#d6d1d1" : "transparent",
-                cursor: disabled ? "auto" : "pointer",
-              }}
-              onClick={() => {
-                if (disabled) {
-                  return <></>;
-                }
-                onClick();
-              }}
-              disableRipple={disabled}
-              // disabled={disabled}
-              {...restProps}
-            ></Button>
-          );
-        },
-      }}
-    />
+            const disabled = start < time;
+            const restProps = disabled ? {} : props;
+            return (
+              <Button
+                style={{
+                  height: "100%",
+                  background: disabled ? "#d6d1d1" : "transparent",
+                  cursor: disabled ? "auto" : "pointer",
+                }}
+                onClick={() => {
+                  if (disabled) {
+                    return <></>;
+                  }
+                  onClick();
+                }}
+                disableRipple={disabled}
+                // disabled={disabled}
+                {...restProps}
+              ></Button>
+            );
+          },
+        }}
+      />
+      <ToastContainer />
+    </>
   );
 };

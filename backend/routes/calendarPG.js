@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const calendarEventController = require("../controllers/calendarEventController");
+const calendarEventController = require("../controllers/calendarPGController");
 
 // CalendarEvent routes
 router.post("/events", calendarEventController.createCalendarEvent);
