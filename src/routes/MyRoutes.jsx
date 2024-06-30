@@ -15,9 +15,10 @@ import Quiz from "../pages/Cuestionario";
 import MisEtapas from "../pages/Etapas";
 import Home from "../pages/Home";
 import Agencia from "../pages/Agencia";
-const MyRoutes = () => {
-  //Rutas de la aplicación
+import { Calendar } from "../components/Calendar/Calendar";
 
+const MyRoutes = () => {
+  //Rutas de la aplicaciÃ³n
   return (
     <UserProvider>
       <BrowserRouter>
@@ -27,7 +28,7 @@ const MyRoutes = () => {
           <Route path="/iniciar-sesion" element={<Login />} />
           <Route path="/registro-de-usuario" element={<Register />} />
 
-          {/*Rutas protegidas*/}
+          {/* Rutas protegidas */}
           <Route element={<ProtectedRoutes />}>
             <Route path="/inicio" element={<HomeUser />} />
             <Route path="/mis-foros" element={<ForumLandingPage />} />
@@ -37,8 +38,9 @@ const MyRoutes = () => {
             </Route>
             <Route path="/mis-etapas" element={<MisEtapas />} />
             <Route path="/seleccionar-agencia" element={<SelectAgency />} />
-            <Route path="/cuestionario" element={<Quiz />}/>
+            <Route path="/cuestionario" element={<Quiz />} />
             <Route path="/agencia" element={<Agencia />} />
+            <Route path="/mi-calendario" element={<Calendar />} />
           </Route>
         </Routes>
       </BrowserRouter>
