@@ -1,5 +1,7 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import es from "date-fns/locale/es";
+import { toDate, toZonedTime } from "date-fns-tz";
+
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 
@@ -36,6 +38,8 @@ const colorConfigs = {
   freeScheduleTitle: "#3b82f6",
 };
 
+const timeZone = "Atlantic/Azores";
+
 const generateDate = (fecha) => {
   //hacer una validacion que existe un fechas y hora no nulos
   let newDateTime = fecha.$d;
@@ -65,6 +69,8 @@ const generateDate2 = (fecha) => {
   return year + "-" + month + "-" + day;
 };
 
+const userId = JSON.parse(localStorage.getItem("user") || "")?.id;
+
 const generateHours2 = (fecha) => {
   //hacer una validacion que existe un fechas y hora no nulos
   //let newDateTime = fecha.$d;
@@ -83,8 +89,8 @@ const handleDelete = async (deleteId) => {
       .then((response) => {
         toast.success("El horario fue eliminado exitosamente");
         res(deleteId);
-        scheduler.close();
-        scheduler.loading(false);
+        // scheduler.close();
+        // scheduler.loading(false);
       })
       .catch((err) => {
         toast.error("Ha ocurrido un error al eliminar el horario");
@@ -93,14 +99,14 @@ const handleDelete = async (deleteId) => {
   });
 };
 
-const PanelRegistro = ({ scheduler }) => {
+const PanelRegistro = ({ scheduler, setNeedToUpdate }) => {
   const event = scheduler.edited;
   const libre = event ? event?.libre : true;
   const [fecha, setFecha] = useState(dayjs(scheduler.state.start.value));
   const [horaIni, setHoraIni] = useState(dayjs(scheduler.state.start.value));
   const [horaFin, setHoraFin] = useState(dayjs(scheduler.state.end.value));
 
-  const [type, setType] = useState("");
+  const [type, setType] = useState(event?.type || "");
 
   const handleTypeChange = (event) => {
     setType(event.target.value);
@@ -130,8 +136,6 @@ const PanelRegistro = ({ scheduler }) => {
     datosEvento,
     scheduler
   ) => {
-    const userId = JSON.parse(localStorage.getItem("user") || "")?.id;
-    console.log("userId", userId);
     const datosEvento2 = {
       nombre: datosEvento.nombre,
       dia: generateDate(datosEvento.dia),
@@ -167,7 +171,7 @@ const PanelRegistro = ({ scheduler }) => {
           });
       } else if (action == "edit") {
         axiosBase()
-          .patch(`/events/${event?.event_id}/`, datosEvento2)
+          .put(`/events/${event?.event_id}/`, datosEvento2)
           .then((response) => {
             toast.success("El horario fue editado exitosamente");
             const data = response.data;
@@ -248,12 +252,15 @@ const PanelRegistro = ({ scheduler }) => {
       scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
 
       scheduler.close();
+      setNeedToUpdate((e) => !e);
     } catch (error) {
       scheduler.loading(false);
     } finally {
       scheduler.loading(false);
     }
   };
+
+  useEffect(() => {}, [fecha, horaIni, horaFin]);
 
   return (
     <div
@@ -503,26 +510,72 @@ const PanelRegistro = ({ scheduler }) => {
 };
 
 export const Calendar = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [needToUpdate, setNeedToUpdate] = useState(true);
+
+  useEffect(() => {
+    console.log(events);
+  }, [events]);
+  useEffect(() => {
+    setLoading(true);
+    axiosBase()
+      .get("/events_by_user", {
+        params: {
+          userId,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+
+        setEvents(
+          response.data.map((d) => {
+            const startHourUtc = toDate(d["startHour"]);
+            const endHourUtc = toDate(d["endHour"]);
+
+            // Convert UTC time to the specified timezone
+            const start = toZonedTime(startHourUtc, timeZone);
+            const end = toZonedTime(endHourUtc, timeZone);
+
+            // const start = new Date(d["startHour"]);
+            // const end = new Date(d["endHour"]);
+            // console.log(start, end);
+            return {
+              event_id: d["id"],
+              title: d["name"],
+              start: start,
+              end: end,
+              color: false
+                ? colorConfigs.busySchedule
+                : colorConfigs.freeSchedule,
+              editable: start > new Date(),
+              deletable: end > new Date(),
+              draggable: false,
+              type: d["type"],
+            };
+          })
+        );
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  }, [needToUpdate]);
+
   return (
     <>
       <Scheduler
         view="month"
-        customEditor={(scheduler) => <PanelRegistro scheduler={scheduler} />}
+        customEditor={(scheduler) => (
+          <PanelRegistro
+            scheduler={scheduler}
+            setNeedToUpdate={setNeedToUpdate}
+          />
+        )}
         onDelete={(deleteId) => handleDelete(deleteId)}
-        events={[
-          {
-            event_id: 1,
-            title: "Reunion 1",
-            start: new Date("2024/6/29 00:00"),
-            end: new Date("2024/6/29 24:00"),
-          },
-          {
-            event_id: 2,
-            title: "Event 2",
-            start: new Date("2021/5/4 10:00"),
-            end: new Date("2021/5/4 11:00"),
-          },
-        ]}
+        events={events}
         locale={es}
         translations={{
           navigation: {
@@ -555,7 +608,10 @@ export const Calendar = () => {
           loading: "Cargando...",
         }}
         draggable={false}
-        week={{
+        day={null}
+        week={null}
+        agenda={true}
+        month={{
           weekDays: [0, 1, 2, 3, 4, 5, 6],
           weekStartOn: 1,
           startHour: 6,
