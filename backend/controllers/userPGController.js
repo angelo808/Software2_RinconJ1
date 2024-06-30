@@ -11,6 +11,8 @@ exports.loginUser = async (req, res) => {
       },
     });
     if (user) {
+      // send a email to all users which have pending appointments today
+
       res.status(200).json(user);
     } else {
       res.status(401).json({ message: "Invalid credentials" });
