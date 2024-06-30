@@ -3,6 +3,7 @@ const { Pool } = require("pg");
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/users");
 const userRoutesPG = require("./routes/usersPG");
+const calendarPG = require("./routes/calendarPG");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const cors = require("cors"); // Import the cors package
@@ -16,7 +17,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/assets", express.static("src/assets"));
 app.use("/api/users", userRoutesPG); // User routes
-// app.use("/api/users", userRoutes); // User routes
+app.use("/api/", calendarPG); // User routes
 app.use("/api/posts", postRoutes); // Post routes
 app.use("/api", commentRoutes); // Comment routes
 
