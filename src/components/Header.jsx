@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React, { useContext, useState } from "react";
 import logo from "../assets/logo.PNG";
 import { UserContext } from "../context/UserContext";
@@ -30,20 +29,31 @@ const Header = () => {
         <img className="w-12" src={logo} alt="logo" />
         <p className="mx-4"><Link to={!isLoggedIn ? "/" : "/inicio"}>EL RINCÓN DEL J1</Link></p>
       </div>
-      {!isLoggedIn ? (
-        <GuestLinks />
-      ) : (
-        <UserInfo
-          user={user}
-          isInfoVisible={isInfoVisible}
-          toggleInfoVisibility={toggleInfoVisibility}
-          handleProfile={handleProfile}
-          handleLogout={handleLogout}
-        />
-      )}
+      <nav>
+        <ul className="flex items-center">
+          <li className="mx-2">
+            <Link to="/calendario">Calendario</Link>
+          </li>
+          {isLoggedIn ? (
+            <>
+              <li className="mx-2">
+                <button onClick={handleLogout}>Cerrar Sesión</button>
+              </li>
+              <UserInfo
+                user={user}
+                isInfoVisible={isInfoVisible}
+                toggleInfoVisibility={toggleInfoVisibility}
+                handleProfile={handleProfile}
+                handleLogout={handleLogout}
+              />
+            </>
+          ) : (
+            <GuestLinks />
+          )}
+        </ul>
+      </nav>
     </header>
   );
 };
 
 export default Header;
-
