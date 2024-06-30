@@ -1,8 +1,8 @@
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -14,17 +14,17 @@ const ChangePassword = () => {
   };
 
   const handleSave = async (data) => {
-    if (data.newPassword === data.confirmPassword && data.newPassword !== '') {
+    if (data.newPassword === data.confirmPassword && data.newPassword !== "") {
       try {
-        await axios.put(`http://localhost:5000/api/users/${user._id}`, {
+        await axios.put(`http://localhost:5001/api/users/${user._id}`, {
           password: data.newPassword,
         });
-        alert('Contraseña actualizada correctamente');
+        alert("Contraseña actualizada correctamente");
         reset();
         onClose();
       } catch (error) {
-        console.error('Error actualizando la contraseña:', error);
-        alert('Error actualizando la contraseña');
+        console.error("Error actualizando la contraseña:", error);
+        alert("Error actualizando la contraseña");
       }
     } else {
       alert("Las contraseñas no coinciden o están vacías");
@@ -32,11 +32,17 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className='flex items-center justify-center w-full h-full bg-customColor/50 absolute top-0 right-0'>
-      <form onSubmit={handleSubmit(handleSave)} className="w-1/2 bg-white p-6 rounded">
+    <div className="flex items-center justify-center w-full h-full bg-customColor/50 absolute top-0 right-0">
+      <form
+        onSubmit={handleSubmit(handleSave)}
+        className="w-1/2 bg-white p-6 rounded"
+      >
         <h2 className="text-xl font-bold mb-4">Cambiar contraseña</h2>
         <div className="mb-4">
-          <label htmlFor="newPassword" className="block text-gray-700 font-bold mb-2">
+          <label
+            htmlFor="newPassword"
+            className="block text-gray-700 font-bold mb-2"
+          >
             Nueva contraseña
           </label>
           <input
@@ -48,7 +54,10 @@ const ChangePassword = () => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="confirmPassword" className="block text-gray-700 font-bold mb-2">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-gray-700 font-bold mb-2"
+          >
             Confirmar contraseña
           </label>
           <input
@@ -67,7 +76,7 @@ const ChangePassword = () => {
             Cancelar
           </button>
           <button
-            type='submit'
+            type="submit"
             className="bg-blue-500 text-white px-4 py-2 m-2 rounded"
           >
             Guardar
@@ -75,7 +84,7 @@ const ChangePassword = () => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default ChangePassword;
