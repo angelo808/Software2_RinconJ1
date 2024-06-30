@@ -130,14 +130,17 @@ const PanelRegistro = ({ scheduler }) => {
     datosEvento,
     scheduler
   ) => {
+    const userId = JSON.parse(localStorage.getItem("user") || "")?.id;
+    console.log("userId", userId);
     const datosEvento2 = {
       nombre: datosEvento.nombre,
       dia: generateDate(datosEvento.dia),
       hora_inicio: generateHours(datosEvento.hora_inicio),
       hora_fin: generateHours(datosEvento.hora_fin),
       tipo: datosEvento.tipo,
+      descripcion: "",
+      userId: userId || 0,
     };
-    console.log(datosEvento2);
 
     return await new Promise((res) => {
       if (action == "create") {

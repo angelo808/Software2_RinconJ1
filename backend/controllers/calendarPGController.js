@@ -1,20 +1,42 @@
 const prisma = require("../prismaClient");
 
 // Create a new calendar event
-const createCalendarEvent = async (event) => {
-  const { name, description, date, startHour, endHour, type, userId } = event;
-  console.log(event);
-  //   return await prisma.calendarEvent.create({
-  //     data: {
-  //       name,
-  //       description,
-  //       date,
-  //       startHour,
-  //       endHour,
-  //       type,
-  //       userId,
-  //     },
-  //   });
+const createCalendarEvent = async (req, res) => {
+  try {
+    const {
+      nombre: name,
+      descripcion: description,
+      dia: date,
+      hora_inicio: startHour,
+      hora_fin: endHour,
+      tipo: type,
+      userId,
+    } = req.body;
+
+    console.log("trying...");
+    const eventDate = new Date(date);
+    const eventStartHour = new Date(`${date}T${startHour}:00Z`);
+    const eventEndHour = new Date(`${date}T${endHour}:00Z`);
+
+    const newEvent = await prisma.calendarEvent.create({
+      data: {
+        name,
+        description,
+        date: eventDate,
+        startHour: eventStartHour,
+        endHour: eventEndHour,
+        type,
+        user: {
+          connect: { id: parseInt(userId) },
+        },
+      },
+    });
+    console.log("solved");
+    return res.status(200).json(newEvent);
+  } catch (err) {
+    console.error("Error creating calendar event:", err.message);
+    throw new Error(`Error creating calendar event: ${err.message}`);
+  }
 };
 
 // Get a calendar event by ID
