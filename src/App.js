@@ -1,7 +1,6 @@
 import React from "react";
-
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import MyRoutes from "./routes/MyRoutes.jsx";
+import MyRoutes from "./routes/MyRoutes";
 
 const theme = createTheme({
   palette: {
@@ -34,3 +33,4 @@ function App() {
 }
 
 export default App;
+

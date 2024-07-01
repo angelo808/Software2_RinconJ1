@@ -1,5 +1,5 @@
-const Comment = require('../models/commentModel');
-const Post = require('../models/PostModel');
+const Comment = require('../models/Comment');
+const Post = require('../models/Post');
 
 exports.createComment = async (req, res) => {
   try {
@@ -7,7 +7,6 @@ exports.createComment = async (req, res) => {
     const newComment = new Comment({ author, text, postId });
     await newComment.save();
 
-    // Añade el comentario al post correspondiente
     await Post.findByIdAndUpdate(postId, { $push: { comments: newComment._id } });
 
     res.status(201).json(newComment);

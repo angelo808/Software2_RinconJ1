@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosBase from '../axios/axiosBase';
 
 const SeleccionarAgencia = () => {
     const [selectedAgency, setSelectedAgency] = useState('');
@@ -15,7 +15,7 @@ const SeleccionarAgencia = () => {
         if (selectedAgency) {
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
-                const response = await axios.put('http://localhost:5001/api/users/update-agency', { userId: user._id, selectedAgency: selectedAgency });
+                const response = await axiosBase.put('/update-agency', { userId: user._id, selectedAgency });
                 const updatedUser = response.data;
                 localStorage.setItem('user', JSON.stringify(updatedUser));
                 navigate('/mis-foros');
@@ -53,6 +53,7 @@ const SeleccionarAgencia = () => {
 };
 
 export default SeleccionarAgencia;
+
 
 
 

@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
-import axios from "axios"; 
+import axiosBase from "../axios/axiosBase";
+
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -16,7 +17,7 @@ export const UserProvider = ({ children }) => {
 
     const addUser = async (username, password, name, email, occupation, photo, selectedAgency) => {
         try {
-            const response = await axios.post('http://localhost:5001/api/users', {
+            const response = await axiosBase.post('/users', {
                 username,
                 password,
                 name,
@@ -33,10 +34,10 @@ export const UserProvider = ({ children }) => {
             console.error("Registration failed", error);
         }
     };
+
     const loginUser = async (username, password) => {
         try {
-            const response = await axios.post('http://localhost:5001/api/users/login', { username, password });
-            console.log('Login response:', response.data); // Para depuración
+            const response = await axiosBase.post('/login', { username, password });
             const userData = response.data;
             setUser(userData);
             setIsLoggedIn(true);
@@ -59,10 +60,11 @@ export const UserProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(updatedUser));
         }
     };
-    const updateUserAgency = async (userId,agency) => {
+
+    const updateUserAgency = async (userId, agency) => {
         if (user) {
             try {
-                const response = await axios.put('http://localhost:5001/api/users/update-agency', { userId, selectedAgency: agency });
+                const response = await axiosBase.put('/update-agency', { userId, selectedAgency: agency });
                 const updatedUser = response.data;
                 setUser(updatedUser);
                 localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -78,3 +80,4 @@ export const UserProvider = ({ children }) => {
         </UserContext.Provider>
     );
 };
+

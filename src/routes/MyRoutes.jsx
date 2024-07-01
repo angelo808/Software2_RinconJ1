@@ -18,7 +18,6 @@ import Agencia from "../pages/Agencia";
 import { Calendar } from "../components/Calendar/Calendar";
 
 const MyRoutes = () => {
-  //Rutas de la aplicaciÃ³n
   return (
     <UserProvider>
       <BrowserRouter>
