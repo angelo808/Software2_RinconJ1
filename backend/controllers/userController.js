@@ -1,5 +1,6 @@
 const User = require('../models/User');
 
+// Método para iniciar sesión
 exports.loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -14,21 +15,21 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+// Actualizar la agencia seleccionada por el usuario
 exports.updateUserAgency = async (req, res) => {
   try {
     const { userId, selectedAgency } = req.body;
     const user = await User.findByIdAndUpdate(userId, { selectedAgency }, { new: true });
-
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+// Crear un nuevo usuario
 exports.createUser = async (req, res) => {
   try {
     const { username, password, name, email, occupation, photo } = req.body;
@@ -40,6 +41,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
+// Obtener todos los usuarios
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -49,6 +51,7 @@ exports.getUsers = async (req, res) => {
   }
 };
 
+// Obtener un usuario por ID
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -61,6 +64,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+// Actualizar un usuario
 exports.updateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -77,6 +81,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+// Eliminar un usuario
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -88,4 +93,5 @@ exports.deleteUser = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
 
