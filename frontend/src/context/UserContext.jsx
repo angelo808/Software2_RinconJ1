@@ -37,7 +37,7 @@ export const UserProvider = ({ children }) => {
 
     const loginUser = async (username, password) => {
         try {
-            const response = await axiosBase.post('/login', { username, password });
+            const response = await axiosBase.post('/users/login', { username, password });
             const userData = response.data;
             setUser(userData);
             setIsLoggedIn(true);

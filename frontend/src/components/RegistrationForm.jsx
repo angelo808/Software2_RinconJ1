@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { Link } from "react-router-dom";
 
 const RegistrationForm = () => {
   const { register, handleSubmit, reset } = useForm();
