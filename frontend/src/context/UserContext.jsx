@@ -15,21 +15,13 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const addUser = async (username, password, name, email, occupation, photo, selectedAgency) => {
+  const addUser = async (userData) => {
     try {
-      const response = await axiosBase.post("/users/register", {
-        username,
-        password,
-        name,
-        email,
-        occupation,
-        photo,
-        selectedAgency,
-      });
-      const userData = response.data;
-      setUser(userData);
+      const response = await axiosBase.post("/users", userData);
+      const createdUser = response.data;
+      setUser(createdUser);
       setIsLoggedIn(true);
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("user", JSON.stringify(createdUser));
     } catch (error) {
       console.error("Registration failed", error);
     }
@@ -37,7 +29,7 @@ export const UserProvider = ({ children }) => {
 
   const loginUser = async (username, password) => {
     try {
-      const response = await axiosBase.post("/users/login", { username, password });
+      const response = await axiosBase.post("/login", { username, password });
       const userData = response.data;
       setUser(userData);
       setIsLoggedIn(true);
@@ -64,7 +56,7 @@ export const UserProvider = ({ children }) => {
   const updateUserAgency = async (userId, agency) => {
     if (user) {
       try {
-        const response = await axiosBase.put("/users/update-agency", { userId, selectedAgency: agency });
+        const response = await axiosBase.put("/update-agency", { userId, selectedAgency: agency });
         const updatedUser = response.data;
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -75,10 +67,11 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, setUser, updateUserAgency }}>
+    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency }}>
       {children}
     </UserContext.Provider>
   );
 };
+
 
 

@@ -6,7 +6,6 @@ import {
   Typography,
   Avatar,
   Menu,
-  MenuItem,
   IconButton,
 } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
