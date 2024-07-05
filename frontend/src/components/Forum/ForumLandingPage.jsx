@@ -38,5 +38,6 @@ export const ForumLandingPage = () => {
     </div>
   );
 };
+export default ForumLandingPage;
 
 

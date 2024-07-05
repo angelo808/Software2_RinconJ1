@@ -5,3 +5,305 @@
 body {
     background-color: #f5ebe0;
 }
+
+.container {
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f4f4f4;
+    padding: 10px 20px;
+}
+
+.header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.header nav ul {
+    display: flex;
+    list-style: none;
+}
+
+.header nav ul li {
+    margin-left: 20px;
+}
+
+.forum {
+    padding: 20px;
+}
+
+.forum .search-bar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.forum .create-post-button {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.comment {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comment .user-icon {
+    width: 30px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+.comment .comment-content p {
+    margin: 0;
+}
+
+.post {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.post .post-header {
+    display: flex;
+    align-items: center;
+}
+
+.post .user-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 20px;
+}
+
+.post .post-content h2 {
+    margin: 0;
+}
+
+.post .post-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.post .comments {
+    margin-top: 20px;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.main img {
+    max-width: 100%;
+    height: auto;
+}
+
+.main .title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.main .description {
+    font-size: 1.2rem;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.main .text-center {
+    text-align: center;
+}
+
+.main .text-4xl {
+    font-size: 2.25rem;
+}
+
+.main .m-6 {
+    margin: 1.5rem;
+}
+
+.bg-firstImg {
+    background-image: url('../assets/imgHome.jpeg');
+}
+
+.responsive-image {
+    width: 100%;
+    height: auto;
+}
+
+.container-full {
+    width: 100%;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.highlight {
+    font-weight: bold;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.m-auto {
+    margin: auto;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-start {
+    text-align: start;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+    margin-bottom: 2rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.w-1/2 {
+    width: 50%;
+}
+
+.w-1/4 {
+    width: 25%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.h-12 {
+    height: 3rem;
+}
+
+.bg-customColor {
+    background-color: #e3d5ca;
+}
+
+.rounded {
+    border-radius: 0.25rem;
+}
+
+.rounded-full {
+    border-radius: 50%;
+}
+
+.shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.appearance-none {
+    appearance: none;
+}
+
+.leading-tight {
+    line-height: 1.25;
+}
+
+.focus\:outline-none:focus {
+    outline: 0;
+}
+
+.focus\:shadow-outline:focus {
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.bg-blue-500 {
+    background-color: #3b82f6;
+}
+
+.text-white {
+    color: #fff;
+}
+
+.hover\:bg-blue-700:hover {
+    background-color: #2563eb;
+}
+
+.hover\:scale-105:hover {
+    transform: scale(1.05);
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
