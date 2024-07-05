@@ -6,8 +6,10 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#52A1BD", // Celeste
-      primary: "#52A1BD", // Celeste
-      secondary: "#D1C8C1",
+      contrastText: "#fff",
+    },
+    secondary: {
+      main: "#D1C8C1",
     },
     background: {
       default: "#F6F4F3", // Tonalidades de los colores de la nieve
@@ -24,13 +26,12 @@ const theme = createTheme({
   },
 });
 
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <MyRoutes />
-    </ThemeProvider>
-  );
-}
+const App = () => (
+  <ThemeProvider theme={theme}>
+    <MyRoutes />
+  </ThemeProvider>
+);
 
 export default App;
+
 
