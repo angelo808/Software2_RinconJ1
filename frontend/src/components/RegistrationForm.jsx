@@ -1,8 +1,14 @@
 import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import { Link } from "react-router-dom";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+} from "@mui/material";
 
 const RegistrationForm = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -10,79 +16,81 @@ const RegistrationForm = () => {
   const { addUser } = useContext(UserContext);
 
   const onSubmitRegistro = async (data) => {
-    await addUser(data.username, data.password, data.name, data.email, data.occupation, data.photo, data.selectedAgency);
+    await addUser(
+      data.username,
+      data.password,
+      data.name,
+      data.email,
+      data.occupation,
+      data.photo,
+      data.selectedAgency
+    );
     reset();
-    navigate('/iniciar-sesion');
+    navigate("/iniciar-sesion");
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitRegistro)} className="max-w-md mx-auto">
-      <div className="mb-4">
-        <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Nombre</label>
-        <input
-          type="text"
+    <Container maxWidth="sm">
+      <Box component="form" onSubmit={handleSubmit(onSubmitRegistro)} sx={{ mt: 3 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Registro de Usuario
+        </Typography>
+        <TextField
+          fullWidth
+          margin="normal"
           id="name"
-          {...register("name")}
-          className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="Ingresa tu nombre"
+          label="Nombre"
+          {...register("name", { required: true })}
         />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Correo electrónico</label>
-        <input
-          type="email"
+        <TextField
+          fullWidth
+          margin="normal"
           id="email"
-          {...register("email")}
-          className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="Ingresa tu correo electrónico"
+          label="Correo electrónico"
+          type="email"
+          {...register("email", { required: true })}
         />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="occupation" className="block text-gray-700 font-bold mb-2">Profesión</label>
-        <input
-          type="text"
+        <TextField
+          fullWidth
+          margin="normal"
           id="occupation"
-          {...register("occupation")}
-          className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="Ingresa tu profesión"
+          label="Profesión"
+          {...register("occupation", { required: true })}
         />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="username" className="block text-gray-700 font-bold mb-2">Usuario</label>
-        <input
-          type="text"
+        <TextField
+          fullWidth
+          margin="normal"
           id="username"
-          {...register("username")}
-          className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="Ingresa tu usuario"
+          label="Usuario"
+          {...register("username", { required: true })}
         />
-      </div>
-
-      <div className="mb-6">
-        <label htmlFor="password" className="block text-gray-700 font-bold mb-2">Contraseña</label>
-        <input
-          type="password"
+        <TextField
+          fullWidth
+          margin="normal"
           id="password"
-          {...register("password")}
-          className="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="Ingresa tu contraseña"
+          label="Contraseña"
+          type="password"
+          {...register("password", { required: true })}
         />
-      </div>
-
-      <div className="flex items-center justify-between">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          sx={{ mt: 3, mb: 2 }}
+        >
           Registrarse
-        </button>
-        <Link to="/iniciar-sesion" className="inline-block align-baseline font-medium text-sm text-blue-500 hover:text-blue-800">
-          ¿Ya tienes una cuenta? Inicia sesión
-        </Link>
-      </div>
-    </form>
+        </Button>
+        <Box textAlign="center">
+          <Link to="/iniciar-sesion">
+            ¿Ya tienes una cuenta? Inicia sesión
+          </Link>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
 export default RegistrationForm;
+
 

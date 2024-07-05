@@ -1,79 +1,89 @@
 const CalendarEvent = require('../models/calendarEventModel');
 
-const createCalendarEvent = async (req, res) => {
+// Crear un nuevo evento de calendario
+exports.createCalendarEvent = async (req, res) => {
+  const { name, description, date, startHour, endHour, type, userId } = req.body;
+
   try {
-    const { name, description, date, startHour, endHour, type, userId } = req.body;
-    const newEvent = new CalendarEvent({ name, description, date, startHour, endHour, type, userId });
-    await newEvent.save();
-    res.status(200).json(newEvent);
+    const newEvent = new CalendarEvent({
+      name,
+      description,
+      date,
+      startHour,
+      endHour,
+      type,
+      userId,
+    });
+
+    const savedEvent = await newEvent.save();
+    res.status(201).json(savedEvent);
   } catch (err) {
     console.error('Error creating calendar event:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-const getEventsByUserId = async (req, res) => {
-  try {
-    const { userId } = req.query;
-    const events = await CalendarEvent.find({ userId });
-    res.status(200).json(events);
-  } catch (err) {
-    console.error('Error fetching events:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-};
+// Obtener un evento de calendario por ID
+exports.getCalendarEventById = async (req, res) => {
+  const { id } = req.params;
 
-const getCalendarEventById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const event = await CalendarEvent.findById(id).populate('userId');
+    const event = await CalendarEvent.findById(id).populate('userId', 'name email');
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ error: 'Calendar event not found' });
     }
+
     res.status(200).json(event);
   } catch (err) {
-    console.error('Error fetching event:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('Error fetching calendar event by ID:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-const updateCalendarEvent = async (req, res) => {
+// Actualizar un evento de calendario por ID
+exports.updateCalendarEvent = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
   try {
-    const { id } = req.params;
-    const { name, description, date, startHour, endHour, type, userId } = req.body;
-    const updatedEvent = await CalendarEvent.findByIdAndUpdate(
-      id,
-      { name, description, date, startHour, endHour, type, userId },
-      { new: true }
-    );
+    const updatedEvent = await CalendarEvent.findByIdAndUpdate(id, updates, { new: true });
     if (!updatedEvent) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ error: 'Calendar event not found' });
     }
+
     res.status(200).json(updatedEvent);
   } catch (err) {
-    console.error('Error updating event:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('Error updating calendar event:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-const deleteCalendarEvent = async (req, res) => {
+// Eliminar un evento de calendario por ID
+exports.deleteCalendarEvent = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
     const deletedEvent = await CalendarEvent.findByIdAndDelete(id);
     if (!deletedEvent) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ error: 'Calendar event not found' });
     }
-    res.status(200).json(deletedEvent);
+
+    res.status(200).json({ message: 'Calendar event deleted successfully' });
   } catch (err) {
-    console.error('Error deleting event:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('Error deleting calendar event:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-module.exports = {
-  createCalendarEvent,
-  getCalendarEventById,
-  updateCalendarEvent,
-  deleteCalendarEvent,
-  getEventsByUserId,
+// Obtener eventos de calendario por ID de usuario
+exports.getEventsByUserId = async (req, res) => {
+  const { userId } = req.query;
+
+  try {
+    const events = await CalendarEvent.find({ userId }).populate('userId', 'name email');
+    res.status(200).json(events);
+  } catch (err) {
+    console.error('Error fetching calendar events by user ID:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };

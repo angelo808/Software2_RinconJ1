@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Post from "./Post";
 import { Container, TextField, Button, Box, Divider, Modal, Typography } from "@mui/material";
 import axios from "axios";
+import { API_URL } from "../../constants";
 
 const Forum = () => {
   const [isLoadingAgencia, setIsLoadingAgencia] = useState(true);
@@ -22,13 +23,13 @@ const Forum = () => {
 
       const userId = storedUser._id;
 
-      const userResponse = await axios.get(`http://localhost:5001/api/users/${userId}`);
+      const userResponse = await axios.get(`${API_URL}/users/${userId}`);
       const user = userResponse.data;
 
       setNombreAgencia(user.selectedAgency || "BLOQUEADO");
       setNombreUsuario(user.username);
 
-      const postsResponse = await axios.get(`http://localhost:5001/api/posts?agency=${user.selectedAgency}`);
+      const postsResponse = await axios.get(`${API_URL}/posts?agency=${user.selectedAgency}`);
       setPosts(postsResponse.data);
       setIsLoadingAgencia(false);
     } catch (error) {
@@ -63,7 +64,7 @@ const Forum = () => {
         reactions: [],
       };
 
-      const response = await axios.post('http://localhost:5001/api/posts', newPost);
+      const response = await axios.post(`${API_URL}/posts`, newPost);
       setPosts((prevPosts) => [...prevPosts, response.data]);
       setNewPostOpen(false);
       setNewPostTitle("");
@@ -86,12 +87,12 @@ const Forum = () => {
 
   return (
     <Container>
-      <h2 className="text-4xl font-bold text-secondary my-4">
+      <Typography variant="h4" gutterBottom>
         FORO AGENCIA: {!isLoadingAgencia && nombreAgencia}
-      </h2>
+      </Typography>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 
-      <Box className="flex flex-row my-4 items-center">
+      <Box display="flex" flexDirection="row" alignItems="center" my={4}>
         <TextField
           fullWidth
           label="Buscar por nombre de post..."
@@ -104,7 +105,7 @@ const Forum = () => {
           sx={{ ml: 2 }}
           onClick={() => setNewPostOpen(true)}
         >
-          <p className="text-white font-bold">CREAR POST</p>
+          CREAR POST
         </Button>
       </Box>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
@@ -136,7 +137,6 @@ const Forum = () => {
             border: "2px solid #000",
             boxShadow: 24,
             p: 4,
-            backgroundColor: "#F6F4F3",
           }}
         >
           <Typography id="modal-title" variant="h6" component="h2" mb={2}>
@@ -151,6 +151,7 @@ const Forum = () => {
             fullWidth
             value={newPostTitle}
             onChange={(e) => setNewPostTitle(e.target.value)}
+            variant="outlined"
           />
           <TextField
             margin="dense"
@@ -159,6 +160,7 @@ const Forum = () => {
             fullWidth
             value={newPostContent}
             onChange={(e) => setNewPostContent(e.target.value)}
+            variant="outlined"
           />
           <input
             accept="image/*"
@@ -179,12 +181,18 @@ const Forum = () => {
               />
             </Box>
           )}
-          <div className="flex justify-end">
-            <Button color="error" onClick={() => setNewPostOpen(false)}>
+          <Box display="flex" justifyContent="flex-end" mt={2}>
+            <Button
+              color="error"
+              onClick={() => setNewPostOpen(false)}
+              sx={{ mr: 1 }}
+            >
               Cancelar
             </Button>
-            <Button onClick={handleCreatePost}>Crear</Button>
-          </div>
+            <Button onClick={handleCreatePost} variant="contained" color="primary">
+              Crear
+            </Button>
+          </Box>
         </Box>
       </Modal>
     </Container>
@@ -192,3 +200,4 @@ const Forum = () => {
 };
 
 export default Forum;
+

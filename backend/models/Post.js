@@ -3,17 +3,24 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: [true, 'Title is required'],
+    trim: true,
+    maxlength: [100, 'Title cannot exceed 100 characters']
   },
   content: {
     type: String,
-    required: true,
+    required: [true, 'Content is required'],
+    trim: true,
   },
   author: {
     type: String,
-    required: true,
+    required: [true, 'Author is required'],
+    trim: true,
   },
-  image: String,
+  image: {
+    type: String,
+    trim: true,
+  },
   likes: {
     type: Number,
     default: 0,
@@ -24,13 +31,24 @@ const postSchema = new mongoose.Schema({
   },
   agency: {
     type: String,
-    required: true,
+    required: [true, 'Agency is required'],
+    trim: true,
   },
   reactions: [{
-    user: String,
-    reaction: String,
+    user: {
+      type: String,
+      required: true,
+    },
+    reaction: {
+      type: String,
+      enum: ['like', 'dislike'],
+      required: true,
+    }
   }],
+}, {
+  timestamps: true, // Automatically manage `createdAt` and `updatedAt` fields
 });
 
 const Post = mongoose.model('Post', postSchema);
 module.exports = Post;
+

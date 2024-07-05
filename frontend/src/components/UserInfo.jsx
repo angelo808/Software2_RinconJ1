@@ -1,5 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Typography,
+  Avatar,
+  Menu,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
+import { AccountCircle } from "@mui/icons-material";
 
 const UserInfo = ({
   user,
@@ -8,98 +18,62 @@ const UserInfo = ({
   handleProfile,
   handleLogout,
 }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+    toggleInfoVisibility();
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    toggleInfoVisibility();
+  };
+
   return (
-    <div className="flex items-center text-lg font-bold text-neutral-500">
-      <div className="mx-4 hover:scale-105 hover:text-black">
-        <Link to="mis-etapas">Mis etapas</Link>
-      </div>
-
-      <div className="mx-4 hover:scale-105 hover:text-black">
-        <Link to="mis-foros">Mis foros</Link>
-      </div>
-
-      <div className="mx-4 hover:scale-105 hover:text-black">
-        <Link to="mi-calendario">Mi Calendario</Link>
-      </div>
-
-      <div className="mx-4 relative text-black" onClick={toggleInfoVisibility}>
-        {isInfoVisible ? (
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M8 11C10.2091 11 12 9.20914 12 7C12 4.79086 10.2091 3 8 3C5.79086 3 4 4.79086 4 7C4 9.20914 5.79086 11 8 11ZM8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z"
-              fill="currentColor"
-            />
-            <path
-              d="M11 14C11.5523 14 12 14.4477 12 15V21H14V15C14 13.3431 12.6569 12 11 12H5C3.34315 12 2 13.3431 2 15V21H4V15C4 14.4477 4.44772 14 5 14H11Z"
-              fill="currentColor"
-            />
-            <path d="M22 9H16V11H22V9Z" fill="currentColor" />
-          </svg>
+    <Box display="flex" alignItems="center">
+      <Button component={Link} to="/mis-etapas" color="inherit">
+        Mis etapas
+      </Button>
+      <Button component={Link} to="/mis-foros" color="inherit">
+        Mis foros
+      </Button>
+      <Button component={Link} to="/mi-calendario" color="inherit">
+        Mi Calendario
+      </Button>
+      <IconButton onClick={handleMenuOpen} color="inherit">
+        {user.photo ? (
+          <Avatar alt={user.name} src={user.photo} />
         ) : (
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M8 11C10.2091 11 12 9.20914 12 7C12 4.79086 10.2091 3 8 3C5.79086 3 4 4.79086 4 7C4 9.20914 5.79086 11 8 11ZM8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z"
-              fill="currentColor"
-            />
-            <path
-              d="M11 14C11.5523 14 12 14.4477 12 15V21H14V15C14 13.3431 12.6569 12 11 12H5C3.34315 12 2 13.3431 2 15V21H4V15C4 14.4477 4.44772 14 5 14H11Z"
-              fill="currentColor"
-            />
-            <path d="M22 11H16V13H22V11Z" fill="currentColor" />
-            <path d="M16 15H22V17H16V15Z" fill="currentColor" />
-            <path d="M22 7H16V9H22V7Z" fill="currentColor" />
-          </svg>
+          <AccountCircle />
         )}
-
-        {isInfoVisible && (
-          <div className="w-96 h-auto absolute top-16 -right-5 bg-customColor p-4 rounded-lg shadow-lg z-10">
-            <div className="flex items-center mb-4">
-              <img
-                src={user.photo || "https://via.placeholder.com/600"}
-                alt="Profile"
-                className="w-16 h-16 rounded-full mr-4"
-              />
-              <div>
-                <p className="font-bold text-lg">{user.nombre}</p>
-                <p className="text-gray-600">{user.correo}</p>
-                <p className="text-gray-600">{user.especialidad}</p>
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={handleProfile}
-              >
-                Ver Perfil
-              </button>
-              <button
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                onClick={handleLogout}
-              >
-                Cerrar sesiÃ³n
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={isInfoVisible}
+        onClose={handleMenuClose}
+        keepMounted
+      >
+        <Box display="flex" flexDirection="column" alignItems="center" p={2}>
+          <Avatar
+            alt={user.name}
+            src={user.photo || "https://via.placeholder.com/600"}
+            sx={{ width: 64, height: 64, mb: 2 }}
+          />
+          <Typography variant="h6">{user.name}</Typography>
+          <Typography variant="body2">{user.email}</Typography>
+          <Typography variant="body2">{user.occupation}</Typography>
+          <Button onClick={handleProfile} fullWidth sx={{ mt: 1, mb: 1 }}>
+            Ver Perfil
+          </Button>
+          <Button onClick={handleLogout} fullWidth color="error">
+            Cerrar sesión
+          </Button>
+        </Box>
+      </Menu>
+    </Box>
   );
 };
 
 export default UserInfo;
+

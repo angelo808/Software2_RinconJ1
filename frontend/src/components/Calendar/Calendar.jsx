@@ -2,28 +2,20 @@ import { Scheduler } from "@aldabil/react-scheduler";
 import es from "date-fns/locale/es";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
-
 import {
   Button,
   Typography,
   Box,
-  ThemeProvider,
-  CircularProgress,
-  DialogActions,
-  TextField,  // <--- Asegúrate de importar TextField aquí
-  Grid,
   IconButton,
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from "@mui/material";
 import { toast } from "react-toastify";
-
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import axiosBase  from "../../axios/axiosBase";
-
+import axiosBase from "../../axios/axiosBase";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -36,192 +28,84 @@ const colorConfigs = {
   freeScheduleTitle: "#3b82f6",
 };
 
-const generateDate = (fecha) => {
-  //hacer una validacion que existe un fechas y hora no nulos
-  let newDateTime = fecha.$d;
-  let year = fecha.$d.getFullYear().toString();
-  let month = (fecha.$d.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 to the month because getMonth() returns 0-based index
-  let day = fecha.$d.getDate().toString().padStart(2, "0");
-
-  return year + "-" + month + "-" + day;
-};
-
-const generateHours = (fecha) => {
-  //hacer una validacion que existe un fechas y hora no nulos
-  let newDateTime = fecha.$d;
-  let hours = fecha.$d.getHours().toString().padStart(2, "0");
-  let minutes = fecha.$d.getMinutes().toString().padStart(2, "0");
-
-  return hours + ":" + minutes;
-};
-
-const generateDate2 = (fecha) => {
-  //hacer una validacion que existe un fechas y hora no nulos
-  let newDateTime = fecha.$d;
-  let year = fecha.$d.getFullYear().toString();
-  let month = (fecha.$d.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 to the month because getMonth() returns 0-based index
-  let day = fecha.$d.getDate().toString().padStart(2, "0");
-
-  return year + "-" + month + "-" + day;
-};
-
-const generateHours2 = (fecha) => {
-  //hacer una validacion que existe un fechas y hora no nulos
-  //let newDateTime = fecha.$d;
-  let hours = fecha.$d.getHours();
-  hours = hours.toString().padStart(2, "0");
-  let minutes = fecha.$d.getMinutes().toString().padStart(2, "0");
-
-  return hours + ":" + minutes;
-};
+const formatDate = (date) => date.format("YYYY-MM-DD");
+const formatTime = (date) => date.format("HH:mm");
 
 const handleDelete = async (deleteId) => {
-  let scheduler = Scheduler;
-  return await new Promise((res) => {
-    axiosBase()
-      .delete(`/calendario/${deleteId}/`)
-      .then((response) => {
-        toast.success("El horario fue eliminado exitosamente");
-        res(deleteId);
-        scheduler.close();
-        scheduler.loading(false);
-      })
-      .catch((err) => {
-        toast.error("Ha ocurrido un error al eliminar el horario");
-        console.log(err);
-      });
-  });
+  try {
+    await axiosBase().delete(`/calendario/${deleteId}/`);
+    toast.success("El horario fue eliminado exitosamente");
+    return deleteId;
+  } catch (error) {
+    toast.error("Ha ocurrido un error al eliminar el horario");
+    console.error(error);
+  }
 };
 
 const PanelRegistro = ({ scheduler }) => {
   const event = scheduler.edited;
-  const libre = event ? event?.libre : true;
   const [fecha, setFecha] = useState(dayjs(scheduler.state.start.value));
   const [horaIni, setHoraIni] = useState(dayjs(scheduler.state.start.value));
   const [horaFin, setHoraFin] = useState(dayjs(scheduler.state.end.value));
-
   const [type, setType] = useState("");
-
-  const handleTypeChange = (event) => {
-    setType(event.target.value);
-  };
-  //const [titulo, setTitulo] = useState<any>(event?.title || "");
-  const [error, setError] = useState("");
-
-  useEffect(() => {}, [fecha, horaIni, horaFin]);
-
   const [state, setState] = useState({
     title: event?.title || "",
     enlace: event?.enlace || "",
   });
+  const [error, setError] = useState("");
+
+  useEffect(() => {}, [fecha, horaIni, horaFin]);
 
   const handleChange = (value, name) => {
-    setState((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setState((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSaveAvailability = async (
-    event,
-    action,
-    datosEvento,
-    scheduler
-  ) => {
+  const handleSaveAvailability = async (action, datosEvento) => {
     const datosEvento2 = {
       nombre: datosEvento.nombre,
-      dia: generateDate(datosEvento.dia),
-      hora_inicio: generateHours(datosEvento.hora_inicio),
-      hora_fin: generateHours(datosEvento.hora_fin),
+      dia: formatDate(datosEvento.dia),
+      hora_inicio: formatTime(datosEvento.hora_inicio),
+      hora_fin: formatTime(datosEvento.hora_fin),
       tipo: datosEvento.tipo,
     };
-    console.log(datosEvento2);
 
-    return await new Promise((res) => {
-      if (action == "create") {
-        axiosBase()
-          .post("/calendario/", datosEvento2)
-          .then((response) => {
-            toast.success("El horario fue registrado exitosamente");
-            const data = response.data;
-            res({
-              event_id: data.id_disponibilidad,
-              title: data["nombre"],
-              start: new Date(data["dia"] + "T" + data["hora_inicio"]),
-              end: new Date(data["dia"] + "T" + data["hora_fin"]),
-              enlace: data["enlace"],
-              color: colorConfigs.freeSchedule,
-              libre: data["libre"],
-            });
-          })
-          .catch((err) => {
-            scheduler.loading(false);
-            scheduler.close();
-            //toast.error('Hubo un error al registrar el horario');
-            toast.error(err.response.data);
-          });
-      } else if (action == "edit") {
-        axiosBase()
-          .patch(`/calendario/${event?.event_id}/`, datosEvento2)
-          .then((response) => {
-            toast.success("El horario fue editado exitosamente");
-            const data = response.data;
-            res({
-              event_id: data.id_disponibilidad,
-              title: data["nombre"],
-              start: new Date(data["dia"] + "T" + data["hora_inicio"]),
-              end: new Date(data["dia"] + "T" + data["hora_fin"]),
-              enlace: data["enlace"],
-              color: !data.libre
-                ? colorConfigs.busySchedule
-                : colorConfigs.freeSchedule,
-              libre: data["libre"],
-            });
-          })
-          .catch((err) => {
-            scheduler.loading(false);
-            scheduler.close();
-            //toast.error('Hubo un error al editar el horario');
-            toast.error(err.response.data);
-          });
+    try {
+      let response;
+      if (action === "create") {
+        response = await axiosBase().post("/calendario/", datosEvento2);
+        toast.success("El horario fue registrado exitosamente");
+      } else if (action === "edit") {
+        response = await axiosBase().patch(`/calendario/${event?.event_id}/`, datosEvento2);
+        toast.success("El horario fue editado exitosamente");
       }
-    });
+      const data = response.data;
+      return {
+        event_id: data.id_disponibilidad,
+        title: data.nombre,
+        start: new Date(`${data.dia}T${data.hora_inicio}`),
+        end: new Date(`${data.dia}T${data.hora_fin}`),
+        enlace: data.enlace,
+        color: data.libre ? colorConfigs.freeSchedule : colorConfigs.busySchedule,
+        libre: data.libre,
+      };
+    } catch (error) {
+      scheduler.loading(false);
+      scheduler.close();
+      toast.error(error.response.data);
+      console.error(error);
+    }
   };
 
   const handleSubmit = async () => {
-    //setFecha(dayjs(scheduler.state.start.value))
-    //setHoraIni(dayjs(scheduler.state.start.value))
-    //setHoraFin(dayjs(scheduler.state.end.value))
-    let timeAct = new Date();
-    let timeInicio = new Date(
-      `${generateDate2(fecha)}T${generateHours2(horaIni)}`
-    );
-    let timeFin = new Date(
-      `${generateDate2(fecha)}T${generateHours2(horaFin)}`
-    );
+    const timeAct = new Date();
+    const timeInicio = new Date(`${formatDate(fecha)}T${formatTime(horaIni)}`);
 
-    console.log("timeAct" + timeAct);
-    console.log("timeInicio" + timeInicio);
-    console.log("timeFin" + timeFin);
-
-    // Your own validation
-    if (state.title.length < 3) {
-      return setError("Minimo 3 caracteres");
-    }
-
-    if (horaFin <= horaIni) {
-      //   toast.warn("La hora de inicio no puede ser mayor a la de finalización");
-      setError("");
-      return null;
-    }
-
-    if (timeInicio <= timeAct) {
-      //   toast.warn("No se puede registrar una disponibilidad en el pasado");
-      setError("");
-      return null;
-    }
+    if (state.title.length < 3) return setError("Minimo 3 caracteres");
+    if (horaFin <= horaIni) return setError("");
+    if (timeInicio <= timeAct) return setError("");
 
     try {
       scheduler.loading(true);
@@ -233,20 +117,12 @@ const PanelRegistro = ({ scheduler }) => {
         tipo: type,
       };
 
-      const added_updated_event = await Promise.all([
-        handleSaveAvailability(
-          event,
-          event ? "edit" : "create",
-          datosEvento,
-          scheduler
-        ),
-      ]);
-
+      const added_updated_event = await handleSaveAvailability(event ? "edit" : "create", datosEvento);
       scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
-
       scheduler.close();
     } catch (error) {
       scheduler.loading(false);
+      console.error(error);
     } finally {
       scheduler.loading(false);
     }
@@ -277,42 +153,11 @@ const PanelRegistro = ({ scheduler }) => {
         </Box>
       </Box>
 
-      <Grid
-        container
-        sx={{
-          border: 0,
-          marginBottom: 2,
-          paddingInlineStart: 3,
-          paddingBlockEnd: 3,
-          borderRadius: 0,
-        }}
-      >
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 2,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+      <Box container sx={{ marginBottom: 2, paddingInlineStart: 3, paddingBlockEnd: 3 }}>
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 2, display: "flex", alignItems: "flex-start" }}>
           <Typography sx={{ mb: 1, fontWeight: 600 }}>Título *</Typography>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 0,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+        </Box>
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 0, display: "flex", alignItems: "flex-start" }}>
           <TextField
             value={state.title}
             onChange={(e) => handleChange(e.target.value, "title")}
@@ -320,181 +165,64 @@ const PanelRegistro = ({ scheduler }) => {
             helperText={error}
             sx={{ width: "90%" }}
           />
-        </Grid>
+        </Box>
 
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 2,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 2, display: "flex", alignItems: "flex-start" }}>
           <Typography sx={{ mb: 1, fontWeight: 600 }}>Fecha *</Typography>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 0,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+        </Box>
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 0, display: "flex", alignItems: "flex-start" }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <DatePicker
-              sx={{ width: "90%" }}
-              value={fecha}
-              onChange={(valor) => setFecha(valor)}
-            />
+            <DatePicker sx={{ width: "90%" }} value={fecha} onChange={(valor) => setFecha(valor)} />
           </LocalizationProvider>
-        </Grid>
+        </Box>
 
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 2,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
-          <Typography sx={{ mb: 1, fontWeight: 600 }}>
-            Hora de Inicio *
-          </Typography>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 0,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 2, display: "flex", alignItems: "flex-start" }}>
+          <Typography sx={{ mb: 1, fontWeight: 600 }}>Hora de Inicio *</Typography>
+        </Box>
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 0, display: "flex", alignItems: "flex-start" }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <TimePicker
-              sx={{ width: "90%" }}
-              value={horaIni}
-              onChange={(valor) => setHoraIni(valor)}
-            />
+            <TimePicker sx={{ width: "90%" }} value={horaIni} onChange={(valor) => setHoraIni(valor)} />
           </LocalizationProvider>
-        </Grid>
+        </Box>
 
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 2,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 2, display: "flex", alignItems: "flex-start" }}>
           <Typography sx={{ mb: 1, fontWeight: 600 }}>Hora de Fin *</Typography>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 0,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+        </Box>
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 0, display: "flex", alignItems: "flex-start" }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <TimePicker
-              sx={{ width: "90%" }}
-              value={horaFin}
-              onChange={(valor) => setHoraFin(valor)}
-            />
+            <TimePicker sx={{ width: "90%" }} value={horaFin} onChange={(valor) => setHoraFin(valor)} />
           </LocalizationProvider>
-        </Grid>
+        </Box>
 
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 2,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
-          <Typography sx={{ mb: 1, fontWeight: 600 }}>
-            Tipo de Evento
-          </Typography>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          sx={{
-            paddingRight: 1,
-            paddingTop: 0,
-            border: 0,
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-        >
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 2, display: "flex", alignItems: "flex-start" }}>
+          <Typography sx={{ mb: 1, fontWeight: 600 }}>Tipo de Evento</Typography>
+        </Box>
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 0, display: "flex", alignItems: "flex-start" }}>
           <FormControl fullWidth variant="standard">
             <Select
               labelId="payment-select-label"
               id="payment-select"
               value={type}
-              label="Options"
-              onChange={handleTypeChange}
+              onChange={(e) => setType(e.target.value)}
             >
               <MenuItem value="Pago">Pago</MenuItem>
-              <MenuItem value="Entrevista">
-                Entrevista con el empleador
-              </MenuItem>
+              <MenuItem value="Entrevista">Entrevista con el empleador</MenuItem>
               <MenuItem value="Cita">Cita con el embajada</MenuItem>
             </Select>
           </FormControl>
-        </Grid>
+        </Box>
 
-        <Box
-          sx={{
-            paddingTop: 3,
-            display: "flex",
-            justifyContent: "end",
-            width: "100%",
-            paddingRight: "12%",
-          }}
-        >
+        <Box sx={{ paddingTop: 3, display: "flex", justifyContent: "end", width: "100%", paddingRight: "12%" }}>
           <Button
             variant="contained"
             color="secondary"
-            sx={{
-              textTransform: "capitalize",
-            }}
+            sx={{ textTransform: "capitalize" }}
             onClick={handleSubmit}
           >
             Guardar
           </Button>
         </Box>
-      </Grid>
+      </Box>
     </div>
   );
 };
@@ -557,10 +285,8 @@ export const Calendar = () => {
         startHour: 6,
         endHour: 24,
         step: 60,
-        cellRenderer: ({ height, start, onClick, ...props }) => {
-          // Fake some condition up
+        cellRenderer: ({ start, onClick, ...props }) => {
           const time = new Date();
-
           const disabled = start < time;
           const restProps = disabled ? {} : props;
           return (
@@ -571,18 +297,15 @@ export const Calendar = () => {
                 cursor: disabled ? "auto" : "pointer",
               }}
               onClick={() => {
-                if (disabled) {
-                  return <></>;
-                }
-                onClick();
+                if (!disabled) onClick();
               }}
               disableRipple={disabled}
-              // disabled={disabled}
               {...restProps}
-            ></Button>
+            />
           );
         },
       }}
     />
   );
 };
+

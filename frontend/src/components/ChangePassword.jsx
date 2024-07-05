@@ -14,9 +14,9 @@ const ChangePassword = () => {
   };
 
   const handleSave = async (data) => {
-    if (data.newPassword === data.confirmPassword && data.newPassword !== '') {
+    if (data.newPassword === data.confirmPassword && data.newPassword) {
       try {
-        await axios.put(`http://localhost:5001/api/users/${user._id}`, {
+        await axios.put(`http://localhost:5001/api/users/${user._id}/password`, {
           password: data.newPassword,
         });
         alert('Contraseña actualizada correctamente');
@@ -42,7 +42,7 @@ const ChangePassword = () => {
           <input
             type="password"
             id="newPassword"
-            {...register("newPassword")}
+            {...register("newPassword", { required: true })}
             className="w-full px-3 py-2 placeholder-gray-400 border rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 shadow-sm disabled:bg-gray-100 my-2"
             placeholder="Ingrese su nueva contraseña"
           />
@@ -54,13 +54,14 @@ const ChangePassword = () => {
           <input
             type="password"
             id="confirmPassword"
-            {...register("confirmPassword")}
+            {...register("confirmPassword", { required: true })}
             className="w-full px-3 py-2 placeholder-gray-400 border rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 shadow-sm disabled:bg-gray-100 my-2"
             placeholder="Confirme su nueva contraseña"
           />
         </div>
         <div className="flex justify-end">
           <button
+            type="button"
             onClick={onClose}
             className="bg-gray-500 text-white px-4 py-2 m-2 rounded"
           >
@@ -75,7 +76,8 @@ const ChangePassword = () => {
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 export default ChangePassword;
+

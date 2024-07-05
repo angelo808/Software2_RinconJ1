@@ -1,9 +1,9 @@
+import React from "react";
 import Formulario from "../components/Formulario";
 
-const Login = () => {//Este componente es una página de inicio de sesión que contiene un formulario de inicio de sesión.
+const Login = () => {
   return (
     <div className="container m-auto p-4">
-
       <div className="w-12 h-12 bg-customColor mx-auto my-4 rounded-full ">
         <svg
           width="48"
@@ -11,7 +11,6 @@ const Login = () => {//Este componente es una página de inicio de sesión que c
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          
         >
           <path
             fillRule="evenodd"
@@ -25,15 +24,12 @@ const Login = () => {//Este componente es una página de inicio de sesión que c
           />
         </svg>
       </div>
-
       <div className="text-center my-4 text-2xl font-bold">
         <p>Inicia sesión</p>
       </div>
-
       <div className="w-1/2 m-auto bg-customColor p-2">
         <Formulario />
       </div>
-
     </div>
   );
 };

@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Box, Card, CardContent, CardActions, Button, Typography, TextField, Modal } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Typography,
+  TextField,
+  Modal,
+  IconButton,
+} from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import IconButton from "@mui/material/IconButton";
 import axios from "axios";
 import Comment from "../Comment";
 
@@ -17,7 +26,9 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/api/comments/post/${post._id}`);
+        const response = await axios.get(
+          `http://localhost:5001/api/comments/posts/${post._id}`
+        );
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -29,18 +40,25 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
 
   useEffect(() => {
     if (post.reactions) {
-      setUserReaction(post.reactions.find((r) => r.user === currentUser)?.reaction || null);
+      setUserReaction(
+        post.reactions.find((r) => r.user === currentUser)?.reaction || null
+      );
     }
   }, [post.reactions, currentUser]);
 
   const handleAddComment = async () => {
-    const newComment = { author: currentUser, text: newCommentContent, postId: post._id };
+    const newComment = {
+      author: currentUser,
+      text: newCommentContent,
+      postId: post._id,
+    };
 
     try {
-      const response = await axios.post(`http://localhost:5001/api/comments`, newComment);
-      const updatedComment = response.data;
-
-      setComments((prevComments) => [...prevComments, updatedComment]);
+      const response = await axios.post(
+        `http://localhost:5001/api/comments`,
+        newComment
+      );
+      setComments((prevComments) => [...prevComments, response.data]);
       setNewCommentOpen(false);
       setNewCommentContent("");
     } catch (error) {
@@ -48,101 +66,60 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
     }
   };
 
-  const handleLike = async () => {
-    let new_dislikes = dislikes,
-        new_likes = likes,
-        new_user_reaction = userReaction;
+  const handleReaction = async (reaction) => {
+    let newLikes = likes;
+    let newDislikes = dislikes;
 
-    if (userReaction === "like") {
-      new_likes -= 1;
-      new_user_reaction = null;
-    } else {
-      if (userReaction === "dislike") {
-        new_dislikes -= 1;
-      }
-      new_likes += 1;
-      new_user_reaction = "like";
-    }
-
-    setLikes(new_likes);
-    setDislikes(new_dislikes);
-    setUserReaction(new_user_reaction);
-
-    const updatedPosts = posts.map((p) => {
-      if (p._id === post._id) {
-        return {
-          ...p,
-          likes: new_likes,
-          dislikes: new_dislikes,
-          reactions: [
-            ...(p.reactions || []).filter((r) => r.user !== currentUser),
-            { user: currentUser, reaction: new_user_reaction },
-          ],
-        };
-      }
-      return p;
-    });
-
-    setPosts(updatedPosts);
-
-    try {
-      await axios.put(`http://localhost:5001/api/posts/${post._id}`, {
-        likes: new_likes,
-        dislikes: new_dislikes,
-        reactions: [
-          ...(post.reactions || []).filter((r) => r.user !== currentUser),
-          { user: currentUser, reaction: new_user_reaction },
-        ],
-      });
-    } catch (error) {
-      console.error("Error updating post reactions:", error);
-    }
-  };
-
-  const handleDislike = async () => {
-    let new_dislikes = dislikes,
-        new_likes = likes,
-        new_user_reaction = userReaction;
-
-    if (userReaction === "dislike") {
-      new_dislikes -= 1;
-      new_user_reaction = null;
-    } else {
+    if (reaction === "like") {
       if (userReaction === "like") {
-        new_likes -= 1;
+        newLikes -= 1;
+        setUserReaction(null);
+      } else {
+        if (userReaction === "dislike") {
+          newDislikes -= 1;
+        }
+        newLikes += 1;
+        setUserReaction("like");
       }
-      new_dislikes += 1;
-      new_user_reaction = "dislike";
+    } else if (reaction === "dislike") {
+      if (userReaction === "dislike") {
+        newDislikes -= 1;
+        setUserReaction(null);
+      } else {
+        if (userReaction === "like") {
+          newLikes -= 1;
+        }
+        newDislikes += 1;
+        setUserReaction("dislike");
+      }
     }
 
-    setLikes(new_likes);
-    setDislikes(new_dislikes);
-    setUserReaction(new_user_reaction);
+    setLikes(newLikes);
+    setDislikes(newDislikes);
 
-    const updatedPosts = posts.map((p) => {
-      if (p._id === post._id) {
-        return {
-          ...p,
-          likes: new_likes,
-          dislikes: new_dislikes,
-          reactions: [
-            ...(p.reactions || []).filter((r) => r.user !== currentUser),
-            { user: currentUser, reaction: new_user_reaction },
-          ],
-        };
-      }
-      return p;
-    });
+    const updatedPosts = posts.map((p) =>
+      p._id === post._id
+        ? {
+            ...p,
+            likes: newLikes,
+            dislikes: newDislikes,
+            reactions: [
+              ...(p.reactions || []).filter((r) => r.user !== currentUser),
+              { user: currentUser, reaction: userReaction },
+            ],
+          }
+        : p
+    );
 
     setPosts(updatedPosts);
 
     try {
       await axios.put(`http://localhost:5001/api/posts/${post._id}`, {
-        likes: new_likes,
-        dislikes: new_dislikes,
+        likes: newLikes,
+        dislikes: newDislikes,
         reactions: [
           ...(post.reactions || []).filter((r) => r.user !== currentUser),
-          { user: currentUser, reaction: new_user_reaction },
+          { user: currentUser, reaction: userReaction },
         ],
       });
     } catch (error) {
@@ -197,14 +174,14 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
           </Button>
           <IconButton
             size="small"
-            onClick={handleLike}
+            onClick={() => handleReaction("like")}
             color={userReaction === "like" ? "primary" : "default"}
           >
             <ThumbUpIcon /> {likes}
           </IconButton>
           <IconButton
             size="small"
-            onClick={handleDislike}
+            onClick={() => handleReaction("dislike")}
             color={userReaction === "dislike" ? "primary" : "default"}
           >
             <ThumbDownIcon /> {dislikes}
@@ -212,7 +189,7 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
         </CardActions>
       </Card>
 
-      {(comments || []).map((comment) => (
+      {comments.map((comment) => (
         <Comment key={comment._id} comment={comment} />
       ))}
 
@@ -262,4 +239,5 @@ const Post = ({ post, setPosts, posts, currentUser }) => {
 };
 
 export default Post;
+
 

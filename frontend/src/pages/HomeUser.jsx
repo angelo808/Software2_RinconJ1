@@ -1,4 +1,3 @@
-// src/pages/HomeUser.jsx
 import React from 'react';
 
 const HomeUser = () => {

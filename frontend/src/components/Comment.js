@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
+import PropTypes from "prop-types";
 
 const Comment = ({ comment }) => {
   if (!comment || !comment.author) {
@@ -40,5 +41,13 @@ const Comment = ({ comment }) => {
   );
 };
 
+Comment.propTypes = {
+  comment: PropTypes.shape({
+    author: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
 export default Comment;
+
 
