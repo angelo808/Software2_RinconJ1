@@ -8,6 +8,8 @@ module.exports = {
       },
       colors: {
         customColor: '#e3d5ca', 
+        marron: '#31241E',
+        marronClaro: '#86654B'
       },
       backgroundImage: {
         'firstImg' : "linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('./assets/imgHome.jpeg')",

@@ -16,6 +16,11 @@ import MisEtapas from "../pages/Etapas";
 import Home from "../pages/Home";
 import Agencia from "../pages/Agencia";
 import { Calendar } from "../components/Calendar/Calendar";
+import Empleador from "../pages/MisEtapas/Empleador";
+import Puestos from "../pages/MisEtapas/Puestos";
+import Entrevista from "../pages/MisEtapas/Entrevista";
+import SelPuestos from "../pages/MisEtapas/SelPuestos";
+import Documentos from "../pages/MisEtapas/Documentos";
 
 const MyRoutes = () => {
   //Rutas de la aplicaciÃ³n
@@ -37,6 +42,11 @@ const MyRoutes = () => {
               <Route path="cambiar-contrasenia" element={<ChangePassword />} />
             </Route>
             <Route path="/mis-etapas" element={<MisEtapas />} />
+            <Route path="/empleador" element={<Empleador />} />
+            <Route path="/empleador/puestos" element={<Puestos />} />
+            <Route path="/empleador/entrevista" element={<Entrevista />} />
+            <Route path="/empleador/seleccionar-puesto" element={<SelPuestos />} />
+            <Route path="/empleador/documentos" element={<Documentos />} />
             <Route path="/seleccionar-agencia" element={<SelectAgency />} />
             <Route path="/cuestionario" element={<Quiz />} />
             <Route path="/agencia" element={<Agencia />} />
