@@ -23,19 +23,19 @@ export const UserProvider = ({ children }) => {
       setIsLoggedIn(true);
       localStorage.setItem("user", JSON.stringify(createdUser));
     } catch (error) {
-      console.error("Registration failed", error);
+      console.error("Registration failed:", error);
     }
   };
 
   const loginUser = async (username, password) => {
     try {
-      const response = await axiosBase.post("/login", { username, password });
+      const response = await axiosBase.post("/users/login", { username, password });
       const userData = response.data;
       setUser(userData);
       setIsLoggedIn(true);
       localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
-      console.error("Login failed", error);
+      console.error("Login failed:", error);
     }
   };
 
@@ -56,12 +56,12 @@ export const UserProvider = ({ children }) => {
   const updateUserAgency = async (userId, agency) => {
     if (user) {
       try {
-        const response = await axiosBase.put("/update-agency", { userId, selectedAgency: agency });
+        const response = await axiosBase.put(`/users/update-agency`, { userId, selectedAgency: agency });
         const updatedUser = response.data;
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } catch (error) {
-        console.error("Failed to update agency", error);
+        console.error("Failed to update agency:", error);
       }
     }
   };
@@ -72,6 +72,7 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
 
 
 

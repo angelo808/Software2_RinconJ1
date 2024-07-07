@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 
 // Método para iniciar sesión
 exports.loginUser = async (req, res) => {
@@ -9,9 +10,14 @@ exports.loginUser = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ username, password });
+    const user = await User.findOne({ username });
     if (user) {
-      res.status(200).json(user);
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (isMatch) {
+        res.status(200).json(user);
+      } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+      }
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -50,7 +56,8 @@ exports.createUser = async (req, res) => {
   }
 
   try {
-    const newUser = new User({ username, password, name, email, occupation, photo });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, password: hashedPassword, name, email, occupation, photo });
     await newUser.save();
     res.status(201).json(newUser);
   } catch (err) {
@@ -82,7 +89,7 @@ exports.getUserById = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.error('Error fetching user:', err.message);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status500().json({ error: 'Internal Server Error' });
   }
 };
 

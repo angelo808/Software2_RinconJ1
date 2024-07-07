@@ -26,9 +26,10 @@ app.use('/api/events', eventRoutes);
 
 // Middleware para manejo de errores
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send({ message: 'Algo salió mal!' });
+  console.error('Error:', err.message);
+  res.status(500).send({ message: 'Algo salió mal!', error: err.message });
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
