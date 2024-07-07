@@ -5,7 +5,7 @@ import emp2 from '../../assets/emp2.jpg'
 import SideBar from '../../components/SideBar';
 
 const Empleador = () => {
-
+  //comentario
 
   return (
     <div className="container h-screen w-screen p-4 grid grid-cols-5 gap-4">
