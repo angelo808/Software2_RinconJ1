@@ -27,7 +27,7 @@ const MyRoutes = () => (
         <Route path="/" element={<Home />} />
         <Route path="/iniciar-sesion" element={<Login />} />
         <Route path="/registro-de-usuario" element={<Register />} />
-        <Route path="/catalogoEmpeladores" element={<CatalogoEmpleadores />} />
+        <Route path="/catalogoEmpleadores" element={<CatalogoEmpleadores />} />
         <Route path="/product/:id" element={<Empleadores />} />
 
         {/* Rutas protegidas */}
