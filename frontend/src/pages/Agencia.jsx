@@ -11,7 +11,7 @@ const Agencia = () => {
   const agencies = [
     {
       name: "Agencia INTEJ",
-      description: "INTEJ es una agencia especializada en programas de intercambio cultural y educativo. Su misión es proporcionar experiencias enriquecedoras a jóvenes estudiantes y profesionales, permitiéndoles desarrollar habilidades personales y profesionales a través de programas internacionales.",
+      description: "INTES es una agencia especializada en programas de intercambio cultural y educativo. Su misión es proporcionar experiencias enriquecedoras a jóvenes estudiantes y profesionales, permitiéndoles desarrollar habilidades personales y profesionales a través de programas internacionales.",
       programs: [
         {
           name: "Work and Travel",
