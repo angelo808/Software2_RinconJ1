@@ -11,16 +11,26 @@ exports.loginUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ username });
-    if (user) {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (isMatch) {
-        res.status(200).json(user);
-      } else {
-        res.status(401).json({ message: 'Invalid credentials' });
-      }
-    } else {
-      res.status(401).json({ message: 'Invalid credentials' });
+    console.log('User found:', user); // Log del usuario encontrado
+
+    if (!user) {
+      console.log('User not found');
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
+
+    const isMatch = await user.comparePassword(password);
+    console.log('Entered password:', password);
+    console.log('Hashed password:', user.password);
+    console.log('Password match:', isMatch); // Log de la comparación de contraseñas
+
+    if (!isMatch) {
+      console.log('Entered password:', password);
+      console.log('Hashed password:', user.password);
+      console.log('Password does not match');
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    res.status(200).json(user);
   } catch (err) {
     console.error('Error during login:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -57,6 +67,7 @@ exports.createUser = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed Password:', hashedPassword); // Agrega este log para verificar el hash
     const newUser = new User({ username, password: hashedPassword, name, email, occupation, photo });
     await newUser.save();
     res.status(201).json(newUser);
@@ -89,7 +100,7 @@ exports.getUserById = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.error('Error fetching user:', err.message);
-    res.status500().json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
