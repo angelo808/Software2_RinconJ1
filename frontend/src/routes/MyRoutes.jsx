@@ -16,6 +16,8 @@ import MisEtapas from "../pages/Etapas";
 import Home from "../pages/Home";
 import Agencia from "../pages/Agencia";
 import Calendar from "../components/Calendar/Calendar";
+import CatalogoEmpleadores from "../pages/catalogoEmpleadores";
+import Empleadores from "../pages/Empleadores";
 
 const MyRoutes = () => (
   <UserProvider>
@@ -25,6 +27,8 @@ const MyRoutes = () => (
         <Route path="/" element={<Home />} />
         <Route path="/iniciar-sesion" element={<Login />} />
         <Route path="/registro-de-usuario" element={<Register />} />
+        <Route path="/catalogoEmpeladores" element={<CatalogoEmpleadores />} />
+        <Route path="/product/:id" element={<Empleadores />} />
 
         {/* Rutas protegidas */}
         <Route element={<ProtectedRoutes />}>

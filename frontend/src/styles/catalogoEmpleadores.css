@@ -1,0 +1,26 @@
+.catalog-container {
+    padding: 20px;
+    margin: 2%;
+  }
+  
+  .catalog-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .catalog-item {
+    width: 25%;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .catalog-item img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .catalog-item h2 {
+    margin-top: 10px;
+    font-size: 1.2em;
+  }
+  
