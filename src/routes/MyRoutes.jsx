@@ -21,6 +21,7 @@ import Puestos from "../pages/MisEtapas/Puestos";
 import Entrevista from "../pages/MisEtapas/Entrevista";
 import SelPuestos from "../pages/MisEtapas/SelPuestos";
 import Documentos from "../pages/MisEtapas/Documentos";
+import AdminPanel from "../pages/AdminPanel";
 
 const MyRoutes = () => {
   //Rutas de la aplicaciÃ³n
@@ -32,6 +33,7 @@ const MyRoutes = () => {
           <Route path="/" element={<Home />} />
           <Route path="/iniciar-sesion" element={<Login />} />
           <Route path="/registro-de-usuario" element={<Register />} />
+          <Route path="/admin" element={<AdminPanel />} />
 
           {/* Rutas protegidas */}
           <Route element={<ProtectedRoutes />}>
