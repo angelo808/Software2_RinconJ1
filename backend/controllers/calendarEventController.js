@@ -1,8 +1,9 @@
 const CalendarEvent = require('../models/calendarEventModel');
+const { sendEmail, scheduleEmail } = require('../models/mailer'); // Asegúrate de ajustar la ruta según tu estructura de proyecto
 
 // Crear un nuevo evento de calendario
 exports.createCalendarEvent = async (req, res) => {
-  const { name, description, date, startHour, endHour, type, userId } = req.body;
+  const { name, description, date, startHour, endHour, type, userId, email } = req.body;
 
   try {
     const newEvent = new CalendarEvent({
@@ -13,9 +14,14 @@ exports.createCalendarEvent = async (req, res) => {
       endHour,
       type,
       userId,
+      email
     });
 
     const savedEvent = await newEvent.save();
+
+    // Programar el envío de correo electrónico
+    scheduleEmail(savedEvent);
+
     res.status(201).json(savedEvent);
   } catch (err) {
     console.error('Error creating calendar event:', err.message);

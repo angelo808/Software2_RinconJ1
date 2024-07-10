@@ -33,7 +33,7 @@ const formatTime = (date) => date.format("HH:mm");
 
 const handleDelete = async (deleteId) => {
   try {
-    await axiosBase().delete(`/calendario/${deleteId}/`);
+    await axiosBase().delete(`/events/${deleteId}`); // Asegúrate de que la ruta sea correcta
     toast.success("El horario fue eliminado exitosamente");
     return deleteId;
   } catch (error) {
@@ -43,14 +43,15 @@ const handleDelete = async (deleteId) => {
 };
 
 const PanelRegistro = ({ scheduler }) => {
-  const event = scheduler.edited;
-  const [fecha, setFecha] = useState(dayjs(scheduler.state.start.value));
-  const [horaIni, setHoraIni] = useState(dayjs(scheduler.state.start.value));
-  const [horaFin, setHoraFin] = useState(dayjs(scheduler.state.end.value));
+  const event = scheduler?.edited;
+  const [fecha, setFecha] = useState(dayjs(scheduler?.state?.start?.value));
+  const [horaIni, setHoraIni] = useState(dayjs(scheduler?.state?.start?.value));
+  const [horaFin, setHoraFin] = useState(dayjs(scheduler?.state?.end?.value));
   const [type, setType] = useState("");
   const [state, setState] = useState({
     title: event?.title || "",
     enlace: event?.enlace || "",
+    email: event?.email || "", // Añadir campo de correo electrónico
   });
   const [error, setError] = useState("");
 
@@ -70,20 +71,21 @@ const PanelRegistro = ({ scheduler }) => {
       hora_inicio: formatTime(datosEvento.hora_inicio),
       hora_fin: formatTime(datosEvento.hora_fin),
       tipo: datosEvento.tipo,
+      email: datosEvento.email, // Asegúrate de pasar el correo electrónico al backend
     };
 
     try {
       let response;
       if (action === "create") {
-        response = await axiosBase().post("/calendario/", datosEvento2);
+        response = await axiosBase().post("/events", datosEvento2); // Asegúrate de que la ruta sea correcta
         toast.success("El horario fue registrado exitosamente");
       } else if (action === "edit") {
-        response = await axiosBase().patch(`/calendario/${event?.event_id}/`, datosEvento2);
+        response = await axiosBase().put(`/events/${event?.event_id}`, datosEvento2); // Asegúrate de que la ruta sea correcta
         toast.success("El horario fue editado exitosamente");
       }
       const data = response.data;
       return {
-        event_id: data.id_disponibilidad,
+        event_id: data._id,
         title: data.nombre,
         start: new Date(`${data.dia}T${data.hora_inicio}`),
         end: new Date(`${data.dia}T${data.hora_fin}`),
@@ -115,6 +117,7 @@ const PanelRegistro = ({ scheduler }) => {
         hora_inicio: horaIni,
         hora_fin: horaFin,
         tipo: type,
+        email: state.email, // Asegúrate de incluir el correo electrónico en los datos del evento
       };
 
       const added_updated_event = await handleSaveAvailability(event ? "edit" : "create", datosEvento);
@@ -161,6 +164,19 @@ const PanelRegistro = ({ scheduler }) => {
           <TextField
             value={state.title}
             onChange={(e) => handleChange(e.target.value, "title")}
+            error={!!error}
+            helperText={error}
+            sx={{ width: "90%" }}
+          />
+        </Box>
+
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 2, display: "flex", alignItems: "flex-start" }}>
+          <Typography sx={{ mb: 1, fontWeight: 600 }}>Correo Electrónico *</Typography>
+        </Box>
+        <Box item xs={12} sm={12} sx={{ paddingRight: 1, paddingTop: 0, display: "flex", alignItems: "flex-start" }}>
+          <TextField
+            value={state.email}
+            onChange={(e) => handleChange(e.target.value, "email")}
             error={!!error}
             helperText={error}
             sx={{ width: "90%" }}
@@ -308,5 +324,5 @@ export const Calendar = () => {
     />
   );
 };
-export default Calendar;
 
+export default Calendar;

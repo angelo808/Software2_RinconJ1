@@ -1,13 +1,13 @@
+
 const express = require('express');
 const router = express.Router();
-const eventController = require('../controllers/eventController');
+const calendarEventController = require('../controllers/calendarEventController');
 
-// Rutas para eventos
-router.get('/events', eventController.getEvents);
-router.post('/events', eventController.createEvent);
-router.put('/events/:id', eventController.updateEvent);
-router.delete('/events/:id', eventController.deleteEvent);
+// Rutas para eventos del calendario
+router.post('/events', calendarEventController.createCalendarEvent);
+router.get('/events/:id', calendarEventController.getCalendarEventById);
+router.put('/events/:id', calendarEventController.updateCalendarEvent);
+router.delete('/events/:id', calendarEventController.deleteCalendarEvent);
+router.get('/events/user/:userId', calendarEventController.getEventsByUserId);
 
 module.exports = router;
-
-
