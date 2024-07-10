@@ -66,9 +66,23 @@ exports.createUser = async (req, res) => {
   }
 
   try {
+    let isAdmin = false;
+    
+    if (username === 'admin') isAdmin = true;
+
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log('Hashed Password:', hashedPassword); // Agrega este log para verificar el hash
-    const newUser = new User({ username, password: hashedPassword, name, email, occupation, photo });
+
+    const newUser = new User({
+      username,
+      password: hashedPassword,
+      name,
+      email,
+      occupation,
+      photo,
+      isAdmin
+    });
+
     await newUser.save();
     res.status(201).json(newUser);
   } catch (err) {

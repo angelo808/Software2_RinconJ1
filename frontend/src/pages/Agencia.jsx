@@ -41,7 +41,7 @@ const Agencia = () => {
         "Estados Cálidos: Florida (parques de diversiones), California (hoteles y restaurantes)."
       ]
     },
-    // Additional agency objects here...
+
   ];
 
   return (

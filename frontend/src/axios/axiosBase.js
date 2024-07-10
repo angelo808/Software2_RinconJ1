@@ -1,8 +1,9 @@
 import axios from 'axios';
 import queryString from 'query-string';
-import { API_URL } from '../constants';
 
-const axiosInstance = axios.create({
+const API_URL = 'http://localhost:5001/api'; // Asegúrate de que esta URL es correcta
+
+const axiosBase = axios.create({
   baseURL: API_URL,
   paramsSerializer: params => queryString.stringify(params),
   headers: {
@@ -10,7 +11,4 @@ const axiosInstance = axios.create({
   },
 });
 
-export default axiosInstance;
-
-
-
+export default axiosBase;
