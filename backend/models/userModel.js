@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -32,21 +31,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    },
-    test: {
-        type: String,
-        default: null
-    },
-    ds: {
-        type: String,
-        default: null
-    },
-    pago: {
-        type: String,
-        default: null
+    entrevista: { 
+        type: Boolean, 
+        default: false 
     }
 });
 

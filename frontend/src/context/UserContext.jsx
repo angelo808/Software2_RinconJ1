@@ -39,6 +39,16 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const updateUserEntrevista = async (userId) => {
+    try {
+        await axiosBase.put(`http://localhost:5001/api/users/update-entrevista/${userId}`);
+        setUser(prevUser => ({ ...prevUser, entrevista: true }));
+        localStorage.setItem('user', JSON.stringify({ ...user, entrevista: true }));
+    } catch (error) {
+        console.error("Failed to update entrevista", error);
+    }
+};
+
   const removeUser = () => {
     setUser(null);
     setIsLoggedIn(false);
@@ -67,12 +77,8 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency }}>
+    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista }}>
       {children}
     </UserContext.Provider>
   );
 };
-
-
-
-

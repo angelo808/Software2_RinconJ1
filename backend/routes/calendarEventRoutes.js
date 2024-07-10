@@ -8,6 +8,6 @@ router.get('/events/:id', calendarEventController.getCalendarEventById);
 router.put('/events/:id', calendarEventController.updateCalendarEvent);
 router.delete('/events/:id', calendarEventController.deleteCalendarEvent);
 router.get('/events/user/:userId', calendarEventController.getEventsByUserId);
-
+    
 module.exports = router;
 

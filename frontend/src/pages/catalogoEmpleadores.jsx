@@ -5,7 +5,7 @@ import aspenMeadows from "../assets/logosEmpleadores/aspenMeadows.jpg";
 import cafeRio from "../assets/logosEmpleadores/cafeRio.png";
 import crystalMountain from "../assets/logosEmpleadores/crystalMountain.png";
 import montageBigsky from "../assets/logosEmpleadores/montageBigsky.png";
-import '../styles/catalogoEmpleadores.css';
+import SideBar from '../components/SideBar';
 
 const products = [
   { id: 1, name: 'Alta Peruvian', image: altaPeruvian, route: '/product/1' },
@@ -17,15 +17,20 @@ const products = [
 
 const Catalog = () => {
   return (
-    <div className="catalog-container">
-      <h1>Lista de Empleadores Work And Travel</h1>
-      <div className="catalog-grid">
-        {products.map(product => (
-          <Link key={product.id} to={product.route} className="catalog-item">
-            <img src={product.image} alt={product.name} />
-            <h2>{product.name}</h2>
-          </Link>
-        ))}
+    <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
+      <div style={{ width: '20%', backgroundColor: '#f0f0f0', padding: '20px' }}>
+        <SideBar />
+      </div>
+      <div style={{ width: '80%', padding: '20px', overflowY: 'auto' }}>
+        <h1>Lista de Empleadores Work And Travel</h1>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          {products.map(product => (
+            <Link key={product.id} to={product.route} style={{ flex: '1 1 calc(33.333% - 20px)', boxSizing: 'border-box', textAlign: 'center' }}>
+              <img src={product.image} alt={product.name} style={{ maxWidth: '100%', height: 'auto' }} />
+              <h2 style={{ marginTop: '10px', fontSize: '1.2em' }}>{product.name}</h2>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

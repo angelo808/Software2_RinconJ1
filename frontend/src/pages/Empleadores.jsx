@@ -5,7 +5,10 @@ import aspenMeadows from "../assets/logosEmpleadores/aspenMeadows.jpg";
 import cafeRio from "../assets/logosEmpleadores/cafeRio.png";
 import crystalMountain from "../assets/logosEmpleadores/crystalMountain.png";
 import montageBigsky from "../assets/logosEmpleadores/montageBigsky.png";
+import SideBar from '../components/SideBar';
+
 import '../styles/empleadores.css';
+
 
 const productDetails = {
     1: { 
@@ -219,6 +222,11 @@ const Product = () => {
   const trabajos = puestosDisponibles[id]
 
   return (
+    <div style={{ display: 'flex', height: '100vh', width: '100%'}}>
+      <div style={{ width: '20%', backgroundColor: '#f0f0f0', padding: '20px' }}>
+        <SideBar />
+      </div>
+    
     <div className="product-container">
       <div className="product-header">
         <img src={product.image} alt={product.name} className="product-image"/>
@@ -273,6 +281,7 @@ const Product = () => {
 
         </div>
       </div>
+    </div>
     </div>
   );
 }

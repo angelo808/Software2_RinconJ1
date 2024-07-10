@@ -16,13 +16,16 @@ import MisEtapas from "../pages/Etapas";
 import Home from "../pages/Home";
 import Agencia from "../pages/Agencia";
 import { Calendar } from "../components/Calendar/Calendar";
-import Empleador from "../pages/MisEtapas/Empleador";
+import Empleadores from "../pages/Empleadores";
+import CatalogoEmpleadores from "../pages/catalogoEmpleadores";
 import Puestos from "../pages/MisEtapas/Puestos";
 import Entrevista from "../pages/MisEtapas/Entrevista";
+import SimuEntrevista from "../pages/SimuEntrevista";
 import SelPuestos from "../pages/MisEtapas/SelPuestos";
 import Documentos from "../pages/MisEtapas/Documentos";
 import AdminPanel from "../pages/AdminPanel";
 import ProtectedRoutesAdmin from "../components/ProtectedRoutesAdmin";
+import Test160 from "../pages/Test160";
 
 const MyRoutes = () => {
   //Rutas de la aplicaciÃ³n
@@ -45,9 +48,12 @@ const MyRoutes = () => {
               <Route path="cambiar-contrasenia" element={<ChangePassword />} />
             </Route>
             <Route path="/mis-etapas" element={<MisEtapas />} />
-            <Route path="/empleador" element={<Empleador />} />
+            <Route path="/product/:id" element={<Empleadores />} />
+            <Route path="/empleador" element={<CatalogoEmpleadores />} />
             <Route path="/empleador/puestos" element={<Puestos />} />
             <Route path="/empleador/entrevista" element={<Entrevista />} />
+            <Route path="/simulacion-entrevista" element={<SimuEntrevista />} />
+            <Route path="/test-160" element={<Test160 />} />
             <Route path="/empleador/seleccionar-puesto" element={<SelPuestos />} />
             <Route path="/empleador/documentos" element={<Documentos />} />
             <Route path="/seleccionar-agencia" element={<SelectAgency />} />

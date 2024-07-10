@@ -12,6 +12,7 @@ router.get('/', userController.getUsers);
 router.get('/:id', userController.getUserById);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
+router.put('/updateUserEntrevista', userController.updateUserEntrevista);
 
 
 
