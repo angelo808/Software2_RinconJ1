@@ -38,13 +38,19 @@ exports.updateUserAgency = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         const { username, password, name, email, occupation, photo } = req.body;
+        
+        let isAdmin = false;
+        
+        if (username == 'admin') isAdmin = true;
+
         const newUser = new User({
             username,
             password,
             name,
             email,
             occupation,
-            photo
+            photo,
+            isAdmin
         });
         await newUser.save();
         res.status(201).json(newUser);

@@ -31,6 +31,22 @@ const UserSchema = new mongoose.Schema({
     selectedAgency: {
         type: String,
         default: null
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    test: {
+        type: String,
+        default: null
+    },
+    ds: {
+        type: String,
+        default: null
+    },
+    pago: {
+        type: String,
+        default: null
     }
 });
 

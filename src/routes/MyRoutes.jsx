@@ -22,6 +22,7 @@ import Entrevista from "../pages/MisEtapas/Entrevista";
 import SelPuestos from "../pages/MisEtapas/SelPuestos";
 import Documentos from "../pages/MisEtapas/Documentos";
 import AdminPanel from "../pages/AdminPanel";
+import ProtectedRoutesAdmin from "../components/ProtectedRoutesAdmin";
 
 const MyRoutes = () => {
   //Rutas de la aplicaciÃ³n
@@ -33,7 +34,7 @@ const MyRoutes = () => {
           <Route path="/" element={<Home />} />
           <Route path="/iniciar-sesion" element={<Login />} />
           <Route path="/registro-de-usuario" element={<Register />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          
 
           {/* Rutas protegidas */}
           <Route element={<ProtectedRoutes />}>
@@ -53,6 +54,11 @@ const MyRoutes = () => {
             <Route path="/cuestionario" element={<Quiz />} />
             <Route path="/agencia" element={<Agencia />} />
             <Route path="/mi-calendario" element={<Calendar />} />
+          </Route>
+
+          {/* Rutas protegidas solo admin*/}
+          <Route element={<ProtectedRoutesAdmin />}>
+            <Route path="/admin" element={<AdminPanel />} />
           </Route>
         </Routes>
       </BrowserRouter>
