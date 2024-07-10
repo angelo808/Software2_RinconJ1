@@ -1,5 +1,8 @@
+// UserContext.js
+
 import { createContext, useState, useEffect } from "react";
-import axios from "axios"; 
+import axios from "axios";
+
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -14,7 +17,7 @@ export const UserProvider = ({ children }) => {
         }
     }, []);
 
-    const addUser = async (username, password, name, email, occupation, photo, selectedAgency) => {
+    const addUser = async (username, password, name, email, occupation, photo, selectedAgency, entrevista) => {
         try {
             const response = await axios.post('http://localhost:5001/api/users', {
                 username,
@@ -23,7 +26,8 @@ export const UserProvider = ({ children }) => {
                 email,
                 occupation,
                 photo,
-                selectedAgency
+                selectedAgency,
+                entrevista
             });
             const userData = response.data;
             setUser(userData);
@@ -33,16 +37,27 @@ export const UserProvider = ({ children }) => {
             console.error("Registration failed", error);
         }
     };
+
     const loginUser = async (username, password) => {
         try {
             const response = await axios.post('http://localhost:5001/api/users/login', { username, password });
-            console.log('Login response:', response.data); // Para depuración
+            console.log('Login response:', response.data);
             const userData = response.data;
             setUser(userData);
             setIsLoggedIn(true);
             localStorage.setItem('user', JSON.stringify(userData));
         } catch (error) {
             console.error("Login failed", error);
+        }
+    };
+
+    const updateUserEntrevista = async (userId) => {
+        try {
+            await axios.put(`http://localhost:5001/api/users/update-entrevista/${userId}`);
+            setUser(prevUser => ({ ...prevUser, entrevista: true }));
+            localStorage.setItem('user', JSON.stringify({ ...user, entrevista: true }));
+        } catch (error) {
+            console.error("Failed to update entrevista", error);
         }
     };
 
@@ -59,7 +74,8 @@ export const UserProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(updatedUser));
         }
     };
-    const updateUserAgency = async (userId,agency) => {
+
+    const updateUserAgency = async (userId, agency) => {
         if (user) {
             try {
                 const response = await axios.put('http://localhost:5001/api/users/update-agency', { userId, selectedAgency: agency });
@@ -73,7 +89,7 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, setUser, updateUserAgency }}>
+        <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista }}>
             {children}
         </UserContext.Provider>
     );

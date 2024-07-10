@@ -33,6 +33,25 @@ exports.updateUserAgency = async (req, res) => {
     }
 };
 
+exports.updateUserEntrevista = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { entrevista: true }, // Actualiza el campo entrevista a true
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {

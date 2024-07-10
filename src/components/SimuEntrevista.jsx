@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext  } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
+import axios from "axios";
+
 
 const SimuEntrevista = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+    const { updateUserEntrevista } = useContext(UserContext);
     const [responses, setResponses] = useState({
         q1: '',
         q2: '',
@@ -61,15 +65,21 @@ const SimuEntrevista = () => {
         return totalScore;
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if (Object.values(responses).some(response => response === '') || (responses.q2 === 'A' && responses.q2Detail === '')) {
             setError('Por favor responde todas las preguntas.');
         } else {
             setError('');
             const totalScore = calculateScore();
-            setScore(totalScore);
-            localStorage.setItem('hasCompletedSimuEntrevista', 'true');
+            // Llamar a updateUserEntrevista
+            try {
+                await updateUserEntrevista();
+                setScore(totalScore);
+                localStorage.setItem('hasCompletedSimuEntrevista', 'true');
+            } catch (error) {
+                console.error('Error updating entrevista:', error);
+            }
         }
     };
 

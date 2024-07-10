@@ -31,6 +31,10 @@ const UserSchema = new mongoose.Schema({
     selectedAgency: {
         type: String,
         default: null
+    },
+    entrevista: { 
+        type: Boolean, 
+        default: false 
     }
 });
 
