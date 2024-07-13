@@ -1,29 +1,42 @@
-const Comment = require('../models/commentModel');
-const Post = require('../models/PostModel');
+const Comment = require('../models/Comment');
+const Post = require('../models/Post');
 
+// Crear un nuevo comentario
 exports.createComment = async (req, res) => {
+  const { author, text, postId } = req.body;
+
   try {
-    const { author, text, postId } = req.body;
+    const postExists = await Post.findById(postId);
+    if (!postExists) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
     const newComment = new Comment({ author, text, postId });
-    await newComment.save();
-
-    // Añade el comentario al post correspondiente
-    await Post.findByIdAndUpdate(postId, { $push: { comments: newComment._id } });
-
-    res.status(201).json(newComment);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const savedComment = await newComment.save();
+    
+    res.status(201).json(savedComment);
+  } catch (err) {
+    console.error('Error creating comment:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
+// Obtener comentarios por ID de publicación
 exports.getCommentsByPostId = async (req, res) => {
+  const { postId } = req.params;
+
   try {
-    const { postId } = req.params;
     const comments = await Comment.find({ postId });
+    if (!comments) {
+      return res.status(404).json({ error: 'Comments not found' });
+    }
+
     res.status(200).json(comments);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+  } catch (err) {
+    console.error('Error fetching comments by post ID:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 

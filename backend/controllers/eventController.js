@@ -1,29 +1,61 @@
 const Event = require('../models/Event');
 
-const getEvents = async (req, res) => {
+// Obtener todos los eventos
+exports.getEvents = async (req, res) => {
+  try {
     const events = await Event.find();
-    res.send(events);
+    res.status(200).json(events);
+  } catch (err) {
+    console.error('Error fetching events:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
-const createEvent = async (req, res) => {
-    const event = new Event(req.body);
-    await event.save();
-    res.send(event);
+// Crear un nuevo evento
+exports.createEvent = async (req, res) => {
+  const { title, start, end } = req.body;
+
+  try {
+    const newEvent = new Event({ title, start, end });
+    const savedEvent = await newEvent.save();
+    res.status(201).json(savedEvent);
+  } catch (err) {
+    console.error('Error creating event:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
-const updateEvent = async (req, res) => {
-    const event = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.send(event);
+// Actualizar un evento por ID
+exports.updateEvent = async (req, res) => {
+  const { id } = req.params;
+  const { title, start, end } = req.body;
+
+  try {
+    const updatedEvent = await Event.findByIdAndUpdate(id, { title, start, end }, { new: true });
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+    res.status(200).json(updatedEvent);
+  } catch (err) {
+    console.error('Error updating event:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
-const deleteEvent = async (req, res) => {
-    await Event.findByIdAndDelete(req.params.id);
-    res.send({ message: 'Event deleted' });
+// Eliminar un evento por ID
+exports.deleteEvent = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedEvent = await Event.findByIdAndDelete(id);
+    if (!deletedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+    res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting event:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
-module.exports = {
-    getEvents,
-    createEvent,
-    updateEvent,
-    deleteEvent
-};
+

@@ -33,25 +33,6 @@ exports.updateUserAgency = async (req, res) => {
     }
 };
 
-exports.updateUserEntrevista = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const user = await User.findByIdAndUpdate(
-            userId,
-            { entrevista: true }, // Actualiza el campo entrevista a true
-            { new: true }
-        );
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
 
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
@@ -125,3 +106,43 @@ exports.deleteUser = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
+
+exports.updateUserEntrevista = async (req, res) => {
+  try {
+      const { userId } = req.params;
+      const user = await User.findByIdAndUpdate(
+          userId,
+          { entrevista: true }, // Actualiza el campo entrevista a true
+          { new: true }
+      );
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json(user);
+  } catch (err) {
+      res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateUserPhoto = async (req, res) => {
+    const { userId } = req.params;
+    const { photo } = req.body;
+  
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { photo }, 
+        { new: true } 
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
