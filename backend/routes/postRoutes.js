@@ -4,7 +4,7 @@ const postController = require('../controllers/postController');
 
 // Rutas para publicaciones
 router.get('/filter/:agency', postController.getPosts);
-router.post('/', postController.createPost[0],postController.createPost[1]);
+router.post('/', postController.uploadImg, postController.createPost);
 router.get('/:id', postController.getPostById);
 router.put('/:id', postController.updatePost);
 router.post('/:id/comment', postController.uploadComment);

@@ -33,12 +33,15 @@ const Forum = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
-    if (newPostImage) formData.append('image', newPostImage);
     formData.append('agency', user.selectedAgency);
+  
+    if (newPostImage) {
+      formData.append('image', newPostImage);
+    }
   
     try {
       const response = await axios.post(
-        `http://localhost:5001/api/posts`,
+        'http://localhost:5001/api/posts',
         formData,
         {
           headers: {
@@ -46,14 +49,15 @@ const Forum = () => {
           }
         }
       );
-      console.log(response.data)
+
+      console.log(response.data);
       setNewPostOpen(false);
       setNewPostTitle("");
       setNewPostContent("");
       setNewPostImage(null);
       setPosts((prevPosts) => [...prevPosts, response.data]);
     } catch (error) {
-      console.error('Error al actualizar la foto:', error);
+      console.error('Error al crear el post:', error);
     }
   };
 

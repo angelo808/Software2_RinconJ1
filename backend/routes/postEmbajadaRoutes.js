@@ -4,7 +4,7 @@ const postEmbajadaController = require('../controllers/postEmbajadaController');
 
 // Rutas para publicaciones
 router.get('/filter/:employer', postEmbajadaController.getPosts);
-router.post('/', postEmbajadaController.createPost[0],postEmbajadaController.createPost[1]);
+router.post('/', postEmbajadaController.uploadImg, postEmbajadaController.createPost);
 router.get('/:id', postEmbajadaController.getPostById);
 router.put('/:id', postEmbajadaController.updatePost);
 router.post('/:id/comment', postEmbajadaController.uploadComment);

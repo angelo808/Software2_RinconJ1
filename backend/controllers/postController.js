@@ -114,28 +114,37 @@ exports.reportComment = async (req, res) => {
   }
 };
 
+exports.uploadImg = upload.single('image');
+
 // Crear un nuevo post
-exports.createPost = [
-  upload.single('image'),
-  async (req, res) => {
-    const { title, content, author, agency } = req.body;
-    console.log(req.body);
-    if (!title || !content || !author || !agency) {
-      return res.status(400).json({ error: 'All required fields must be filled' });
+exports.createPost = async (req, res) => {
+  const { title, content, author, agency } = req.body;
+  console.log(req.body);
+  if (!title || !content || !author || !agency) {
+    return res.status(400).json({ error: 'All required fields must be filled' });
+  }
+
+  try {
+    let url = null;
+    if (req.file) {
+      url = `http://localhost:5001/media/postImg/${req.file.filename}`;
     }
 
-    try {
+    const newPost = new Post({ 
+      title, 
+      content, 
+      author, 
+      image: url, 
+      agency 
+    });
 
-      const url = `http://localhost:5001/media/postImg/${req.file.filename}`;
-
-      const newPost = new Post({ title, content, author, image: url, agency });
-      const savedPost = await newPost.save();
-      res.status(201).json(savedPost);
-    } catch (err) {
-      console.error('Error creating post:', err.message);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }]; 
+    const savedPost = await newPost.save();
+    res.status(201).json(savedPost);
+  } catch (err) {
+    console.error('Error creating post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}; 
 
 // Obtener un post por ID
 exports.getPostById = async (req, res) => {

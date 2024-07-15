@@ -34,12 +34,14 @@ const ForumEmbajada = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
-    formData.append('image', newPostImage);
-    formData.append('employer', user.employer);
+  
+    if (newPostImage) {
+      formData.append('image', newPostImage);
+    }
   
     try {
       const response = await axios.post(
-        `http://localhost:5001/api/postsEmbajada`,
+        'http://localhost:5001/api/postsEmbajada',
         formData,
         {
           headers: {
@@ -47,14 +49,15 @@ const ForumEmbajada = () => {
           }
         }
       );
-      console.log(response.data)
+
+      console.log(response.data);
       setNewPostOpen(false);
       setNewPostTitle("");
       setNewPostContent("");
       setNewPostImage(null);
       setPosts((prevPosts) => [...prevPosts, response.data]);
     } catch (error) {
-      console.error('Error al actualizar la foto:', error);
+      console.error('Error al crear el post:', error);
     }
   };
 

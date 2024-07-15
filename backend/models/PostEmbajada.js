@@ -46,11 +46,6 @@ const postEmbajadaSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  employer: {
-    type: String,
-    required: [true, 'Employer is required'],
-    trim: true,
-  },
   reactions: [{
     user: {
       type: String,

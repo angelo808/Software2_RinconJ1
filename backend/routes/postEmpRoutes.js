@@ -4,7 +4,7 @@ const postEmpController = require('../controllers/postEmpController');
 
 // Rutas para publicaciones
 router.get('/filter/:employer', postEmpController.getPosts);
-router.post('/', postEmpController.createPost[0],postEmpController.createPost[1]);
+router.post('/', postEmpController.uploadImg, postEmpController.createPost);
 router.get('/:id', postEmpController.getPostById);
 router.put('/:id', postEmpController.updatePost);
 router.post('/:id/comment', postEmpController.uploadComment);

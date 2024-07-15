@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
-import Post from "./Post";
 import { Container, TextField, Button, Box, Divider, Modal, Typography } from "@mui/material";
 import axios from "axios";
 import { API_URL } from "../../constants";
@@ -34,12 +33,17 @@ const ForumEmp = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
-    formData.append('image', newPostImage);
     formData.append('employer', user.employer);
+    console.log(formData)
+  
+    if (newPostImage) {
+      formData.append('image', newPostImage);
+    }
+    
   
     try {
       const response = await axios.post(
-        `http://localhost:5001/api/postsEmp`,
+        'http://localhost:5001/api/postsEmp',
         formData,
         {
           headers: {
@@ -47,14 +51,15 @@ const ForumEmp = () => {
           }
         }
       );
-      console.log(response.data)
+
+      console.log(response.data);
       setNewPostOpen(false);
       setNewPostTitle("");
       setNewPostContent("");
       setNewPostImage(null);
       setPosts((prevPosts) => [...prevPosts, response.data]);
     } catch (error) {
-      console.error('Error al actualizar la foto:', error);
+      console.error('Error al crear el post:', error);
     }
   };
 
