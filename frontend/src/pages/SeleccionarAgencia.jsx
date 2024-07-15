@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosBase from '../axios/axiosBase';
+import { UserContext } from '../context/UserContext';
 
 const SeleccionarAgencia = () => {
   const [selectedAgency, setSelectedAgency] = useState('');
+  const { user, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSelection = (e) => {
@@ -14,10 +16,9 @@ const SeleccionarAgencia = () => {
     e.preventDefault();
     if (selectedAgency) {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
         const response = await axiosBase.put('/users/update-agency', { userId: user._id, selectedAgency });
         const updatedUser = response.data;
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        updateUser(updatedUser)
         navigate('/mis-foros');
       } catch (error) {
         console.error('Error updating user:', error);

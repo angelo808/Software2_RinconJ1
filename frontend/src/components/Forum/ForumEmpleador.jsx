@@ -12,6 +12,7 @@ const ForumEmp = () => {
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostImage, setNewPostImage] = useState(null);
+  const [urlPostImage, setURLPostImage] = useState(null);
   const [query, setQuery] = useState('');
 
   const fetchPosts = async () => {
@@ -66,6 +67,7 @@ const ForumEmp = () => {
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setNewPostImage(e.target.files[0]);
+      setURLPostImage(URL.createObjectURL(e.target.files[0]))
     }
   };
 
@@ -156,7 +158,7 @@ const ForumEmp = () => {
           {newPostImage && (
             <Box mt={2}>
               <img
-                src={newPostImage}
+                src={urlPostImage}
                 alt="Preview"
                 style={{
                   maxWidth: "100%",
