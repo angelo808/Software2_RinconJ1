@@ -44,7 +44,7 @@ const Forum = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
-    formData.append('agency', user.selectedAgency);
+    formData.append('agency', agency);
   
     if (newPostImage) {
       formData.append('image', newPostImage);

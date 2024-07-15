@@ -44,7 +44,7 @@ const ForumEmp = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
-    formData.append('employer', user.employer);
+    formData.append('employer', employer);
     console.log(formData)
   
     if (newPostImage) {
