@@ -20,6 +20,9 @@ exports.createCalendarEvent = async (req, res) => {
     const savedEvent = await newEvent.save();
 
     // Programar el envío de correo electrónico
+    const subject = 'Notificación de Evento Creado';
+    const text = `Hola, acabas de crear un evento llamado "${savedEvent.name}" programado para el día ${savedEvent.date} desde las ${savedEvent.startHour} hasta las ${savedEvent.endHour}.`;
+    sendEmail(savedEvent.email, subject, text)
     scheduleEmail(savedEvent);
 
     res.status(201).json(savedEvent);
@@ -57,6 +60,10 @@ exports.updateCalendarEvent = async (req, res) => {
       return res.status(404).json({ error: 'Calendar event not found' });
     }
 
+    const subject = 'Notificación de Evento Actualizado';
+    const text = `Hola, acabas de actualizar un evento llamado "${updatedEvent.name}" programado para el día ${updatedEvent.date} desde las ${updatedEvent.startHour} hasta las ${updatedEvent.endHour}.`;
+    sendEmail(updatedEvent.email, subject, text);
+
     res.status(200).json(updatedEvent);
   } catch (err) {
     console.error('Error updating calendar event:', err.message);
@@ -83,10 +90,10 @@ exports.deleteCalendarEvent = async (req, res) => {
 
 // Obtener eventos de calendario por ID de usuario
 exports.getEventsByUserId = async (req, res) => {
-  const { userId } = req.query;
+  const { userId } = req.params;
 
   try {
-    const events = await CalendarEvent.find({ userId }).populate('userId', 'name email');
+    const events = await CalendarEvent.find({ userId });
     res.status(200).json(events);
   } catch (err) {
     console.error('Error fetching calendar events by user ID:', err.message);
