@@ -2,10 +2,11 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import SideBar from '../components/SideBar';
+import axios from 'axios';
 
 const SimuEntrevista = () => {
     const navigate = useNavigate();
-    const { updateUserEntrevista } = useContext(UserContext);
+    const { user, updateUserEntrevista } = useContext(UserContext);
     const [responses, setResponses] = useState({
         q1: '',
         q2: '',
@@ -66,21 +67,60 @@ const SimuEntrevista = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (Object.values(responses).some(response => response === '') || (responses.q2 === 'A' && responses.q2Detail === '')) {
-            setError('Por favor responde todas las preguntas.');
+        if (
+            (responses.q2 === 'A' && responses.q2Detail === '') ||
+            Object.entries(responses).some(([key, value]) => value === '' && key !== 'q2Detail')
+        ) {
+            setError('Por favor responde todas las preguntas. Si seleccionaste "A" en la pregunta 2, debes proporcionar detalles.');
         } else {
             setError('');
             const totalScore = calculateScore();
             // Llamar a updateUserEntrevista
             try {
-                await updateUserEntrevista();
+                await updateUserEntrevista(user._id)
                 setScore(totalScore);
-                localStorage.setItem('hasCompletedSimuEntrevista', 'true');
+                localStorage.setItem('hasCompletedEntrevista', 'true');
             } catch (error) {
                 console.error('Error updating entrevista:', error);
             }
         }
     };
+
+    // Función para generar el contenido del archivo
+    function generateTextContent(responses) {
+        let content = '';
+        for (const [key, value] of Object.entries(responses)) {
+        content += `${key}: ${value}\n`;
+        }
+        content += `Puntaje: ${score}\n`
+        return content;
+    }
+    
+    // Función para descargar el archivo
+    function downloadResponses(responses) {
+        const content = generateTextContent(responses);
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'respuestas_entrevista.txt';
+        
+        document.body.appendChild(link);
+        link.click();
+        
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+    
+    // Componente de botón de descarga
+    function DownloadButton({ responses }) {
+        return (
+        <button onClick={() => downloadResponses(responses)}>
+            <u>Descargar Respuestas</u>
+        </button>
+        );
+    }
 
     return (
         <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
@@ -233,6 +273,7 @@ const SimuEntrevista = () => {
                     {score !== null && (
                         <div className="mt-4">
                             <p className="text-xl font-bold">Tu puntaje es: {score}</p>
+                            <DownloadButton responses={responses} />
                         </div>
                     )}
                 </div>

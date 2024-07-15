@@ -35,6 +35,10 @@ const UserSchema = new mongoose.Schema({
         type: Boolean, 
         default: false 
     },
+    pruebads: { 
+        type: Boolean, 
+        default: false 
+    },
     isAdmin: {
         type: Boolean,
         default: false
@@ -60,6 +64,10 @@ const UserSchema = new mongoose.Schema({
             approved: {
                 type: Boolean,
                 default: false
+            },
+            feedback: {
+                type: String,
+                default: null
             }
         },
         payment: {
@@ -70,6 +78,10 @@ const UserSchema = new mongoose.Schema({
             approved: {
                 type: Boolean,
                 default: false
+            },
+            feedback: {
+                type: String,
+                default: null
             }
         },
         passport: {
@@ -80,6 +92,10 @@ const UserSchema = new mongoose.Schema({
             approved: {
                 type: Boolean,
                 default: false
+            },
+            feedback: {
+                type: String,
+                default: null
             }
         },
     }

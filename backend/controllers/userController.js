@@ -244,7 +244,7 @@ exports.updateDocument = [
     }
 ]
 
-// Actualizar perfil
+// Actualizar Docs
 exports.updateApproval = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -261,6 +261,32 @@ exports.updateApproval = async (req, res) => {
             user.documents.passport.approved = !user.documents.passport.approved;
         } else if (type == 'PAGO') {
             user.documents.payment.approved = !user.documents.payment.approved;
+        }
+        await user.save();
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+// Actualizar feedback en docs
+exports.updateFeedback = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const type = req.query.type;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        if (type == 'DS-160') {
+            user.documents.ds160.feedback = req.body.feedback;
+        } else if (type == 'PASAPORTE') {
+            user.documents.passport.feedback = req.body.feedback;
+        } else if (type == 'PAGO') {
+            user.documents.payment.feedback = req.body.feedback;
         }
         await user.save();
 
@@ -304,9 +330,9 @@ exports.deleteUser = async (req, res) => {
 
 exports.updateUserEntrevista = async (req, res) => {
   try {
-      const { userId } = req.params;
+      const { id } = req.params;
       const user = await User.findByIdAndUpdate(
-          userId,
+          id,
           { entrevista: true }, // Actualiza el campo entrevista a true
           { new: true }
       );
@@ -320,3 +346,22 @@ exports.updateUserEntrevista = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 };
+
+exports.updateUserDsTest = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByIdAndUpdate(
+            id,
+            { pruebads: true }, // Actualiza el campo pruebads a true
+            { new: true }
+        );
+  
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+  
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+  };

@@ -41,9 +41,19 @@ export const UserProvider = ({ children }) => {
 
   const updateUserEntrevista = async (userId) => {
     try {
-        await axiosBase.put(`http://localhost:5001/api/users/update-entrevista/${userId}`);
-        setUser(prevUser => ({ ...prevUser, entrevista: true }));
-        localStorage.setItem('user', JSON.stringify({ ...user, entrevista: true }));
+        const response = await axiosBase.put(`http://localhost:5001/api/users/update-entrevista/${userId}`);
+        setUser(response.data);
+        localStorage.setItem('user', JSON.stringify(response.data));
+    } catch (error) {
+        console.error("Failed to update entrevista", error);
+    }
+  };
+
+  const updateUserDsTest = async (userId) => {
+    try {
+        const response = await axiosBase.put(`http://localhost:5001/api/users/update-dstest/${userId}`);
+        setUser(response.data);
+        localStorage.setItem('user', JSON.stringify(response.data));
     } catch (error) {
         console.error("Failed to update entrevista", error);
     }
@@ -93,7 +103,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista, updateUserProfile, updateUser }}>
+    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista, updateUserProfile, updateUser, updateUserDsTest }}>
       {children}
     </UserContext.Provider>
   );

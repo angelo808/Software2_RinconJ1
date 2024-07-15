@@ -13,13 +13,14 @@ import {
   TextField,
 } from "@mui/material";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import axiosBase from "../../axios/axiosBase";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { UserContext } from "../../context/UserContext";
 
 const colorConfigs = {
   busySchedule: "#fbbf24",
@@ -28,7 +29,7 @@ const colorConfigs = {
   freeScheduleTitle: "#3b82f6",
 };
 
-const userId = JSON.parse(localStorage.getItem("user") || {"_id":"6657560e2a62a32ce5be74a8"})._id
+// const userId = JSON.parse(localStorage.getItem("user") || {"_id":"6657560e2a62a32ce5be74a8"})._id
 
 const formatDate = (date) => date.format("YYYY-MM-DD");
 const formatTime = (date) => date.format("YYYY-MM-DD HH:mm");
@@ -46,6 +47,7 @@ const handleDelete = async (deleteId) => {
 
 const PanelRegistro = ({ scheduler }) => {
   const event = scheduler?.edited;
+  const { user } = useContext(UserContext);
   const [fecha, setFecha] = useState(dayjs(scheduler?.state?.start?.value));
   const [horaIni, setHoraIni] = useState(dayjs(scheduler?.state?.start?.value));
   const [horaFin, setHoraFin] = useState(dayjs(scheduler?.state?.end?.value));
@@ -85,7 +87,7 @@ const PanelRegistro = ({ scheduler }) => {
       endHour: new Date(formatTime(datosEvento.hora_fin)), 
       type: datosEvento.tipo,
       email: datosEvento.email,
-      userId: userId, // Parse user ID from localStorage
+      userId: user._id, // Parse user ID from localStorage
     };
 
     try {
@@ -144,7 +146,7 @@ const PanelRegistro = ({ scheduler }) => {
         hora_fin: horaFin,
         tipo: type,
         email: state.email,
-        userId: userId,
+        userId: user._id,
       };
 
       const added_updated_event = await handleSaveAvailability(event ? "edit" : "create", datosEvento);
@@ -273,12 +275,13 @@ const PanelRegistro = ({ scheduler }) => {
 export const Calendar = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useContext(UserContext);
   
 
   
   useEffect(() => {
     setLoading(true)
-    axiosBase.get(`/events/user/${userId}`).then((response) => {
+    axiosBase.get(`/events/user/${user._id}`).then((response) => {
       console.log(response.data);
       setEvents(response.data.map((d)=> (
         {

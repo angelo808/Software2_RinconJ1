@@ -6,7 +6,7 @@ import axios from "axios";
 
 const Test160 = () => {
     const navigate = useNavigate()
-    const { updateUserEntrevista } = useContext(UserContext);
+    const { user, updateUserDsTest } = useContext(UserContext);
     const [responses, setResponses] = useState({
         q1: '',
         q2: '',
@@ -67,21 +67,60 @@ const Test160 = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (Object.values(responses).some(response => response === '') || (responses.q2 === 'A' && responses.q2Detail === '')) {
-            setError('Por favor responde todas las preguntas.');
+        if (
+            (responses.q2 === 'A' && responses.q2Detail === '') ||
+            Object.entries(responses).some(([key, value]) => value === '' && key !== 'q2Detail')
+        ) {
+            setError('Por favor responde todas las preguntas. Si seleccionaste "A" en la pregunta 2, debes proporcionar detalles.');
         } else {
             setError('');
             const totalScore = calculateScore();
             // Llamar a updateUserEntrevista
             try {
-                await updateUserEntrevista();
+                await updateUserDsTest(user._id)
                 setScore(totalScore);
                 localStorage.setItem('hasCompletedTest160', 'true');
             } catch (error) {
-                console.error('Error updating entrevista:', error);
+                console.error('Error updating pruebads:', error);
             }
         }
     };
+
+    // Función para generar el contenido del archivo
+    function generateTextContent(responses) {
+        let content = '';
+        for (const [key, value] of Object.entries(responses)) {
+        content += `${key}: ${value}\n`;
+        }
+        content += `Puntaje: ${score}\n`
+        return content;
+    }
+    
+    // Función para descargar el archivo
+    function downloadResponses(responses) {
+        const content = generateTextContent(responses);
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'respuestas_test160.txt';
+        
+        document.body.appendChild(link);
+        link.click();
+        
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+    
+    // Componente de botón de descarga
+    function DownloadButton({ responses }) {
+        return (
+        <button onClick={() => downloadResponses(responses)}>
+            <u>Descargar Respuestas</u>
+        </button>
+        );
+    }
 
     return (
         <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
@@ -231,6 +270,7 @@ const Test160 = () => {
             {score !== null && (
                 <div className="mt-4">
                     <p className="text-xl font-bold">Tu puntaje es: {score}</p>
+                    <DownloadButton responses={responses} />
                 </div>
             )}
         </div>

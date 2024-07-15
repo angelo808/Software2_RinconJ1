@@ -1,8 +1,108 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Typography,
+  TextField,
+  Modal
+} from "@mui/material";
+import { UserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const HomeUser = () => {
+  const { user, removeUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const [notification, setNotification] = useState(false)
+  const [textNotificacion, setTextNotificacion] = useState('')
+  const [tipoNotificacion, setTipoNotificacion] = useState(null)
+
+  useEffect(()=>{
+    fetchDatos()
+
+    if (!user.isAdmin) {
+      if (user.blocked == true) {
+        setNotification(true);
+        setTextNotificacion('Has sido bloqueado');
+      } else if (tipoNotificacion == 'PAGO') {
+        setNotification(true);
+        setTextNotificacion('Acuérdate que en tu calendario colocaste hoy como fecha de pago.');
+      } else if (tipoNotificacion == 'SIMULACIÓN') {
+        setNotification(true);
+        setTextNotificacion('Puedes realizar la simulación de entrevista.');
+      } else if (tipoNotificacion == 'DS-160') {
+        setNotification(true);
+        setTextNotificacion('Puedes realizar la prueba del DS-160.');
+      }
+    } 
+  }, [tipoNotificacion])
+
+  const fetchDatos = async () => {
+    const responseCalendar = await axios.get(`http://localhost:5001/api/events/user/${user._id}`)
+    const filteredEvents = responseCalendar.data.filter(event => event.type === 'Pago');
+    let isToday = false;
+    if (filteredEvents.length != 0) {
+      const date = new Date(filteredEvents[0].date);
+      const today = new Date();   
+
+      isToday = date.getUTCFullYear() === today.getUTCFullYear() && date.getUTCMonth() === today.getUTCMonth() && date.getUTCDate() === today.getUTCDate();
+    }
+
+    if (isToday) {
+      setTipoNotificacion('PAGO')
+    } else if (!user.entrevista) {
+      setTipoNotificacion('SIMULACIÓN')
+    } else if (!user.pruebads) {
+      setTipoNotificacion('DS-160')
+    }
+  }
+
+  const validarNotificaciones = () => {
+    if (user.blocked == true) {
+      setNotification(false)
+      removeUser()
+      navigate("/");
+    } else {
+      setNotification(false)
+    }
+    
+  }
+
   return (
     <div className="container m-auto p-4">
+      <Modal
+        open={notification}
+        onClose={() => setNotification(false)}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            bgcolor: "#F6F4F3",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            backgroundColor: "#F6F4F3",
+          }}
+        >
+          <div className="flex justify-between">
+            <Typography id="modal-title" variant="h4" component="h1">
+              Notificación
+            </Typography>
+            <Button color="error" onClick={() => validarNotificaciones()}>
+            <svg xmlns="http://www.w3.org/2000/svg" className='h-4 w-4' viewBox="0 0 24 24"><path fill="currentColor" d="m12 13.4l2.9 2.9q.275.275.7.275t.7-.275t.275-.7t-.275-.7L13.4 12l2.9-2.9q.275-.275.275-.7t-.275-.7t-.7-.275t-.7.275L12 10.6L9.1 7.7q-.275-.275-.7-.275t-.7.275t-.275.7t.275.7l2.9 2.9l-2.9 2.9q-.275.275-.275.7t.275.7t.7.275t.7-.275zm0 8.6q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"></path></svg>
+            </Button>
+          </div>
+          <Typography id="modal-description" variant="h6" component="h3" mb={2} mt={2}>
+            {textNotificacion}
+          </Typography>
+        </Box>
+      </Modal>
       <h1 className='text-4xl text-center mb-8'>Información del programa de Work and Travel</h1>
       <div className="agency-list">
         <div className="content-container">
