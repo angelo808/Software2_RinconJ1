@@ -14,6 +14,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Configurar multer para guardar archivos
+const storageDocuments = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'media/documents/') // Asegúrate de que esta carpeta exista
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)) // Genera un nombre único
+    }
+});
+
+const uploadDocuments = multer({ storage: storageDocuments });
+
 
 
 // Método para iniciar sesión
@@ -182,7 +194,6 @@ exports.updatePhoto = [
                 return res.status(404).json({ error: 'User not found' });
             }
 
-            // Aquí es donde actualizas la contraseña sin bcrypt
             if (req.file) {
                 // Construir la URL de la imagen
                 const imageUrl = `http://localhost:5001/media/userImg/${req.file.filename}`;
@@ -197,7 +208,86 @@ exports.updatePhoto = [
             res.status(400).json({ error: err.message });
         }
     }
-],
+]
+
+//Actualizar documentos
+exports.updateDocument = [
+    uploadDocuments.single('document'),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.params.id);
+            const doctype = req.query.doc;
+
+            console.log(doctype);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            if (req.file) {
+                // Construir la URL del doc
+                const docUrl = `http://localhost:5001/media/documents/${req.file.filename}`;
+                
+                if (doctype == 'DS-160') {
+                    user.documents.ds160.url = docUrl;
+                } else if (doctype == 'PASAPORTE') {
+                    user.documents.passport.url = docUrl;
+                } else if (doctype == 'PAGO') {
+                    user.documents.payment.url = docUrl;
+                }
+
+                const newUser = await user.save();
+                res.status(200).json(newUser);
+            }
+        } catch (err) {
+            res.status(400).json({ error: err.message });
+        }
+    }
+]
+
+// Actualizar perfil
+exports.updateApproval = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const type = req.query.type;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        if (type == 'DS-160') {
+            user.documents.ds160.approved = !user.documents.ds160.approved;
+        } else if (type == 'PASAPORTE') {
+            user.documents.passport.approved = !user.documents.passport.approved;
+        } else if (type == 'PAGO') {
+            user.documents.payment.approved = !user.documents.payment.approved;
+        }
+        await user.save();
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+// Bloquear o desbloquear usuario
+exports.updateBlock = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        user.blocked = !user.blocked
+        await user.save();
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
 
 // Eliminar un usuario
 exports.deleteUser = async (req, res) => {

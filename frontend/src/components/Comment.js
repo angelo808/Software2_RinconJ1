@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import PropTypes from "prop-types";
+import { UserContext } from "../context/UserContext";
+import axios from "axios";
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, type }) => {
+  const { user } = useContext(UserContext);
   if (!comment || !comment.author) {
     return null; // Retorna null si comment o comment.author no están definidos
+  }
+  const reportComment = async () => {
+    if (type == 'AGENCY') {
+      const response = await axios.put(`http://localhost:5001/api/posts/${comment._id}/comment/report`)
+      console.log(response.data)
+      alert('Comentario reportado')
+    } else if (type == 'EMPLOYER') {
+      const response = await axios.put(`http://localhost:5001/api/postsEmp/${comment._id}/comment/report`)
+      console.log(response.data)
+      alert('Comentario reportado')
+    }
   }
 
   return (
@@ -33,6 +47,10 @@ const Comment = ({ comment }) => {
                 <strong>{comment.author}</strong>
               </Typography>
               <Typography variant="body2">{comment.text}</Typography>
+              <button className="flex" onClick={()=>reportComment()}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 my-2 text-red-500" viewBox="0 0 24 24"><path fill="currentColor" d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27zM19 14.9L14.9 19H9.1L5 14.9V9.1L9.1 5h5.8L19 9.1z"></path><circle cx="12" cy="16" r="1" fill="currentColor"></circle><path fill="currentColor" d="M11 7h2v7h-2z"></path></svg>
+                <p className="my-auto text-red-500">Reportar</p>
+              </button>
             </Box>
           </Box>
         </CardContent>

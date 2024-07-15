@@ -73,6 +73,12 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (newUser) => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(newUser));
+    }
+  };
+
   const updateUserAgency = async (userId, agency) => {
     if (user) {
       try {
@@ -87,7 +93,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista, updateUserProfile }}>
+    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista, updateUserProfile, updateUser }}>
       {children}
     </UserContext.Provider>
   );

@@ -46,6 +46,42 @@ const UserSchema = new mongoose.Schema({
     job: {
         type: String,
         default: null
+    },
+    blocked: {
+        type: Boolean,
+        default: false
+    },
+    documents: {
+        ds160: {
+            url: {
+                type: String,
+                default: null
+            },
+            approved: {
+                type: Boolean,
+                default: false
+            }
+        },
+        payment: {
+            url: {
+                type: String,
+                default: null
+            },
+            approved: {
+                type: Boolean,
+                default: false
+            }
+        },
+        passport: {
+            url: {
+                type: String,
+                default: null
+            },
+            approved: {
+                type: Boolean,
+                default: false
+            }
+        },
     }
 });
 

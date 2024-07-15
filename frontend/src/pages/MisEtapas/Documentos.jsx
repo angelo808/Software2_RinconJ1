@@ -1,28 +1,66 @@
 // src/pages/Stages.jsx
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import pos1 from '../../assets/pos1.jpg'
 import pos2 from '../../assets/pos2.jpg'
 import SideBar from '../../components/SideBar';
+import axios from 'axios';
+import { UserContext } from '../../context/UserContext';
 
 const Documentos = () => {
-    const isCheckedPassport = true;
-    const isCheckedPayment = false;
-    const isCheckedDS = true;
+    const { user, updateUser } = useContext(UserContext);
+    const [passport, setPassport] = useState(user.documents?.passport.url || null);
+    const [payment, setPayment] = useState(user.documents?.payment.url || null);
+    const [ds160, setDs160] = useState(user.documents?.ds160.url || null);
+    const isCheckedPassport = user.documents?.passport.approved || false;
+    const isCheckedPayment = user.documents?.payment.approved || false;
+    const isCheckedDS = user.documents?.ds160.approved || false;
 
 
-    const handleFileUpload = (event, tipo) => {
+    const handleFileUpload = async (event, tipo) => {
+        const formData = new FormData();
         const file = event.target.files[0];
+        formData.append('document', file);
 
-        if (tipo == 'DS-160' && file.type == 'application/pdf') {
-            console.log('Documento DS-160 subido correctamente');
-            return 'DS-160 Subido';
-        } else if ((tipo == 'PAGO' || tipo == 'PASAPORTE') && (file.type.includes('image') || file.type.includes('pdf'))) {
-            console.log(`Documento ${tipo} subido correctamente`);
-            return `${tipo} Subido`;
-        } else {
-            console.log('Ingrese formato adecuado')
-            return 'Ingrese formato adecuado'
-        }
+        try {
+            if (tipo == 'DS-160' && file.type == 'application/pdf') {
+                const response = await axios.post(
+                    `http://localhost:5001/api/users/${user._id}/document?doc=${tipo}`,
+                    formData,
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                    }
+                );
+                
+                updateUser(response.data)
+                alert('Documento DS-160 subido correctamente');
+            } else if ((tipo == 'PAGO' || tipo == 'PASAPORTE') && (file.type.includes('image') || file.type.includes('pdf'))) {
+                const response = await axios.post(
+                    `http://localhost:5001/api/users/${user._id}/document?doc=${tipo}`,
+                    formData,
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                    }
+                );
+                
+                updateUser(response.data);
+                setPassport(response.data.documents.passport.url);
+                setPayment(response.data.documents.payment.url);
+                setDs160(response.data.documents.ds160.url);
+                console.log(response.data.documents.passport.url)
+                alert(`Documento ${tipo} subido correctamente`);
+            } else {
+                alert('Ingrese formato adecuado')
+                return 'Ingrese formato adecuado'
+            }
+            
+          } catch (error) {
+            console.error('Error al enviar documento:', error);
+          }
+        
     }
 
     const CheckBox = ({isChecked}) => {
@@ -47,14 +85,20 @@ const Documentos = () => {
                     <p className='my-auto font-semibold'>Pasaporte</p>
                     <input
                         type="file"
-                        accept="image/*"
                         style={{ display: 'none' }}
                         onChange={(e)=>handleFileUpload(e, 'PASAPORTE')}
                         id="file-upload" 
                     />
-                    <label htmlFor="file-upload" className="w-32 h-10 my-auto py-2 text-center text-white bg-[#D1C8C1] rounded-lg text-sm focus:outline-none font-bold cursor-pointer">
-                        Subir archivo
-                    </label>
+                    {
+                        passport ?
+                        <label className="w-32 h-10 my-auto py-2 text-center text-white bg-[#D1C8C1] rounded-lg text-sm focus:outline-none font-bold">
+                            Archivo enviado
+                        </label>
+                        :
+                        <label htmlFor="file-upload" className="w-32 h-10 my-auto py-2 text-center text-white bg-marron rounded-lg text-sm focus:outline-none font-bold cursor-pointer">
+                            Subir archivo
+                        </label> 
+                    }
                     <CheckBox isChecked={isCheckedPassport}/>
                 </div>
                 <div className='grid-cols-4 grid'>
@@ -62,14 +106,21 @@ const Documentos = () => {
                     <p className='my-auto font-semibold'>Pago 1</p>
                     <input
                         type="file"
-                        accept="image/*"
                         style={{ display: 'none' }}
                         onChange={(e)=>handleFileUpload(e, 'PAGO')}
                         id="file-upload-2" 
                     />
-                    <label htmlFor="file-upload-2" className="w-32 h-10 my-auto py-2 text-center text-white bg-[#D1C8C1] rounded-lg text-sm focus:outline-none font-bold cursor-pointer">
-                        Subir archivo
-                    </label>
+                    {
+                        payment ?
+                        <label className="w-32 h-10 my-auto py-2 text-center text-white bg-[#D1C8C1] rounded-lg text-sm focus:outline-none font-bold">
+                            Archivo enviado
+                        </label>
+                        :
+                        <label htmlFor="file-upload-2" className="w-32 h-10 my-auto py-2 text-center text-white bg-marron rounded-lg text-sm focus:outline-none font-bold cursor-pointer">
+                            Subir archivo
+                        </label> 
+                        
+                    }
                     <CheckBox isChecked={isCheckedPayment}/>
                 </div>
                 <div className='grid-cols-4 grid'>
@@ -77,14 +128,21 @@ const Documentos = () => {
                     <p className='my-auto font-semibold'>DS-160</p>
                     <input
                         type="file"
-                        accept="image/*"
                         style={{ display: 'none' }}
                         onChange={(e)=>handleFileUpload(e, 'DS-160')}
                         id="file-upload-3" 
                     />
-                    <label htmlFor="file-upload-3" className="w-32 h-10 my-auto py-2 text-center text-white bg-[#D1C8C1] rounded-lg text-sm focus:outline-none font-bold cursor-pointer">
-                        Subir archivo
-                    </label>
+                    {
+                        ds160 ?
+                        <label className="w-32 h-10 my-auto py-2 text-center text-white bg-[#D1C8C1] rounded-lg text-sm focus:outline-none font-bold">
+                            Archivo enviado
+                        </label>
+                        :
+                        <label htmlFor="file-upload-3" className="w-32 h-10 my-auto py-2 text-center text-white bg-marron  rounded-lg text-sm focus:outline-none font-bold cursor-pointer">
+                            Subir archivo
+                        </label> 
+                        
+                    }
                     <CheckBox isChecked={isCheckedDS}/>
                 </div>
             </div>

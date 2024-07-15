@@ -16,7 +16,7 @@ import axios from "axios";
 import Comment from "../Comment";
 import { UserContext } from "../../context/UserContext";
 
-const Post = ({ post, setPosts, posts }) => {
+const PostEmp = ({ post, setPosts, posts }) => {
   const {user} = useContext(UserContext);
   const [newCommentOpen, setNewCommentOpen] = useState(false);
   const [newCommentContent, setNewCommentContent] = useState("");
@@ -37,7 +37,7 @@ const Post = ({ post, setPosts, posts }) => {
     console.log(user)
     try {
       const response = await axios.post(
-        `http://localhost:5001/api/posts/${post._id}/comment`,
+        `http://localhost:5001/api/postsEmp/${post._id}/comment`,
         {author: user.name, text: newCommentContent}
       );
       setComments(response.data.comments);
@@ -93,7 +93,7 @@ const Post = ({ post, setPosts, posts }) => {
       }
       console.log(body)
 
-      const response = await axios.put(`http://localhost:5001/api/posts/${post._id}/reactions`, body);
+      const response = await axios.put(`http://localhost:5001/api/postsEmp/${post._id}/reactions`, body);
       console.log(response.data)
 
     } catch (error) {
@@ -164,7 +164,7 @@ const Post = ({ post, setPosts, posts }) => {
       </Card>
 
       {comments.map((comment) => (
-        <Comment key={comment._id} comment={comment} type={'AGENCY'}/>
+        <Comment key={comment._id} comment={comment} type={'EMPLOYER'}/>
       ))}
 
       <Modal
@@ -212,6 +212,6 @@ const Post = ({ post, setPosts, posts }) => {
   );
 };
 
-export default Post;
+export default PostEmp;
 
 

@@ -7,9 +7,7 @@ import SideBar from '../../components/SideBar';
 const SelPuestos = () => {
     const [selected, setSelected] = useState('');
     
-    useEffect(()=> {
-        
-    }, [])
+    
 
     const selectJob = (trabajo) => {
         setSelected(trabajo)

@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path')
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const postEmpRoutes = require('./routes/postEmpRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const resortRoutes = require('./routes/resortRoutes');
 const connectDB = require('./db');
@@ -22,6 +23,7 @@ app.use('/assets', express.static('src/assets'));
 // Rutas
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/postsEmp', postEmpRoutes);
 app.use('/api/resorts', resortRoutes);
 app.use('/api/events', eventRoutes);
 

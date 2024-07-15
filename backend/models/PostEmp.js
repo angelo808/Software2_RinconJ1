@@ -17,7 +17,7 @@ const commentSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const postSchema = new mongoose.Schema({
+const postEmpSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Title is required'],
@@ -46,9 +46,9 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  agency: {
+  employer: {
     type: String,
-    required: [true, 'Agency is required'],
+    required: [true, 'Employer is required'],
     trim: true,
   },
   reactions: [{
@@ -67,6 +67,6 @@ const postSchema = new mongoose.Schema({
   timestamps: true, // Automatically manage `createdAt` and `updatedAt` fields
 });
 
-const Post = mongoose.model('Post', postSchema);
-module.exports = Post;
+const PostEmp = mongoose.model('PostEmp', postEmpSchema);
+module.exports = PostEmp;
 
