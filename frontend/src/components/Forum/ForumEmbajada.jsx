@@ -19,7 +19,8 @@ const ForumEmbajada = () => {
   const fetchPosts = async () => {
     try {
       console.log(`${API_URL}/posts/${user.employer}`)
-      const postsResponse = await axios.get(`${API_URL}/postsEmbajada/filter/${user.employer}?q=${query}`);
+      const postsResponse = await axios.get(`${API_URL}/postsEmbajada/filter?q=${query}`);
+      console.log(postsResponse.data)
       setPosts(postsResponse.data);
     } catch (error) {
       console.error("Error fetching posts or user data:", error);

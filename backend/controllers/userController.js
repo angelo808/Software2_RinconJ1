@@ -66,7 +66,26 @@ exports.updateUserAgency = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         const { username, password, name, email, occupation } = req.body;
-        
+        const requiredFields = { username, password, name, email, occupation };
+        const containsNumber = (str) => /\d/.test(str);
+        const isNotEmpty = (field) => field.trim().length > 0;
+
+        const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
+
+        for (const [field, value] of Object.entries(requiredFields)) {
+            if (!isNotEmpty(value)) {
+                return res.status(400).json({ error: `No pueden haber datos vacíos` });
+            }
+        }
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'Usuario o email ya existe' });
+        } else if (containsNumber(name)) {
+            return res.status(400).json({ error: 'El nombre no debe contener números' });
+        } else if (containsNumber(occupation)) {
+            return res.status(400).json({ error: 'La profesión no debe contener números' });
+        } 
+
         const newUser = new User({
             username,
             password,

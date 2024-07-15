@@ -23,7 +23,7 @@ export const UserProvider = ({ children }) => {
       setIsLoggedIn(true);
       localStorage.setItem("user", JSON.stringify(createdUser));
     } catch (error) {
-      console.error("Registration failed:", error);
+      return error.response.data.error
     }
   };
 

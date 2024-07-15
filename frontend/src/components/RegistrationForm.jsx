@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
@@ -8,15 +8,17 @@ import {
   Button,
   Typography,
   Box,
+  Alert
 } from "@mui/material";
 
 const RegistrationForm = () => {
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
   const { addUser } = useContext(UserContext);
+  const [error, setError] = useState(null);
 
   const onSubmitRegistro = async (data) => {
-    await addUser({
+    const response = await addUser({
         username: data.username,
         password: data.password,
         name: data.name,
@@ -24,8 +26,13 @@ const RegistrationForm = () => {
         occupation: data.occupation
       }
     );
-    reset();
-    navigate("/iniciar-sesion");
+    
+    if (response) {
+      setError(response)
+    } else {
+      reset();
+      navigate("/iniciar-sesion");
+    }
   };
 
   return (
@@ -71,6 +78,11 @@ const RegistrationForm = () => {
           type="password"
           {...register("password", { required: true })}
         />
+        {
+          error ? 
+          <Alert severity="error">{error}</Alert> :
+          <></>
+        }
         <Button
           type="submit"
           fullWidth

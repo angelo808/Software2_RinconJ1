@@ -3,7 +3,7 @@ const router = express.Router();
 const postEmbajadaController = require('../controllers/postEmbajadaController');
 
 // Rutas para publicaciones
-router.get('/filter/:employer', postEmbajadaController.getPosts);
+router.get('/filter', postEmbajadaController.getPosts);
 router.post('/', postEmbajadaController.uploadImg, postEmbajadaController.createPost);
 router.get('/:id', postEmbajadaController.getPostById);
 router.put('/:id', postEmbajadaController.updatePost);

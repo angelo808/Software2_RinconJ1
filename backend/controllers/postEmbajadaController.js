@@ -18,10 +18,9 @@ const upload = multer({ storage: storage });
 // Obtener todos los posts
 exports.getPosts = async (req, res) => {
   const query = req.query.q;
-  const employer = req.params.employer;
 
   try {
-    let filter = { employer: employer };
+    let filter = { };
 
     if (query) {
       // Añadir condición de título si hay un query
@@ -86,7 +85,7 @@ exports.getPostById = async (req, res) => {
 // Actualizar un post por ID
 exports.updatePost = async (req, res) => {
   const { id } = req.params;
-  const { title, content, image, employer } = req.body;
+  const { title, content, image } = req.body;
 
   try {
     const post = await PostEmbajada.findById(id);
@@ -97,7 +96,6 @@ exports.updatePost = async (req, res) => {
     post.title = title || post.title;
     post.content = content || post.content;
     post.image = image || post.image;
-    post.employer = employer || post.employer;
 
     const updatedPost = await post.save();
     res.status(200).json(updatedPost);

@@ -34,7 +34,7 @@ exports.getPosts = async (req, res) => {
     console.error('Error fetching posts:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-};
+}; 
 
 exports.uploadImg = upload.single('image');
 
