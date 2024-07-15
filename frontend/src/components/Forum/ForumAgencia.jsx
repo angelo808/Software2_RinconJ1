@@ -31,6 +31,8 @@ const Forum = () => {
 
   useEffect(() => {
     fetchPosts();
+    setNombreUsuario(JSON.parse(localStorage.getItem("user")|| {"name": "Juan"}).name)
+    setNombreAgencia(JSON.parse(localStorage.getItem("user")|| {"selectedAgency": "AAA"}).selectedAgency)
   }, []);
 
   const handleCreatePost = async () => {

@@ -4,7 +4,7 @@ const postController = require('../controllers/postController');
 
 // Rutas para publicaciones
 router.get('/filter/:agency', postController.getPosts);
-router.post('/posts', postController.createPost);
+router.post('/', postController.createPost);
 router.get('/:id', postController.getPostById);
 router.put('/:id', postController.updatePost);
 router.delete('/:id', postController.deletePost);

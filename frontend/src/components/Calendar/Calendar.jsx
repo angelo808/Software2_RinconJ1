@@ -28,12 +28,14 @@ const colorConfigs = {
   freeScheduleTitle: "#3b82f6",
 };
 
+const userId = JSON.parse(localStorage.getItem("user") || {"_id":"6657560e2a62a32ce5be74a8"})._id
+
 const formatDate = (date) => date.format("YYYY-MM-DD");
-const formatTime = (date) => date.format("HH:mm");
+const formatTime = (date) => date.format("YYYY-MM-DD HH:mm");
 
 const handleDelete = async (deleteId) => {
   try {
-    await axiosBase().delete(`/events/${deleteId}`); // Asegúrate de que la ruta sea correcta
+    await axiosBase.delete(`/events/${deleteId}`); // Asegúrate de que la ruta sea correcta
     toast.success("El horario fue eliminado exitosamente");
     return deleteId;
   } catch (error) {
@@ -47,7 +49,7 @@ const PanelRegistro = ({ scheduler }) => {
   const [fecha, setFecha] = useState(dayjs(scheduler?.state?.start?.value));
   const [horaIni, setHoraIni] = useState(dayjs(scheduler?.state?.start?.value));
   const [horaFin, setHoraFin] = useState(dayjs(scheduler?.state?.end?.value));
-  const [type, setType] = useState("");
+  const [type, setType] = useState(event?.tipo || "");
   const [state, setState] = useState({
     title: event?.title || "",
     enlace: event?.enlace || "",
@@ -65,33 +67,45 @@ const PanelRegistro = ({ scheduler }) => {
   };
 
   const handleSaveAvailability = async (action, datosEvento) => {
+    // const datosEvento2 = {
+    //   name: datosEvento.nombre,
+    //   date: formatDate(datosEvento.dia),
+    //   startHour: formatTime(datosEvento.hora_inicio),
+    //   endHour: formatTime(datosEvento.hora_fin),
+    //   type: datosEvento.tipo,
+    //   email: datosEvento.email, 
+    //   userId: JSON.parse(localStorage.getItem("user") || {"_id":"6657560e2a62a32ce5be74a8"})
+    // };
+
     const datosEvento2 = {
-      nombre: datosEvento.nombre,
-      dia: formatDate(datosEvento.dia),
-      hora_inicio: formatTime(datosEvento.hora_inicio),
-      hora_fin: formatTime(datosEvento.hora_fin),
-      tipo: datosEvento.tipo,
-      email: datosEvento.email, // Asegúrate de pasar el correo electrónico al backend
+      name: datosEvento.nombre,
+      description: '', 
+      date: new Date(formatDate(datosEvento.dia)), 
+      startHour: new Date(formatTime(datosEvento.hora_inicio)), 
+      endHour: new Date(formatTime(datosEvento.hora_fin)), 
+      type: datosEvento.tipo,
+      email: datosEvento.email,
+      userId: userId, // Parse user ID from localStorage
     };
 
     try {
       let response;
       if (action === "create") {
-        response = await axiosBase().post("/events", datosEvento2); // Asegúrate de que la ruta sea correcta
+        response = await axiosBase.post("/events", datosEvento2); 
         toast.success("El horario fue registrado exitosamente");
       } else if (action === "edit") {
-        response = await axiosBase().put(`/events/${event?.event_id}`, datosEvento2); // Asegúrate de que la ruta sea correcta
+        response = await axiosBase.put(`/events/${event?.event_id}`, datosEvento2);
         toast.success("El horario fue editado exitosamente");
       }
       const data = response.data;
       return {
         event_id: data._id,
-        title: data.nombre,
-        start: new Date(`${data.dia}T${data.hora_inicio}`),
-        end: new Date(`${data.dia}T${data.hora_fin}`),
-        enlace: data.enlace,
-        color: data.libre ? colorConfigs.freeSchedule : colorConfigs.busySchedule,
-        libre: data.libre,
+        title: data.name,
+        start: new Date(data.startHour),
+        end: new Date(data.endHour),
+        email: data.email,
+        tipo: data.type,
+        userId: data.userId
       };
     } catch (error) {
       scheduler.loading(false);
@@ -111,13 +125,26 @@ const PanelRegistro = ({ scheduler }) => {
 
     try {
       scheduler.loading(true);
+
+      // const datosEvento2 = {
+      //   name: datosEvento.nombre,
+      //   description: '', 
+      //   date: new Date(formatDate(datosEvento.dia)), 
+      //   startHour: new Date(formatTime(datosEvento.hora_inicio)), 
+      //   endHour: new Date(formatTime(datosEvento.hora_fin)), 
+      //   type: datosEvento.tipo,
+      //   email: datosEvento.email,
+      //   userId: userId, // Parse user ID from localStorage
+      // };
+
       const datosEvento = {
         nombre: state.title,
         dia: fecha,
         hora_inicio: horaIni,
         hora_fin: horaFin,
         tipo: type,
-        email: state.email, // Asegúrate de incluir el correo electrónico en los datos del evento
+        email: state.email,
+        userId: userId,
       };
 
       const added_updated_event = await handleSaveAvailability(event ? "edit" : "create", datosEvento);
@@ -244,25 +271,42 @@ const PanelRegistro = ({ scheduler }) => {
 };
 
 export const Calendar = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+
+  
+  useEffect(() => {
+    setLoading(true)
+    axiosBase.get(`/events/user/${userId}`).then((response) => {
+      console.log(response.data);
+      setEvents(response.data.map((d)=> (
+        {
+          event_id: d["_id"],
+          title: d["name"],
+          start: new Date(d["startHour"]),
+          end: new Date(d["endHour"]),
+          color: colorConfigs.freeSchedule,
+          tipo: d["type"],
+          email: d["email"],
+          editable: new Date(d["startHour"]) >  new Date(),
+          deletable: new Date(d["endHour"]) >  new Date(),
+          draggable: false
+        }
+      )));
+      setLoading(false);
+      
+    }).catch((err) => {
+      console.log(err);
+      setLoading(false);
+    })
+  }, [])
   return (
     <Scheduler
       view="month"
       customEditor={(scheduler) => <PanelRegistro scheduler={scheduler} />}
       onDelete={(deleteId) => handleDelete(deleteId)}
-      events={[
-        {
-          event_id: 1,
-          title: "Reunion 1",
-          start: new Date("2024/6/29 00:00"),
-          end: new Date("2024/6/29 24:00"),
-        },
-        {
-          event_id: 2,
-          title: "Event 2",
-          start: new Date("2021/5/4 10:00"),
-          end: new Date("2021/5/4 11:00"),
-        },
-      ]}
+      events={events}
       locale={es}
       translations={{
         navigation: {

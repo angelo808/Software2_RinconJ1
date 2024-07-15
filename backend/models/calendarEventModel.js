@@ -5,6 +5,10 @@ const calendarEventSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Event name is required'],
   },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+  },
   description: {
     type: String,
     default: '',
@@ -24,7 +28,7 @@ const calendarEventSchema = new mongoose.Schema({
   type: {
     type: String,
     required: [true, 'Event type is required'],
-    enum: ['Meeting', 'Reminder', 'Task', 'Event'],
+    enum: ['Entrevista', 'Pago', 'Cita', 'Meeting', 'Reminder', 'Task', 'Event'],
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

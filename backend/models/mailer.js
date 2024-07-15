@@ -1,22 +1,26 @@
 const nodemailer = require('nodemailer');
 const cron = require('node-cron');
 
+const passkey = 'wtzy bdqh fizm gmsp'
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'tu-correo@gmail.com',
-    pass: 'tu-contraseña-de-correo'
+    user: 'elrincondelj1@gmail.com',
+    pass: passkey
   }
 });
 
 const sendEmail = (to, subject, text) => {
+
+  
   const mailOptions = {
-    from: 'tu-correo@gmail.com',
+    from: 'elrincondelj1@gmail.com',
     to: to,
     subject: subject,
     text: text
   };
-
+  
   return transporter.sendMail(mailOptions);
 };
 

@@ -12,7 +12,7 @@ exports.getPosts = async (req, res) => {
 };
 
 // Crear un nuevo post
-exports.createPost = async (req, res) => {
+exports.createPost = async (req, res) => {  
   const { title, content, author, image, agency } = req.body;
 
   if (!title || !content || !author || !agency) {
