@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path')
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
-const commentRoutes = require('./routes/commentRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const resortRoutes = require('./routes/resortRoutes');
 const connectDB = require('./db');
 
 // Inicializar aplicación
@@ -21,7 +22,7 @@ app.use('/assets', express.static('src/assets'));
 // Rutas
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
-app.use('/api/comments', commentRoutes);
+app.use('/api/resorts', resortRoutes);
 app.use('/api/events', eventRoutes);
 
 // Middleware para manejo de errores
@@ -30,6 +31,7 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: 'Algo salió mal!', error: err.message });
 });
 
+app.use('/media', express.static(path.join(__dirname, 'media')));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

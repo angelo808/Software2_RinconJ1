@@ -1,8 +1,23 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const AdminPanel = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [listaUsuarios, setListaUsuarios] = useState([])
+
+    useEffect(()=>{
+        getUsuarios()
+    }, [])
+
+    const getUsuarios = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5001/api/users/`);
+            setListaUsuarios(response.data)
+          } catch (error) {
+            console.error('Error al listar usuarios', error);
+          }
+    }
 
     const handleDropdownClick = (usuario) => {
         setShowDropdown(false);
@@ -12,23 +27,6 @@ const AdminPanel = () => {
     const altApproval = (doc) => {
         return;
     }
-
-    const listaUsuarios = [{
-        'nombre': 'pepe',
-        'test': '/assets/pepe_test',
-        'ds': '/assets/pepe_ds',
-        'passport': '/assets/pepe_pass',
-    },{
-        'nombre': 'carlos',
-        'test': '/assets/carlos_test',
-        'ds': '/assets/carlos_ds',
-        'passport': '/assets/carlos_pass',
-    },{
-        'nombre': 'manuel',
-        'test': '/assets/manuel_test',
-        'ds': '/assets/manuel_ds',
-        'passport': '/assets/manuel_pass',
-    }] 
 
     return (
         <div className="container h-screen w-screen p-4 mx-auto">
@@ -46,9 +44,9 @@ const AdminPanel = () => {
                     <ul className="py-2 overflow-y-auto text-gray-700 dark:text-gray-200" aria-labelledby="dropdownUsersButton">
                         {
                             listaUsuarios.map((usuario) => {
-                                return <button onClick={()=>handleDropdownClick(usuario)} className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                    {usuario.nombre}
-                                </button>
+                                return <li key={usuario._id}><button onClick={()=>handleDropdownClick(usuario)} className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                    {usuario.name}
+                                </button></li>
                             })
                         }
                     </ul>
@@ -56,7 +54,7 @@ const AdminPanel = () => {
                 {
                     selectedUser && 
                     <div className="mt-16">
-                        <h3 className="font-bold text-marron text-2xl">Usuario: <span className="font-medium">{selectedUser.nombre}</span></h3>
+                        <h3 className="font-bold text-marron text-2xl">Usuario: <span className="font-medium">{selectedUser.name}</span></h3>
                         <div className="m-8 w-2/6 grid grid-cols-2">
                             <p className="my-auto text-xl me-8">DS-160</p>
                             <button onClick={()=>altApproval('DS')} className="text-white bg-marron focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center items-center w-1/2 mx-auto text-center" type="button">

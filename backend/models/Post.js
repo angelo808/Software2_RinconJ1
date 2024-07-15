@@ -1,5 +1,18 @@
 const mongoose = require('mongoose');
 
+const commentSchema = new mongoose.Schema({
+  author: {
+    type: String,
+    required: [true, 'Author is required'],
+  },
+  text: {
+    type: String,
+    required: [true, 'Text is required'],
+  }
+}, {
+  timestamps: true
+});
+
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -45,6 +58,7 @@ const postSchema = new mongoose.Schema({
       required: true,
     }
   }],
+  comments : [commentSchema]
 }, {
   timestamps: true, // Automatically manage `createdAt` and `updatedAt` fields
 });

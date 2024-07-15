@@ -3,7 +3,7 @@ const Post = require('../models/Post');
 // Obtener todos los posts
 exports.getPosts = async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find({agency: req.params.agency});
     res.status(200).json(posts);
   } catch (err) {
     console.error('Error fetching posts:', err.message);

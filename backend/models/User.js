@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: true, // Automatically manage `createdAt` and `updatedAt` fields
 });

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import AlertaSimu from '../../components/AlertaSimu';
 
 const Entrevista = () => {
-    const urlBalotario = "https://cdn.discordapp.com/attachments/1174547327218884639/1260427454292561952/Worky_Balotario_USA_23-24-Celular.pdf?ex=668f480a&is=668df68a&hm=2d84451a53b434aef13826f00594be39517db4fbdc8c6c2de07d4de2fde95c58";
+    const urlBalotario = "http://localhost:5001/media/balotario.pdf";
 
   const handleDescargarBalotario = () => {
     window.open(urlBalotario, '_blank');
@@ -24,8 +24,8 @@ const Entrevista = () => {
             <div className='w-full text-center mt-8'>
                 <p className='font-semibold'>¡Puedes realizar una simulación para la entrevista! :)</p>
                 <div className="flex justify-around">
-          <Link to="/simulacion-entrevista" className="bg-blue-500 text-white px-4 py-2 rounded">Realizar Simulacion</Link>
-          <button onClick={handleDescargarBalotario} className="bg-blue-500 text-white px-4 py-2 rounded">Descargar Balotario</button>
+          <Link to="/simulacion-entrevista" className="bg-marron my-8 text-white px-4 py-2 rounded">Realizar Simulacion</Link>
+          <button onClick={handleDescargarBalotario} className="bg-marron my-8 text-white px-4 py-2 rounded">Descargar Balotario</button>
         </div>
             </div>
         </section>

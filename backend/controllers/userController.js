@@ -1,4 +1,20 @@
+const multer = require('multer');
+const path = require('path');
 const User = require('../models/userModel');
+
+// Configurar multer para guardar archivos
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'media/userImg/') // Asegúrate de que esta carpeta exista
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)) // Genera un nombre único
+    }
+});
+
+const upload = multer({ storage: storage });
+
+
 
 // Método para iniciar sesión
 exports.loginUser = async (req, res) => {
@@ -81,6 +97,7 @@ exports.updateUser = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
+            console.log('no se encontro usuario')
             return res.status(404).json({ error: 'User not found' });
         }
 
@@ -93,6 +110,94 @@ exports.updateUser = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
+
+// Actualizar contraseña
+exports.updatePass = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Aquí es donde actualizas la contraseña sin bcrypt
+        user.password = req.body.password;
+        await user.save();
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+// Actualizar trabajo
+exports.updateJob = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Aquí es donde actualizas el empleo
+        user.employer = req.body.name;
+        user.job = req.body.title;
+        await user.save();
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+// Actualizar perfil
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, email, occupation } = req.body;
+        const userId = req.params.id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.name = name;
+        user.email = email;
+        user.occupation = occupation;
+        await user.save();
+
+        console.log(user)
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+//Actualizar foto
+exports.updatePhoto = [
+    upload.single('photo'),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.params.id);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            // Aquí es donde actualizas la contraseña sin bcrypt
+            if (req.file) {
+                // Construir la URL de la imagen
+                const imageUrl = `http://localhost:5001/media/userImg/${req.file.filename}`;
+                
+                // Actualizar la foto del usuario
+                user.photo = imageUrl;
+                await user.save();
+
+                res.status(200).json({url: user.photo});
+            }
+        } catch (err) {
+            res.status(400).json({ error: err.message });
+        }
+    }
+],
 
 // Eliminar un usuario
 exports.deleteUser = async (req, res) => {

@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import Post from "./Post";
 import { Container, TextField, Button, Box, Divider, Modal, Typography } from "@mui/material";
 import axios from "axios";
 import { API_URL } from "../../constants";
+import { UserContext } from "../../context/UserContext";
 
 const Forum = () => {
+  const {user} = useContext(UserContext);
   const [isLoadingAgencia, setIsLoadingAgencia] = useState(true);
   const [posts, setPosts] = useState([]);
   const [newPostOpen, setNewPostOpen] = useState(false);
@@ -16,39 +18,20 @@ const Forum = () => {
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
 
-  const fetchUserAndPosts = useCallback(async () => {
+  const fetchPosts = async () => {
     try {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (!storedUser) return;
-
-      const userId = storedUser._id;
-
-      const userResponse = await axios.get(`${API_URL}/users/${userId}`);
-      const user = userResponse.data;
-
-      setNombreAgencia(user.selectedAgency || "BLOQUEADO");
-      setNombreUsuario(user.username);
-
-      const postsResponse = await axios.get(`${API_URL}/posts?agency=${user.selectedAgency}`);
+      console.log(`${API_URL}/posts/${user.selectedAgency}`)
+      const postsResponse = await axios.get(`${API_URL}/posts/filter/${user.selectedAgency}`);
       setPosts(postsResponse.data);
       setIsLoadingAgencia(false);
     } catch (error) {
       console.error("Error fetching posts or user data:", error);
     }
+  };
+
+  useEffect(() => {
+    fetchPosts();
   }, []);
-
-  useEffect(() => {
-    fetchUserAndPosts();
-  }, [fetchUserAndPosts]);
-
-  useEffect(() => {
-    const filtered = posts.filter(
-      (post) =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        post.agency === nombreAgencia
-    );
-    setFilteredPosts(filtered);
-  }, [posts, searchTerm, nombreAgencia]);
 
   const handleCreatePost = async () => {
     try {
@@ -110,12 +93,10 @@ const Forum = () => {
       </Box>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 
-      {filteredPosts.map((post) => (
+      {posts.map((post) => (
         <Post
           key={post._id}
           post={post}
-          setPosts={setPosts}
-          posts={posts}
           currentUser={nombreUsuario}
         />
       ))}

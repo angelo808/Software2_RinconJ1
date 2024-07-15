@@ -20,6 +20,10 @@ const Header = () => {
     navigate("/perfil");
   };
 
+  const handleAdmin = () => {
+    navigate("/admin");
+  };
+
   const handleLogout = () => {
     removeUser();
     navigate("/");
@@ -44,6 +48,7 @@ const Header = () => {
               toggleInfoVisibility={toggleInfoVisibility}
               handleProfile={handleProfile}
               handleLogout={handleLogout}
+              handleAdmin={handleAdmin}
             />
           )}
           <IconButton edge="end" color="inherit" aria-label="menu" sx={{ ml: 2 }}>

@@ -16,6 +16,7 @@ const UserInfo = ({
   toggleInfoVisibility,
   handleProfile,
   handleLogout,
+  handleAdmin
 }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -65,6 +66,12 @@ const UserInfo = ({
           <Button onClick={handleProfile} fullWidth sx={{ mt: 1, mb: 1 }}>
             Ver Perfil
           </Button>
+          {
+            (user?.isAdmin !== undefined && user.isAdmin === true) && <Button onClick={handleAdmin} fullWidth sx={{ mt: 1, mb: 1 }}>
+              Panel Admin
+            </Button>
+          }
+          
           <Button onClick={handleLogout} fullWidth color="error">
             Cerrar sesión
           </Button>

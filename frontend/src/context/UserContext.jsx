@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
   const loginUser = async (username, password) => {
     try {
       const response = await axiosBase.post("/users/login", { username, password });
-      const userData = response.data;
+      let userData = response.data;
       setUser(userData);
       setIsLoggedIn(true);
       localStorage.setItem("user", JSON.stringify(userData));
@@ -47,7 +47,17 @@ export const UserProvider = ({ children }) => {
     } catch (error) {
         console.error("Failed to update entrevista", error);
     }
-};
+  };
+
+  const updateUserProfile = async (userId, name, email, occupation) => {
+    try {
+        await axiosBase.put(`http://localhost:5001/api/users/update-profile/${userId}`,{name, email, occupation});
+        setUser(prevUser => ({ ...prevUser, name: name, email: email, occupation: occupation }));
+        localStorage.setItem('user', JSON.stringify({ ...user, name: name, email: email, occupation: occupation }));
+    } catch (error) {
+        console.error("Failed to update entrevista", error);
+    }
+  };
 
   const removeUser = () => {
     setUser(null);
@@ -77,7 +87,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista }}>
+    <UserContext.Provider value={{ user, addUser, loginUser, removeUser, isLoggedIn, updateUserPhoto, updateUserAgency, updateUserEntrevista, updateUserProfile }}>
       {children}
     </UserContext.Provider>
   );

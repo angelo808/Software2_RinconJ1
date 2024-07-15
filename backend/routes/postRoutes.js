@@ -3,11 +3,11 @@ const router = express.Router();
 const postController = require('../controllers/postController');
 
 // Rutas para publicaciones
-router.get('/posts', postController.getPosts);
+router.get('/filter/:agency', postController.getPosts);
 router.post('/posts', postController.createPost);
-router.get('/posts/:id', postController.getPostById);
-router.put('/posts/:id', postController.updatePost);
-router.delete('/posts/:id', postController.deletePost);
+router.get('/:id', postController.getPostById);
+router.put('/:id', postController.updatePost);
+router.delete('/:id', postController.deletePost);
 
 // Rutas para likes y dislikes en publicaciones
 router.post('/posts/:id/like', postController.likePost);

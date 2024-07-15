@@ -1,11 +1,15 @@
 // src/pages/Stages.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import pos1 from '../../assets/pos1.jpg'
 import pos2 from '../../assets/pos2.jpg'
 import SideBar from '../../components/SideBar';
 
 const SelPuestos = () => {
     const [selected, setSelected] = useState('');
+    
+    useEffect(()=> {
+        
+    }, [])
 
     const selectJob = (trabajo) => {
         setSelected(trabajo)

@@ -54,7 +54,7 @@ const MyRoutes = () => {
             <Route path="/empleador/entrevista" element={<Entrevista />} />
             <Route path="/simulacion-entrevista" element={<SimuEntrevista />} />
             <Route path="/test-160" element={<Test160 />} />
-            <Route path="/empleador/seleccionar-puesto" element={<SelPuestos />} />
+            <Route path="/empleador/seleccionar-puesto" element={<Puestos />} />
             <Route path="/empleador/documentos" element={<Documentos />} />
             <Route path="/seleccionar-agencia" element={<SelectAgency />} />
             <Route path="/cuestionario" element={<Quiz />} />

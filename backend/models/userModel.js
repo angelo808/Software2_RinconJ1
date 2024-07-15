@@ -34,6 +34,18 @@ const UserSchema = new mongoose.Schema({
     entrevista: { 
         type: Boolean, 
         default: false 
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    employer: {
+        type: String,
+        default: null
+    },
+    job: {
+        type: String,
+        default: null
     }
 });
 

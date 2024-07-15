@@ -222,12 +222,12 @@ const Product = () => {
   const trabajos = puestosDisponibles[id]
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100%'}}>
+    <div className='w-full  flex'>
       <div style={{ width: '20%', backgroundColor: '#f0f0f0', padding: '20px' }}>
         <SideBar />
       </div>
     
-    <div className="product-container">
+    <div className="product-container my-4">
       <div className="product-header">
         <img src={product.image} alt={product.name} className="product-image"/>
         <div className="product-info">

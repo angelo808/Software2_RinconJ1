@@ -1,11 +1,18 @@
 import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { Link, Outlet } from "react-router-dom";
+import axios from "axios";
 
 const Profile = () => {
-  const { user, updateUserPhoto } = useContext(UserContext);
+  const { user, updateUserPhoto, updateUserProfile } = useContext(UserContext);
   const [newPhoto, setNewPhoto] = useState(user?.photo);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingP, setIsEditingP] = useState(false);
+  const [file, setFile] = useState(null);
+
+  const [nombreInput, setNombreInput] = useState(user.name);
+  const [correoInput, setCorreoInput] = useState(user.email);
+  const [profesionInput, setProfesionInput] = useState(user.occupation);
 
   useEffect(() => {
     if (user) {
@@ -15,25 +22,46 @@ const Profile = () => {
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setNewPhoto(reader.result);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    setFile(file);
   };
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+    setFile('');
   };
 
-  const handleSaveClick = () => {
-    updateUserPhoto(newPhoto);
+  const handleSaveClick = async () => {
+    const formData = new FormData();
+    formData.append('photo', file);
+  
+    try {
+      const response = await axios.post(
+        `http://localhost:5001/api/users/${user._id}/photo`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      console.log(response.data.url)
+      if (response.data.url) {
+        setNewPhoto(response.data.url);
+        updateUserPhoto(response.data.url);
+      } else {
+        console.error('No se recibió la URL de la foto en la respuesta');
+      }
+    } catch (error) {
+      console.error('Error al actualizar la foto:', error);
+    }
+
     setIsEditing(false);
   };
+
+  const handleSavePerfil = () => {
+    updateUserProfile(user._id, nombreInput, correoInput, profesionInput)
+    setIsEditingP(false)
+  }
 
   if (!user) {
     return <p>Cargando...</p>;
@@ -82,16 +110,21 @@ const Profile = () => {
             <b>ID: {user._id}</b>
           </h1>
           <p className="text-xl text-start my-6">
-            <b>Nombre:</b> {user.name}
+            <b>Nombre:</b> {isEditingP ? <input className="ps-2 rounded-lg" value={nombreInput} onChange={(e)=>setNombreInput(e.target.value)} placeholder={user.name}/> : user.name}
           </p>
           <p className="text-xl text-start my-6">
-            <b>Correo:</b> {user.email}
+            <b>Correo:</b> {isEditingP ? <input className="ps-2 rounded-lg" value={correoInput} onChange={(e)=>setCorreoInput(e.target.value)} placeholder={user.email}/> : user.email}
           </p>
           <p className="text-xl text-start my-6">
-            <b>Profesión:</b> {user.occupation}
+            <b>Profesión:</b> {isEditingP ? <input className="ps-2 rounded-lg" value={profesionInput} onChange={(e)=>setProfesionInput(e.target.value)} placeholder={user.occupation}/> : user.occupation}
           </p>
-          <div className="text-red-500 text-end hover:font-bold">
-            <Link to={'cambiar-contrasenia'}>Cambiar contraseña</Link>
+          <div className="flex justify-between">
+            {
+              isEditingP ?
+                <button className="p-2 rounded-lg text-white bg-blue-500" onClick={()=>handleSavePerfil()}>Guardar perfil</button> : 
+                <button className="p-2 rounded-lg text-white bg-blue-500" onClick={()=>setIsEditingP(true)}>Editar perfil</button>
+            }
+            <Link className="rounded-lg text-white bg-blue-500 p-2" to={'cambiar-contrasenia'}>Cambiar contraseña</Link>
           </div>
         </div>
       </section>

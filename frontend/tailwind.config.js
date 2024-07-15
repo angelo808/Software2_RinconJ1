@@ -8,6 +8,8 @@ module.exports = {
       },
       colors: {
         customColor: "#e3d5ca",
+        marron: '#31241E',
+        marronClaro: '#86654B'
       },
       backgroundImage: {
         firstImg:
