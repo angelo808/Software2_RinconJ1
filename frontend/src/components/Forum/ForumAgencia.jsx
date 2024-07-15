@@ -9,6 +9,7 @@ const Forum = () => {
   const {user} = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [newPostOpen, setNewPostOpen] = useState(false);
+  const [agency, setAgency] = useState('');
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostImage, setNewPostImage] = useState(null);
@@ -17,8 +18,8 @@ const Forum = () => {
 
   const fetchPosts = async () => {
     try {
-      console.log(`${API_URL}/posts/${user.selectedAgency}`)
-      const postsResponse = await axios.get(`${API_URL}/posts/filter/${user.selectedAgency}?q=${query}`);
+      console.log(`${API_URL}/posts/${agency}`)
+      const postsResponse = await axios.get(`${API_URL}/posts/filter/${agency}?q=${query}`);
       setPosts(postsResponse.data);
     } catch (error) {
       console.error("Error fetching posts or user data:", error);
@@ -27,7 +28,16 @@ const Forum = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, [query]);
+  }, [query,agency]);
+
+  const fetchUser = async () => {
+    const response = await axios.get(`http://localhost:5001/api/users/${user._id}`)
+    setAgency(response.data.selectedAgency)
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const handleCreatePost = async () => {
     const formData = new FormData();
@@ -76,7 +86,7 @@ const Forum = () => {
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        FORO AGENCIA: {user.selectedAgency}
+        FORO AGENCIA: {agency}
       </Typography>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 

@@ -89,7 +89,7 @@ const Agencia = () => {
         ))}
       </div>
       <button 
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+        className="bg-marron text-white px-4 py-2 rounded mt-4"
         onClick={handleQuizRedirect}
       >
         Realizar Cuestionario

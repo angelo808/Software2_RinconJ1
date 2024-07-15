@@ -5,6 +5,7 @@ import pos2 from '../../assets/pos2.jpg'
 import SideBar from '../../components/SideBar';
 import axiosBase from "../../axios/axiosBase";
 import { UserContext } from '../../context/UserContext';
+import axios from 'axios';
 
 const Puestos = () => {
   const { user } = useContext(UserContext);
@@ -14,8 +15,6 @@ const Puestos = () => {
 
     useEffect(()=> {
         obtenerResorts()
-        setSelectedEmployer(user.employer)
-        setSelectedJob(user.job)
     }, [])
 
     const obtenerResorts = async () => {
@@ -33,6 +32,16 @@ const Puestos = () => {
         setSelectedJob(response.data.job)
         localStorage.setItem("user", JSON.stringify(response.data));
     }
+
+    const fetchUser = async () => {
+        const response = await axios.get(`http://localhost:5001/api/users/${user._id}`)
+        setSelectedEmployer(response.data.employer)
+        setSelectedJob(response.data.job)
+      }
+    
+      useEffect(() => {
+        fetchUser();
+      }, []);
 
   return (
     <div className="container h-screen w-screen p-4 grid grid-cols-5 gap-4">
