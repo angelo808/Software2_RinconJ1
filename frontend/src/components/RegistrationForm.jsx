@@ -16,14 +16,13 @@ const RegistrationForm = () => {
   const { addUser } = useContext(UserContext);
 
   const onSubmitRegistro = async (data) => {
-    await addUser(
-      data.username,
-      data.password,
-      data.name,
-      data.email,
-      data.occupation,
-      data.photo,
-      data.selectedAgency
+    await addUser({
+        username: data.username,
+        password: data.password,
+        name: data.name,
+        email: data.email,
+        occupation: data.occupation
+      }
     );
     reset();
     navigate("/iniciar-sesion");

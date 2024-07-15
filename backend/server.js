@@ -4,6 +4,7 @@ const path = require('path')
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const postEmpRoutes = require('./routes/postEmpRoutes');
+const postEmbajadaRoutes = require('./routes/postEmbajadaRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const resortRoutes = require('./routes/resortRoutes');
 const connectDB = require('./db');
@@ -17,13 +18,14 @@ connectDB();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use('/assets', express.static('src/assets'));
 
 // Rutas
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/postsEmp', postEmpRoutes);
+app.use('/api/postsEmbajada', postEmbajadaRoutes);
 app.use('/api/resorts', resortRoutes);
 app.use('/api/events', eventRoutes);
 

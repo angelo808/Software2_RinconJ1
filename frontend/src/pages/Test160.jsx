@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import SideBar from '../components/SideBar';
 import axios from "axios";
+import SideBarEmbajada from '../components/SideBarEmbajada';
 
 const Test160 = () => {
     const navigate = useNavigate()
@@ -124,8 +125,8 @@ const Test160 = () => {
 
     return (
         <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
-            <div style={{ width: '20%', backgroundColor: '#f0f0f0', padding: '20px' }}>
-                <SideBar />
+            <div style={{ width: '20%',padding: '20px' }}>
+                <SideBarEmbajada />
             </div>
             <div style={{ width: '80%', padding: '20px' }}>
         <div className="container-full p-4">

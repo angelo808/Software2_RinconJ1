@@ -25,6 +25,15 @@ export const ForumLandingPage = () => {
         }
         type={'EMPLOYER'}
       />
+      <Divider sx={{ borderBottomWidth: 5 }} />
+      <ForumOption
+        name={user.employer}
+        buttonTitle={`FORO EMBAJADA`}
+        descTitle={
+          "¡Aquí podrás ver toda la información relacionada a la embajada!"
+        }
+        type={'EMBASSY'}
+      />
     </div>
   );
 };

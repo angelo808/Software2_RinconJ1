@@ -27,6 +27,7 @@ import AdminPanel from "../pages/AdminPanel";
 import ProtectedRoutesAdmin from "../components/ProtectedRoutesAdmin";
 import Test160 from "../pages/Test160";
 import ForumEmp from "../components/Forum/ForumEmpleador";
+import ForumEmbajada from "../components/Forum/ForumEmbajada";
 
 const MyRoutes = () => {
   //Rutas de la aplicaciÃ³n
@@ -46,6 +47,7 @@ const MyRoutes = () => {
             <Route path="/mis-foros" element={<ForumLandingPage />} />
             <Route path="/mis-foros-agencia" element={<Forum />} />
             <Route path="/mis-foros-empleador" element={<ForumEmp />} />
+            <Route path="/mis-foros-embassy" element={<ForumEmbajada />} />
             <Route path="/perfil" element={<Profile />}>
               <Route path="cambiar-contrasenia" element={<ChangePassword />} />
             </Route>

@@ -4,8 +4,9 @@ import { Container, TextField, Button, Box, Divider, Modal, Typography } from "@
 import axios from "axios";
 import { API_URL } from "../../constants";
 import { UserContext } from "../../context/UserContext";
+import PostEmbajada from "./PostEmbajada";
 
-const Forum = () => {
+const ForumEmbajada = () => {
   const {user} = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [newPostOpen, setNewPostOpen] = useState(false);
@@ -16,8 +17,8 @@ const Forum = () => {
 
   const fetchPosts = async () => {
     try {
-      console.log(`${API_URL}/posts/${user.selectedAgency}`)
-      const postsResponse = await axios.get(`${API_URL}/posts/filter/${user.selectedAgency}?q=${query}`);
+      console.log(`${API_URL}/posts/${user.employer}`)
+      const postsResponse = await axios.get(`${API_URL}/postsEmbajada/filter/${user.employer}?q=${query}`);
       setPosts(postsResponse.data);
     } catch (error) {
       console.error("Error fetching posts or user data:", error);
@@ -33,12 +34,12 @@ const Forum = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
-    if (newPostImage) formData.append('image', newPostImage);
-    formData.append('agency', user.selectedAgency);
+    formData.append('image', newPostImage);
+    formData.append('employer', user.employer);
   
     try {
       const response = await axios.post(
-        `http://localhost:5001/api/posts`,
+        `http://localhost:5001/api/postsEmbajada`,
         formData,
         {
           headers: {
@@ -70,7 +71,7 @@ const Forum = () => {
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        FORO AGENCIA: {user.selectedAgency}
+        FORO EMBAJADA
       </Typography>
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 
@@ -93,7 +94,7 @@ const Forum = () => {
       <Divider sx={{ borderBottomWidth: 5, backgroundColor: "#000" }} />
 
       {posts.map((post) => (
-        <Post
+        <PostEmbajada
           key={post._id}
           post={post}
         />
@@ -178,5 +179,5 @@ const Forum = () => {
   );
 };
 
-export default Forum;
+export default ForumEmbajada;
 

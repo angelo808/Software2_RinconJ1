@@ -8,7 +8,7 @@ const Etapas = () => {
       <div className="flex justify-around">
       <Link to="/Agencia" className="bg-blue-500 text-white px-4 py-2 rounded">Agencia</Link>
       <Link to="/empleador" className="bg-blue-500 text-white px-4 py-2 rounded">Empleador</Link>
-        <button className="bg-gray-500 text-white px-4 py-2 rounded" disabled>Embajada</button>
+      <Link to="/test-160" className="bg-blue-500 text-white px-4 py-2 rounded">Embajada</Link>
       </div>
     </div>
   );

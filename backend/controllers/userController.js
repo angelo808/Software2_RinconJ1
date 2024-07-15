@@ -65,14 +65,14 @@ exports.updateUserAgency = async (req, res) => {
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
     try {
-        const { username, password, name, email, occupation, photo } = req.body;
+        const { username, password, name, email, occupation } = req.body;
+        
         const newUser = new User({
             username,
             password,
             name,
             email,
-            occupation,
-            photo
+            occupation
         });
         await newUser.save();
         res.status(201).json(newUser);
