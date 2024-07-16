@@ -28,6 +28,13 @@ const Puestos = () => {
             name,
             title
         })
+
+        const body = {
+            employer: response.data.employer,
+            userId: user._id
+        }
+
+        axiosBase.post("/events/user/interview", body)
         setSelectedEmployer(response.data.employer)
         setSelectedJob(response.data.job)
         localStorage.setItem("user", JSON.stringify(response.data));

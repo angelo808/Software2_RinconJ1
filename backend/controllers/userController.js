@@ -34,9 +34,9 @@ exports.loginUser = async (req, res) => {
         const { username, password } = req.body;
         const user = await User.findOne({ username, password });
         if (user) {
-            res.status(200).json(user);
+            return res.status(201).json(user);
         } else {
-            res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ error: 'Usuario o contraseña no son correctos.' });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -69,6 +69,7 @@ exports.createUser = async (req, res) => {
         const requiredFields = { username, password, name, email, occupation };
         const containsNumber = (str) => /\d/.test(str);
         const isNotEmpty = (field) => field.trim().length > 0;
+        const hasNoSpaces = (str) => !/\s/.test(str);
 
         const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
 
@@ -78,12 +79,23 @@ exports.createUser = async (req, res) => {
             }
         }
 
+        const isValidPassword = (password) => {
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            return passwordRegex.test(password);
+        };
+
         if (existingUser) {
-            return res.status(400).json({ error: 'Usuario o email ya existe' });
+            return res.status(400).json({ error: 'Usuario o correo ya existe' });
         } else if (containsNumber(name)) {
             return res.status(400).json({ error: 'El nombre no debe contener números' });
         } else if (containsNumber(occupation)) {
             return res.status(400).json({ error: 'La profesión no debe contener números' });
+        } else if (!hasNoSpaces(username)) {
+            return res.status(400).json({ error: 'El nombre de usuario no puede contener espacios' });
+        } else if (!hasNoSpaces(password)) {
+            return res.status(400).json({ error: 'La contraseña no puede contener espacios' });
+        } else if (!isValidPassword(password)) {
+            return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula y un número'});
         } 
 
         const newUser = new User({

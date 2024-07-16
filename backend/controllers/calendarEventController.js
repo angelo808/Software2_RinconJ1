@@ -32,6 +32,58 @@ exports.createCalendarEvent = async (req, res) => {
   }
 };
 
+//Asignar entrevista con empleador
+exports.assignInterview = async (req, res) => {
+  const { employer, userId } = req.body;
+  console.log(employer)
+  let date = '';
+  let start = '';
+  let end = '';
+
+  if (employer == 'Alta Peruvian') {
+    date = new Date("2024-07-22T00:00:00Z");
+    start = new Date("2024-07-22T12:00:00Z");
+    end = new Date("2024-07-22T13:00:00Z");
+  } else if (employer == 'Aspen Meadows Resort') {
+    date = new Date("2024-07-23T00:00:00Z");
+    start = new Date("2024-07-23T13:00:00Z");
+    end = new Date("2024-07-23T14:00:00Z");
+  } else if (employer == 'Cafe Rio Resort') {
+    date = new Date("2024-07-24T00:00:00Z");
+    start = new Date("2024-07-24T14:00:00Z");
+    end = new Date("2024-07-24T15:00:00Z");
+  } else if (employer == 'Crystal Mountain Resort') {
+    date = new Date("2024-07-25T00:00:00Z");
+    start = new Date("2024-07-25T15:00:00Z");
+    end = new Date("2024-07-25T16:00:00Z");
+  } else if (employer == 'Montage Big Sky') {
+    date = new Date("2024-07-26T00:00:00Z");
+    start = new Date("2024-07-26T16:00:00Z");
+    end = new Date("2024-07-26T17:00:00Z");
+  }
+  
+  try {
+    await CalendarEvent.deleteOne({ userId, type: 'Entrevista' });
+
+    const newEvent = new CalendarEvent({
+      name : `Entrevista con empleador ${employer}`,
+      date,
+      startHour: start,
+      endHour: end,
+      type: 'Entrevista',
+      userId,
+      email: 'AutoAssigned'
+    });
+
+    const savedEvent = await newEvent.save();
+
+    res.status(201).json(savedEvent);
+  } catch (err) {
+    console.error('Error creating calendar event:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 // Obtener un evento de calendario por ID
 exports.getCalendarEventById = async (req, res) => {
   const { id } = req.params;

@@ -58,8 +58,9 @@ const PanelRegistro = ({ scheduler }) => {
     email: event?.email || "", // Añadir campo de correo electrónico
   });
   const [error, setError] = useState("");
+  
 
-  useEffect(() => {}, [fecha, horaIni, horaFin]);
+  useEffect(() => {console.log(scheduler)}, [fecha, horaIni, horaFin]);
 
   const handleChange = (value, name) => {
     setState((prev) => ({
@@ -69,15 +70,6 @@ const PanelRegistro = ({ scheduler }) => {
   };
 
   const handleSaveAvailability = async (action, datosEvento) => {
-    // const datosEvento2 = {
-    //   name: datosEvento.nombre,
-    //   date: formatDate(datosEvento.dia),
-    //   startHour: formatTime(datosEvento.hora_inicio),
-    //   endHour: formatTime(datosEvento.hora_fin),
-    //   type: datosEvento.tipo,
-    //   email: datosEvento.email, 
-    //   userId: JSON.parse(localStorage.getItem("user") || {"_id":"6657560e2a62a32ce5be74a8"})
-    // };
 
     const datosEvento2 = {
       name: datosEvento.nombre,
@@ -121,6 +113,10 @@ const PanelRegistro = ({ scheduler }) => {
     const timeAct = new Date();
     const timeInicio = new Date(`${formatDate(fecha)}T${formatTime(horaIni)}`);
 
+    const hour = timeAct.getHours();
+    const min = timeAct.getMinutes();
+    console.log(timeAct)
+    if (formatDate(fecha))
     if (state.title.length < 3) return setError("Minimo 3 caracteres");
     if (horaFin <= horaIni) return setError("");
     if (timeInicio <= timeAct) return setError("");
@@ -282,7 +278,6 @@ export const Calendar = () => {
   useEffect(() => {
     setLoading(true)
     axiosBase.get(`/events/user/${user._id}`).then((response) => {
-      console.log(response.data);
       setEvents(response.data.map((d)=> (
         {
           event_id: d["_id"],
@@ -304,6 +299,7 @@ export const Calendar = () => {
       setLoading(false);
     })
   }, [])
+
   return (
     <Scheduler
       view="month"

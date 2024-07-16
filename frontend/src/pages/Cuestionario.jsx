@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Cuestionario = () => {
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '' });
   const [recommendation, setRecommendation] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,27 +14,35 @@ const Cuestionario = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     let rec = '';
-    switch (answers.q5) {
-      case 'A':
-        rec = 'INTEJ';
-        break;
-      case 'B':
-        rec = 'USE';
-        break;
-      case 'C':
-        rec = 'APK';
-        break;
-      case 'D':
-        rec = 'ATENEA';
-        break;
-      case 'E':
-        rec = 'GO WEX';
-        break;
-      default:
-        rec = 'USE'; // Recomendación por defecto
-        break;
+
+    if (Object.entries(answers).some(([key, value]) => value === '')) {
+      setError('Por favor responde todas las preguntas.');
+    } else {
+      setError('');
+
+      switch (answers.q5) {
+        case 'A':
+          rec = 'INTEJ';
+          break;
+        case 'B':
+          rec = 'USE';
+          break;
+        case 'C':
+          rec = 'APK';
+          break;
+        case 'D':
+          rec = 'ATENEA';
+          break;
+        case 'E':
+          rec = 'GO WEX';
+          break;
+        default:
+          rec = 'USE'; // Recomendación por defecto
+          break;
+      }
+
+      setRecommendation(rec);
     }
-    setRecommendation(rec);
   };
 
   const handleSelectAgency = () => {
@@ -120,6 +129,7 @@ const Cuestionario = () => {
             </label>
           </div>
         </div>
+        {error && <p className="text-red-500 text-xs italic">{error}</p>}
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full">Obtener Recomendación</button>
       </form>
       {recommendation && (
