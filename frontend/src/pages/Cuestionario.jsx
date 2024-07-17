@@ -113,19 +113,19 @@ const Cuestionario = () => {
           <label className="block text-gray-700 text-sm font-bold mb-2">¿Cuál es tu rango de presupuesto?</label>
           <div className="flex flex-col">
             <label className="mb-2">
-              <input type="radio" name="q5" value="A" onChange={handleChange} className="mr-2" /> $2000 - $3000
+              <input type="radio" name="q5" value="A" onChange={handleChange} className="mr-2" /> $1000 - $1500
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="B" onChange={handleChange} className="mr-2" /> $2200 - $3200
+              <input type="radio" name="q5" value="B" onChange={handleChange} className="mr-2" /> $1500 - $2000
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="C" onChange={handleChange} className="mr-2" /> $1800 - $2800
+              <input type="radio" name="q5" value="C" onChange={handleChange} className="mr-2" /> $2000 - $2500
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="D" onChange={handleChange} className="mr-2" /> $1900 - $2900
+              <input type="radio" name="q5" value="D" onChange={handleChange} className="mr-2" /> $2500 - $3000
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="E" onChange={handleChange} className="mr-2" /> $2100 - $3100
+              <input type="radio" name="q5" value="E" onChange={handleChange} className="mr-2" /> $3000 o más
             </label>
           </div>
         </div>

@@ -10,12 +10,11 @@ const Agencia = () => {
 
   const agencies = [
     {
-      name: "Agencia INTEJ",
-      description: "INTES es una agencia especializada en programas de intercambio cultural y educativo. Su misión es proporcionar experiencias enriquecedoras a jóvenes estudiantes y profesionales, permitiéndoles desarrollar habilidades personales y profesionales a través de programas internacionales.",
+      description: "Las agencias de Work and Travel son organizaciones especializadas en gestionar programas de intercambio cultural y laboral para jóvenes estudiantes y profesionales. Su objetivo principal es facilitar experiencias internacionales enriquecedoras, que permitan a los participantes desarrollarse tanto personal como profesionalmente.",
       programs: [
         {
           name: "Work and Travel",
-          details: "Un programa que permite a los estudiantes universitarios trabajar y viajar en el extranjero durante sus vacaciones de verano. Este programa ofrece una inmersión cultural completa y la oportunidad de adquirir experiencia laboral internacional."
+          details: "Este programa está diseñado para estudiantes universitarios que desean trabajar y viajar en el extranjero durante sus vacaciones de verano. Los participantes tienen la oportunidad de vivir una inmersión cultural completa mientras adquieren experiencia laboral internacional."
         },
         {
           name: "Au Pair",
@@ -41,7 +40,6 @@ const Agencia = () => {
         "Estados Cálidos: Florida (parques de diversiones), California (hoteles y restaurantes)."
       ]
     },
-
   ];
 
   return (
@@ -50,7 +48,6 @@ const Agencia = () => {
       <div className="agency-list">
         {agencies.map((agency, index) => (
           <div key={index} className="agency">
-            <h2 className="text-2xl">{agency.name}</h2>
             <div className="section">
               <h2 className="section-title">Descripción General</h2>
               <p>{agency.description}</p>
@@ -99,5 +96,3 @@ const Agencia = () => {
 };
 
 export default Agencia;
-
-

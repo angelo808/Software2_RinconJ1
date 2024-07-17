@@ -114,45 +114,44 @@ const PanelRegistro = ({ scheduler }) => {
     const timeInicio = dayjs(fecha).hour(horaIni.hour()).minute(horaIni.minute());
 
     if (state.title.length < 3) {
-        return setError("Minimo 3 caracteres");
+      return setError("El título debe tener al menos 3 caracteres");
     } else if (horaFin <= horaIni) {
-        return setError("La hora de fin debe ser posterior a la hora de inicio");
+      return setError("La hora de fin debe ser posterior a la hora de inicio");
     } else if (timeInicio.isBefore(timeAct)) {
-        return setError("No puedes crear un evento en un dia que ya ha transcurrido");
+      return setError("No puedes crear un evento en un día que ya ha transcurrido");
+    } else if (!type) {
+      return setError("Debes seleccionar un tipo de evento");
     } else {
-        try {
-            scheduler.loading(true);
+      try {
+        scheduler.loading(true);
 
-            const datosEvento = {
-                nombre: state.title,
-                dia: fecha,
-                hora_inicio: horaIni,
-                hora_fin: horaFin,
-                tipo: type,
-                email: state.email,
-                userId: user._id,
-            };
+        const datosEvento = {
+          nombre: state.title,
+          dia: fecha,
+          hora_inicio: horaIni,
+          hora_fin: horaFin,
+          tipo: type,
+          email: state.email,
+          userId: user._id,
+        };
 
-            // Verifica los datos del evento
-            console.log("Datos del evento:", datosEvento);
-
-            // Asegúrate de que 'event' está definido
-            const mode = event ? "edit" : "create";
-            if (mode === "edit" && (!event.start || !event.end)) {
-                throw new Error("Evento inválido para edición");
-            }
-
-            const added_updated_event = await handleSaveAvailability(mode, datosEvento);
-            scheduler.onConfirm(added_updated_event, mode);
-            scheduler.close();
-        } catch (error) {
-            scheduler.loading(false);
-            console.error("Error al manejar el evento:", error);
-        } finally {
-            scheduler.loading(false);
+        const mode = event ? "edit" : "create";
+        if (mode === "edit" && (!event.start || !event.end)) {
+          throw new Error("Evento inválido para edición");
         }
+
+        const added_updated_event = await handleSaveAvailability(mode, datosEvento);
+        scheduler.onConfirm(added_updated_event, mode);
+        scheduler.close();
+      } catch (error) {
+        scheduler.loading(false);
+        console.error("Error al manejar el evento:", error);
+      } finally {
+        scheduler.loading(false);
+      }
     }
-};
+  };
+
 
   return (
     <div
