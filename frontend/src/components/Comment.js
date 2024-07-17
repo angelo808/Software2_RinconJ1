@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { UserContext } from "../context/UserContext";
@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Comment = ({ comment, type }) => {
   const { user } = useContext(UserContext);
+
   if (!comment || !comment.author) {
     return null; // Retorna null si comment o comment.author no están definidos
   }

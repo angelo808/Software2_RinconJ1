@@ -24,6 +24,7 @@ const PostEmp = ({ post, setPosts, posts }) => {
   const [dislikes, setDislikes] = useState(post.dislikes || 0);
   const [userReaction, setUserReaction] = useState(null);
   const [comments, setComments] = useState(post.comments);
+  const [errorCreateComment, setErrorCreateComment] = useState(null);
 
   useEffect(() => {
     if (post.reactions) {
@@ -34,7 +35,13 @@ const PostEmp = ({ post, setPosts, posts }) => {
   }, [post.reactions, user]);
 
   const handleAddComment = async () => {
-    console.log(user)
+    if (newCommentContent == "") {
+      setErrorCreateComment("Los campos no pueden estar vacíos")
+      return;
+    } else {
+      setErrorCreateComment(null)
+    }
+    
     try {
       const response = await axios.post(
         `http://localhost:5001/api/postsEmp/${post._id}/comment`,
@@ -221,6 +228,9 @@ const PostEmp = ({ post, setPosts, posts }) => {
             value={newCommentContent}
             onChange={(e) => setNewCommentContent(e.target.value)}
           />
+          {
+            errorCreateComment && <p className="text-red-500 text-xs mt-4 italic">{errorCreateComment}</p>
+          }
           <div className="flex justify-end">
             <Button color="error" onClick={() => setNewCommentOpen(false)}>
               Cancelar
