@@ -51,9 +51,6 @@ const Header = () => {
               handleAdmin={handleAdmin}
             />
           )}
-          <IconButton edge="end" color="inherit" aria-label="menu" sx={{ ml: 2 }}>
-            <MenuIcon />
-          </IconButton>
         </Box>
       </Toolbar>
     </AppBar>
