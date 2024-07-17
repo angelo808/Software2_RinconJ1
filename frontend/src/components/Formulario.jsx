@@ -1,17 +1,23 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, Navigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import { TextField, Button, Typography } from "@mui/material";
+import { TextField, Button, Typography, Alert } from "@mui/material";
 import PropTypes from "prop-types";
 
 const Formulario = () => {
   const { register, handleSubmit, reset } = useForm();
   const { user, loginUser } = useContext(UserContext);
+  const [error, setError] = useState(null);
 
   const onSubmit = async (data) => {
-    await loginUser(data.userAccount, data.userPassword);
-    reset();
+    const response = await loginUser(data.userAccount, data.userPassword);
+
+    if (response) {
+      setError(response)
+    } else {
+      reset();
+    }
   };
 
   if (user !== null) {
@@ -47,8 +53,13 @@ const Formulario = () => {
           placeholder="Ingresa tu contraseña"
         />
       </div>
+      {
+        error ? 
+        <Alert severity="error">{error}</Alert> :
+        <></>
+      }
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mt-4">
         <Button
           type="submit"
           variant="contained"
@@ -56,12 +67,12 @@ const Formulario = () => {
         >
           Iniciar sesión
         </Button>
-        <Link
+        {/* <Link
           to="/"
           className="inline-block align-baseline font-medium text-sm text-blue-500 hover:text-blue-800"
         >
           ¿Has olvidado tu contraseña?
-        </Link>
+        </Link> */}
       </div>
     </form>
   );

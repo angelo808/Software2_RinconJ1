@@ -23,7 +23,7 @@ export const UserProvider = ({ children }) => {
       setIsLoggedIn(true);
       localStorage.setItem("user", JSON.stringify(createdUser));
     } catch (error) {
-      console.error("Registration failed:", error);
+      return error.response.data.error
     }
   };
 
@@ -35,7 +35,7 @@ export const UserProvider = ({ children }) => {
       setIsLoggedIn(true);
       localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
-      console.error("Login failed:", error);
+      return error.response.data.error
     }
   };
 

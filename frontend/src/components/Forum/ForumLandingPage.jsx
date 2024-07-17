@@ -24,7 +24,7 @@ export const ForumLandingPage = () => {
     <div className="mx-auto w-5/6">
       <ForumOption
         name={!agency  ? 'BLOQUEADO' : agency}
-        buttonTitle={employer ? `FORO AGENCIA: ${employer}` : 'FORO AGENCIA'}
+        buttonTitle={agency ? `FORO AGENCIA: ${agency}` : 'FORO AGENCIA'}
         descTitle={
           "¡Aquí podrás ver toda la información de aquellos que vayan a tu misma Agencia!"
         }

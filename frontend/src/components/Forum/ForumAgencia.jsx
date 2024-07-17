@@ -15,10 +15,10 @@ const Forum = () => {
   const [newPostImage, setNewPostImage] = useState(null);
   const [urlPostImage, setURLPostImage] = useState(null);
   const [query, setQuery] = useState('');
+  const [errorCreate, setErrorCreate] = useState(null);
 
   const fetchPosts = async () => {
     try {
-      console.log(`${API_URL}/posts/${agency}`)
       const postsResponse = await axios.get(`${API_URL}/posts/filter/${agency}?q=${query}`);
       setPosts(postsResponse.data);
     } catch (error) {
@@ -40,10 +40,18 @@ const Forum = () => {
   }, []);
 
   const handleCreatePost = async () => {
+    if (newPostTitle == "" || newPostContent == "") {
+      setErrorCreate("Los campos no pueden estar vacíos")
+      return;
+    } else {
+      setErrorCreate(null)
+    }
+
     const formData = new FormData();
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
+    formData.append('authorId', user._id);
     formData.append('agency', agency);
   
     if (newPostImage) {
@@ -176,6 +184,9 @@ const Forum = () => {
               />
             </Box>
           )}
+          {
+            errorCreate && <p className="text-red-500 text-xs mt-4 italic">{errorCreate}</p>
+          }
           <Box display="flex" justifyContent="flex-end" mt={2}>
             <Button
               color="error"

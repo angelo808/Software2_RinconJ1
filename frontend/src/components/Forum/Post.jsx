@@ -24,6 +24,7 @@ const Post = ({ post, setPosts, posts }) => {
   const [dislikes, setDislikes] = useState(post.dislikes || 0);
   const [userReaction, setUserReaction] = useState(null);
   const [comments, setComments] = useState(post.comments);
+  const [errorCreateComment, setErrorCreateComment] = useState(null);
 
   useEffect(() => {
     if (post.reactions) {
@@ -38,7 +39,7 @@ const Post = ({ post, setPosts, posts }) => {
     try {
       const response = await axios.post(
         `http://localhost:5001/api/posts/${post._id}/comment`,
-        {author: user.name, text: newCommentContent}
+        {author: user.name, text: newCommentContent, authorId: user._id}
       );
       setComments(response.data.comments);
       setNewCommentOpen(false);
@@ -101,6 +102,16 @@ const Post = ({ post, setPosts, posts }) => {
     }
   };
 
+  const reportPost = async () => {
+    try {
+      const response = await axios.put(`http://localhost:5001/api/posts/${post._id}/report`)
+      console.log(response.data)
+      alert('Post reportado')
+    } catch (error) {
+      console.error("Error reporting post:", error);
+    }
+  }
+
   return (
     <Box>
       <Card sx={{ mt: 4, backgroundColor: "#D1C8C1" }}>
@@ -120,7 +131,11 @@ const Post = ({ post, setPosts, posts }) => {
                 mr: 2,
               }}
             >
-              {post.author.charAt(0)}
+              {
+                post.authorImg ?
+                  <img src={post.authorImg} className="rounded-full"/> :
+                  post.author.charAt(0)
+              }
             </Box>
             <Box>
               <Typography variant="h6">{post.title}</Typography>
@@ -160,6 +175,13 @@ const Post = ({ post, setPosts, posts }) => {
           >
             <ThumbDownIcon /> {dislikes}
           </IconButton>
+          {
+            post.author != user.name && 
+            <button className="flex" onClick={()=>reportPost()}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 my-2 text-red-500" viewBox="0 0 24 24"><path fill="currentColor" d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27zM19 14.9L14.9 19H9.1L5 14.9V9.1L9.1 5h5.8L19 9.1z"></path><circle cx="12" cy="16" r="1" fill="currentColor"></circle><path fill="currentColor" d="M11 7h2v7h-2z"></path></svg>
+              <p className="my-auto text-red-500">Reportar</p>
+            </button>
+          }
         </CardActions>
       </Card>
 

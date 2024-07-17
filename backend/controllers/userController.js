@@ -1,6 +1,10 @@
 const multer = require('multer');
 const path = require('path');
 const User = require('../models/userModel');
+const Post = require('../models/Post');
+const PostEmbajada = require('../models/PostEmbajada');
+const PostEmp = require('../models/PostEmp');
+const { default: mongoose } = require('mongoose');
 
 // Configurar multer para guardar archivos
 const storage = multer.diskStorage({
@@ -34,14 +38,15 @@ exports.loginUser = async (req, res) => {
         const { username, password } = req.body;
         const user = await User.findOne({ username, password });
         if (user) {
-            res.status(200).json(user);
+            return res.status(201).json(user);
         } else {
-            res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ error: 'Usuario o contraseña no son correctos.' });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
+
 exports.updateUserAgency = async (req, res) => {
     try {
         const { userId, selectedAgency } = req.body;
@@ -66,7 +71,38 @@ exports.updateUserAgency = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         const { username, password, name, email, occupation } = req.body;
-        
+        const requiredFields = { username, password, name, email, occupation };
+        const containsNumber = (str) => /\d/.test(str);
+        const isNotEmpty = (field) => field.trim().length > 0;
+        const hasNoSpaces = (str) => !/\s/.test(str);
+
+        const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
+
+        for (const [field, value] of Object.entries(requiredFields)) {
+            if (!isNotEmpty(value)) {
+                return res.status(400).json({ error: `No pueden haber datos vacíos` });
+            }
+        }
+
+        const isValidPassword = (password) => {
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            return passwordRegex.test(password);
+        };
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'Usuario o correo ya existe' });
+        } else if (containsNumber(name)) {
+            return res.status(400).json({ error: 'El nombre no debe contener números' });
+        } else if (containsNumber(occupation)) {
+            return res.status(400).json({ error: 'La profesión no debe contener números' });
+        } else if (!hasNoSpaces(username)) {
+            return res.status(400).json({ error: 'El nombre de usuario no puede contener espacios' });
+        } else if (!hasNoSpaces(password)) {
+            return res.status(400).json({ error: 'La contraseña no puede contener espacios' });
+        } else if (!isValidPassword(password)) {
+            return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula y un número'});
+        } 
+
         const newUser = new User({
             username,
             password,
@@ -365,3 +401,89 @@ exports.updateUserDsTest = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
   };
+
+//FUNCION DE ADMIN
+exports.getPostsAndComments = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const objectId = new mongoose.Types.ObjectId(id);
+
+        const postsAgency = await Post.find({authorId: id});
+        const postsEmbassy = await PostEmbajada.find({authorId: id});
+        const postsEmployer = await PostEmp.find({authorId: id});
+        const allPosts = [...postsAgency, ...postsEmbassy, ...postsEmployer];
+        
+        const commentsQuery = [
+            { $unwind: "$comments" },
+            { $match: { "comments.authorId": objectId } },
+            { $project: {
+                _id: 0,
+                postId: "$_id",
+                postTitle: "$title",
+                comment: "$comments"
+            }}
+        ];
+
+        const commentsAgency = await Post.aggregate(commentsQuery);
+        const commentsEmbassy = await PostEmbajada.aggregate(commentsQuery);
+        const commentsEmployer = await PostEmp.aggregate(commentsQuery);
+        const allComments = [...commentsAgency, ...commentsEmbassy, ...commentsEmployer];
+        
+        res.status(200).json({
+            posts: allPosts,
+            comments: allComments
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+//FUNCION DE ADMIN
+exports.deletePost = async (req, res) => {
+    try {
+        const { id, postid } = req.params;
+        
+        const deleteOperations = [
+            Post.findByIdAndDelete(postid),
+            PostEmbajada.findByIdAndDelete(postid),
+            PostEmp.findByIdAndDelete(postid)
+        ];
+
+        await Promise.all(deleteOperations);
+
+        res.status(200).json({ message: 'Post deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+//FUNCION DE ADMIN
+exports.deleteComment = async (req, res) => {
+    try {
+        const { id, postid, commentid } = req.params;
+        
+        // Definir la operación de eliminación de comentarios
+        const deleteCommentQuery = { _id: postid };
+        const deleteCommentUpdate = { $pull: { comments: { _id: commentid } } };
+
+        // Ejecutar las eliminaciones en paralelo
+        const deleteOperations = [
+            Post.updateOne(deleteCommentQuery, deleteCommentUpdate),
+            PostEmbajada.updateOne(deleteCommentQuery, deleteCommentUpdate),
+            PostEmp.updateOne(deleteCommentQuery, deleteCommentUpdate)
+        ];
+
+        const results = await Promise.all(deleteOperations);
+
+        // Comprobar si algún comentario fue eliminado
+        const wasDeleted = results.some(result => result.modifiedCount > 0);
+
+        if (wasDeleted) {
+            res.status(200).json({ message: 'Comment deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Comment not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

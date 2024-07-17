@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Cuestionario = () => {
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '' });
   const [recommendation, setRecommendation] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,27 +14,35 @@ const Cuestionario = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     let rec = '';
-    switch (answers.q5) {
-      case 'A':
-        rec = 'INTEJ';
-        break;
-      case 'B':
-        rec = 'USE';
-        break;
-      case 'C':
-        rec = 'APK';
-        break;
-      case 'D':
-        rec = 'ATENEA';
-        break;
-      case 'E':
-        rec = 'GO WEX';
-        break;
-      default:
-        rec = 'USE'; // Recomendación por defecto
-        break;
+
+    if (Object.entries(answers).some(([key, value]) => value === '')) {
+      setError('Por favor responde todas las preguntas.');
+    } else {
+      setError('');
+
+      switch (answers.q5) {
+        case 'A':
+          rec = 'INTEJ';
+          break;
+        case 'B':
+          rec = 'USE';
+          break;
+        case 'C':
+          rec = 'APK';
+          break;
+        case 'D':
+          rec = 'ATENEA';
+          break;
+        case 'E':
+          rec = 'GO WEX';
+          break;
+        default:
+          rec = 'USE'; // Recomendación por defecto
+          break;
+      }
+
+      setRecommendation(rec);
     }
-    setRecommendation(rec);
   };
 
   const handleSelectAgency = () => {
@@ -104,22 +113,23 @@ const Cuestionario = () => {
           <label className="block text-gray-700 text-sm font-bold mb-2">¿Cuál es tu rango de presupuesto?</label>
           <div className="flex flex-col">
             <label className="mb-2">
-              <input type="radio" name="q5" value="A" onChange={handleChange} className="mr-2" /> $2000 - $3000
+              <input type="radio" name="q5" value="A" onChange={handleChange} className="mr-2" /> $1000 - $1500
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="B" onChange={handleChange} className="mr-2" /> $2200 - $3200
+              <input type="radio" name="q5" value="B" onChange={handleChange} className="mr-2" /> $1500 - $2000
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="C" onChange={handleChange} className="mr-2" /> $1800 - $2800
+              <input type="radio" name="q5" value="C" onChange={handleChange} className="mr-2" /> $2000 - $2500
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="D" onChange={handleChange} className="mr-2" /> $1900 - $2900
+              <input type="radio" name="q5" value="D" onChange={handleChange} className="mr-2" /> $2500 - $3000
             </label>
             <label className="mb-2">
-              <input type="radio" name="q5" value="E" onChange={handleChange} className="mr-2" /> $2100 - $3100
+              <input type="radio" name="q5" value="E" onChange={handleChange} className="mr-2" /> $3000 o más
             </label>
           </div>
         </div>
+        {error && <p className="text-red-500 text-xs italic">{error}</p>}
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full">Obtener Recomendación</button>
       </form>
       {recommendation && (

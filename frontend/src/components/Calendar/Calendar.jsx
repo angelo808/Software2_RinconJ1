@@ -55,11 +55,12 @@ const PanelRegistro = ({ scheduler }) => {
   const [state, setState] = useState({
     title: event?.title || "",
     enlace: event?.enlace || "",
-    email: event?.email || "", // Añadir campo de correo electrónico
+    email: user.email || "", // Añadir campo de correo electrónico
   });
   const [error, setError] = useState("");
+  
 
-  useEffect(() => {}, [fecha, horaIni, horaFin]);
+  useEffect(() => {console.log(scheduler)}, [fecha, horaIni, horaFin]);
 
   const handleChange = (value, name) => {
     setState((prev) => ({
@@ -69,15 +70,6 @@ const PanelRegistro = ({ scheduler }) => {
   };
 
   const handleSaveAvailability = async (action, datosEvento) => {
-    // const datosEvento2 = {
-    //   name: datosEvento.nombre,
-    //   date: formatDate(datosEvento.dia),
-    //   startHour: formatTime(datosEvento.hora_inicio),
-    //   endHour: formatTime(datosEvento.hora_fin),
-    //   type: datosEvento.tipo,
-    //   email: datosEvento.email, 
-    //   userId: JSON.parse(localStorage.getItem("user") || {"_id":"6657560e2a62a32ce5be74a8"})
-    // };
 
     const datosEvento2 = {
       name: datosEvento.nombre,
@@ -118,47 +110,48 @@ const PanelRegistro = ({ scheduler }) => {
   };
 
   const handleSubmit = async () => {
-    const timeAct = new Date();
-    const timeInicio = new Date(`${formatDate(fecha)}T${formatTime(horaIni)}`);
+    const timeAct = dayjs();
+    const timeInicio = dayjs(fecha).hour(horaIni.hour()).minute(horaIni.minute());
 
-    if (state.title.length < 3) return setError("Minimo 3 caracteres");
-    if (horaFin <= horaIni) return setError("");
-    if (timeInicio <= timeAct) return setError("");
+    if (state.title.length < 3) {
+      return setError("El título debe tener al menos 3 caracteres");
+    } else if (horaFin <= horaIni) {
+      return setError("La hora de fin debe ser posterior a la hora de inicio");
+    } else if (timeInicio.isBefore(timeAct)) {
+      return setError("No puedes crear un evento en un día que ya ha transcurrido");
+    } else if (!type) {
+      return setError("Debes seleccionar un tipo de evento");
+    } else {
+      try {
+        scheduler.loading(true);
 
-    try {
-      scheduler.loading(true);
+        const datosEvento = {
+          nombre: state.title,
+          dia: fecha,
+          hora_inicio: horaIni,
+          hora_fin: horaFin,
+          tipo: type,
+          email: state.email,
+          userId: user._id,
+        };
 
-      // const datosEvento2 = {
-      //   name: datosEvento.nombre,
-      //   description: '', 
-      //   date: new Date(formatDate(datosEvento.dia)), 
-      //   startHour: new Date(formatTime(datosEvento.hora_inicio)), 
-      //   endHour: new Date(formatTime(datosEvento.hora_fin)), 
-      //   type: datosEvento.tipo,
-      //   email: datosEvento.email,
-      //   userId: userId, // Parse user ID from localStorage
-      // };
+        const mode = event ? "edit" : "create";
+        if (mode === "edit" && (!event.start || !event.end)) {
+          throw new Error("Evento inválido para edición");
+        }
 
-      const datosEvento = {
-        nombre: state.title,
-        dia: fecha,
-        hora_inicio: horaIni,
-        hora_fin: horaFin,
-        tipo: type,
-        email: state.email,
-        userId: user._id,
-      };
-
-      const added_updated_event = await handleSaveAvailability(event ? "edit" : "create", datosEvento);
-      scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
-      scheduler.close();
-    } catch (error) {
-      scheduler.loading(false);
-      console.error(error);
-    } finally {
-      scheduler.loading(false);
+        const added_updated_event = await handleSaveAvailability(mode, datosEvento);
+        scheduler.onConfirm(added_updated_event, mode);
+        scheduler.close();
+      } catch (error) {
+        scheduler.loading(false);
+        console.error("Error al manejar el evento:", error);
+      } finally {
+        scheduler.loading(false);
+      }
     }
   };
+
 
   return (
     <div
@@ -251,8 +244,8 @@ const PanelRegistro = ({ scheduler }) => {
               onChange={(e) => setType(e.target.value)}
             >
               <MenuItem value="Pago">Pago</MenuItem>
-              <MenuItem value="Entrevista">Entrevista con el empleador</MenuItem>
-              <MenuItem value="Cita">Cita con el embajada</MenuItem>
+              {/* <MenuItem value="Entrevista">Entrevista con el empleador</MenuItem> */}
+              <MenuItem value="Cita">Cita con la embajada</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -282,7 +275,6 @@ export const Calendar = () => {
   useEffect(() => {
     setLoading(true)
     axiosBase.get(`/events/user/${user._id}`).then((response) => {
-      console.log(response.data);
       setEvents(response.data.map((d)=> (
         {
           event_id: d["_id"],
@@ -304,6 +296,7 @@ export const Calendar = () => {
       setLoading(false);
     })
   }, [])
+
   return (
     <Scheduler
       view="month"
