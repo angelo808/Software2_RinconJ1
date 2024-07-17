@@ -110,51 +110,49 @@ const PanelRegistro = ({ scheduler }) => {
   };
 
   const handleSubmit = async () => {
-    const timeAct = new Date();
-    const timeInicio = new Date(`${formatDate(fecha)}T${formatTime(horaIni)}`);
+    const timeAct = dayjs();
+    const timeInicio = dayjs(fecha).hour(horaIni.hour()).minute(horaIni.minute());
 
-    const hour = timeAct.getHours();
-    const min = timeAct.getMinutes();
-    console.log(timeAct)
-    if (formatDate(fecha))
-    if (state.title.length < 3) return setError("Minimo 3 caracteres");
-    if (horaFin <= horaIni) return setError("");
-    if (timeInicio <= timeAct) return setError("");
+    if (state.title.length < 3) {
+        return setError("Minimo 3 caracteres");
+    } else if (horaFin <= horaIni) {
+        return setError("La hora de fin debe ser posterior a la hora de inicio");
+    } else if (timeInicio.isBefore(timeAct)) {
+        return setError("No puedes crear un evento en un dia que ya ha transcurrido");
+    } else {
+        try {
+            scheduler.loading(true);
 
-    try {
-      scheduler.loading(true);
+            const datosEvento = {
+                nombre: state.title,
+                dia: fecha,
+                hora_inicio: horaIni,
+                hora_fin: horaFin,
+                tipo: type,
+                email: state.email,
+                userId: user._id,
+            };
 
-      // const datosEvento2 = {
-      //   name: datosEvento.nombre,
-      //   description: '', 
-      //   date: new Date(formatDate(datosEvento.dia)), 
-      //   startHour: new Date(formatTime(datosEvento.hora_inicio)), 
-      //   endHour: new Date(formatTime(datosEvento.hora_fin)), 
-      //   type: datosEvento.tipo,
-      //   email: datosEvento.email,
-      //   userId: userId, // Parse user ID from localStorage
-      // };
+            // Verifica los datos del evento
+            console.log("Datos del evento:", datosEvento);
 
-      const datosEvento = {
-        nombre: state.title,
-        dia: fecha,
-        hora_inicio: horaIni,
-        hora_fin: horaFin,
-        tipo: type,
-        email: state.email,
-        userId: user._id,
-      };
+            // Asegúrate de que 'event' está definido
+            const mode = event ? "edit" : "create";
+            if (mode === "edit" && (!event.start || !event.end)) {
+                throw new Error("Evento inválido para edición");
+            }
 
-      const added_updated_event = await handleSaveAvailability(event ? "edit" : "create", datosEvento);
-      scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
-      scheduler.close();
-    } catch (error) {
-      scheduler.loading(false);
-      console.error(error);
-    } finally {
-      scheduler.loading(false);
+            const added_updated_event = await handleSaveAvailability(mode, datosEvento);
+            scheduler.onConfirm(added_updated_event, mode);
+            scheduler.close();
+        } catch (error) {
+            scheduler.loading(false);
+            console.error("Error al manejar el evento:", error);
+        } finally {
+            scheduler.loading(false);
+        }
     }
-  };
+};
 
   return (
     <div
