@@ -12,23 +12,22 @@ import {
 } from "@mui/material";
 
 const RegistrationForm = () => {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const { addUser } = useContext(UserContext);
   const [error, setError] = useState(null);
 
   const onSubmitRegistro = async (data) => {
     const response = await addUser({
-        username: data.username,
-        password: data.password,
-        name: data.name,
-        email: data.email,
-        occupation: data.occupation
-      }
-    );
-    
+      username: data.username,
+      password: data.password,
+      name: data.name,
+      email: data.email,
+      occupation: data.occupation
+    });
+
     if (response) {
-      setError(response)
+      setError(response);
     } else {
       reset();
       navigate("/iniciar-sesion");
@@ -46,7 +45,9 @@ const RegistrationForm = () => {
           margin="normal"
           id="name"
           label="Nombre"
-          {...register("name", { required: true })}
+          {...register("name", { required: "El campo Nombre es obligatorio" })}
+          error={!!errors.name}
+          helperText={errors.name ? errors.name.message : ""}
         />
         <TextField
           fullWidth
@@ -54,21 +55,27 @@ const RegistrationForm = () => {
           id="email"
           label="Correo electrónico"
           type="email"
-          {...register("email", { required: true })}
+          {...register("email", { required: "El campo Correo electrónico es obligatorio" })}
+          error={!!errors.email}
+          helperText={errors.email ? errors.email.message : ""}
         />
         <TextField
           fullWidth
           margin="normal"
           id="occupation"
           label="Profesión"
-          {...register("occupation", { required: true })}
+          {...register("occupation", { required: "El campo Profesión es obligatorio" })}
+          error={!!errors.occupation}
+          helperText={errors.occupation ? errors.occupation.message : ""}
         />
         <TextField
           fullWidth
           margin="normal"
           id="username"
           label="Usuario"
-          {...register("username", { required: true })}
+          {...register("username", { required: "El campo Usuario es obligatorio" })}
+          error={!!errors.username}
+          helperText={errors.username ? errors.username.message : ""}
         />
         <TextField
           fullWidth
@@ -76,7 +83,9 @@ const RegistrationForm = () => {
           id="password"
           label="Contraseña"
           type="password"
-          {...register("password", { required: true })}
+          {...register("password", { required: "El campo Contraseña es obligatorio" })}
+          error={!!errors.password}
+          helperText={errors.password ? errors.password.message : ""}
         />
         {
           error ? 
@@ -103,5 +112,3 @@ const RegistrationForm = () => {
 };
 
 export default RegistrationForm;
-
-
