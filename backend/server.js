@@ -13,8 +13,10 @@ const connectDB = require('./db');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+
+
 // Conectar a la base de datos
-connectDB();
+connectDB()
 
 // Middleware
 app.use(express.json());
@@ -39,4 +41,5 @@ app.use('/media', express.static(path.join(__dirname, 'media')));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  
 });

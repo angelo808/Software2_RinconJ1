@@ -44,6 +44,7 @@ const ForumEmp = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
+    formData.append('authorId', user._id);
     formData.append('employer', employer);
     console.log(formData)
   

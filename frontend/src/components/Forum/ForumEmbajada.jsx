@@ -36,7 +36,7 @@ const ForumEmbajada = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
-  
+    formData.append('authorId', user._id);
     if (newPostImage) {
       formData.append('image', newPostImage);
     }

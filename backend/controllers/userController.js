@@ -1,6 +1,10 @@
 const multer = require('multer');
 const path = require('path');
 const User = require('../models/userModel');
+const Post = require('../models/Post');
+const PostEmbajada = require('../models/PostEmbajada');
+const PostEmp = require('../models/PostEmp');
+const { default: mongoose } = require('mongoose');
 
 // Configurar multer para guardar archivos
 const storage = multer.diskStorage({
@@ -396,3 +400,39 @@ exports.updateUserDsTest = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
   };
+
+exports.getPostsAndComments = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const objectId = new mongoose.Types.ObjectId(id);
+
+        const postsAgency = await Post.find({authorId: id});
+        const postsEmbassy = await PostEmbajada.find({authorId: id});
+        const postsEmployer = await PostEmp.find({authorId: id});
+        const allPosts = [...postsAgency, ...postsEmbassy, ...postsEmployer];
+        
+        const commentsQuery = [
+            { $unwind: "$comments" },
+            { $match: { "comments.authorId": objectId } },
+            { $project: {
+                _id: 0,
+                postId: "$_id",
+                postTitle: "$title",
+                comment: "$comments"
+            }}
+        ];
+
+        const commentsAgency = await Post.aggregate(commentsQuery);
+        console.log(commentsAgency)
+        const commentsEmbassy = await PostEmbajada.aggregate(commentsQuery);
+        const commentsEmployer = await PostEmp.aggregate(commentsQuery);
+        const allComments = [...commentsAgency, ...commentsEmbassy, ...commentsEmployer];
+        
+        res.status(200).json({
+            posts: allPosts,
+            comments: allComments
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

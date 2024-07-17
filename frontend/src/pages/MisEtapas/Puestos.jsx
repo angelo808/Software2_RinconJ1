@@ -6,6 +6,7 @@ import SideBar from '../../components/SideBar';
 import axiosBase from "../../axios/axiosBase";
 import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
+import { Slide, toast } from 'react-toastify';
 
 const Puestos = () => {
   const { user } = useContext(UserContext);
@@ -35,6 +36,7 @@ const Puestos = () => {
         }
 
         axiosBase.post("/events/user/interview", body)
+        alert('Se te ha asignado una entrevista con tu empleador')
         setSelectedEmployer(response.data.employer)
         setSelectedJob(response.data.job)
         localStorage.setItem("user", JSON.stringify(response.data));

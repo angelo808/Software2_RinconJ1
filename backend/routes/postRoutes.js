@@ -11,6 +11,7 @@ router.post('/:id/comment', postController.uploadComment);
 router.get('/:id/comment', postController.getComments);
 router.delete('/:id/comment', postController.deleteComment);
 router.put('/:id/comment/report', postController.reportComment);
+router.put('/:id/report', postController.reportPost);
 router.delete('/:id', postController.deletePost);
 
 // Rutas para likes y dislikes en publicaciones

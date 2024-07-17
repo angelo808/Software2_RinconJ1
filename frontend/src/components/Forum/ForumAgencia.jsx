@@ -18,7 +18,6 @@ const Forum = () => {
 
   const fetchPosts = async () => {
     try {
-      console.log(`${API_URL}/posts/${agency}`)
       const postsResponse = await axios.get(`${API_URL}/posts/filter/${agency}?q=${query}`);
       setPosts(postsResponse.data);
     } catch (error) {
@@ -44,6 +43,7 @@ const Forum = () => {
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
     formData.append('author', user.name);
+    formData.append('authorId', user._id);
     formData.append('agency', agency);
   
     if (newPostImage) {

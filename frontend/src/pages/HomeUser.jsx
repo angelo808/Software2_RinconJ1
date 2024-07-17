@@ -33,6 +33,9 @@ const HomeUser = () => {
       } else if (tipoNotificacion == 'DS-160') {
         setNotification(true);
         setTextNotificacion('Puedes realizar la prueba del DS-160.');
+      } else if (tipoNotificacion == 'ENTREVISTAEMP') {
+        setNotification(true);
+        setTextNotificacion('Tus documentos han sido aceptados, asegúrate de estar listo para tu entrevista y vuelo.');
       }
     } 
   }, [tipoNotificacion])
@@ -54,6 +57,8 @@ const HomeUser = () => {
       setTipoNotificacion('SIMULACIÓN')
     } else if (!user.pruebads) {
       setTipoNotificacion('DS-160')
+    } else if (user.documents.ds160.approved && user.documents.ds160.approved && user.documents.ds160.approved) {
+      setTipoNotificacion('ENTREVISTAEMP')
     }
   }
 

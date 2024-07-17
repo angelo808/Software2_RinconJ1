@@ -9,6 +9,10 @@ const commentSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Text is required'],
   },
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User'
+  },  
   reportCount : {
     type: Number,
     default: 0
@@ -34,6 +38,10 @@ const postEmpSchema = new mongoose.Schema({
     required: [true, 'Author is required'],
     trim: true,
   },
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User'
+  },
   image: {
     type: String,
     trim: true,
@@ -50,6 +58,10 @@ const postEmpSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Employer is required'],
     trim: true,
+  },
+  reportCount : {
+    type: Number,
+    default: 0
   },
   reactions: [{
     user: {

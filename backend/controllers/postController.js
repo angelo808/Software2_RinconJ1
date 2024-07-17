@@ -28,7 +28,33 @@ exports.getPosts = async (req, res) => {
       filter.title = { $regex: query, $options: 'i' };
     }
 
-    const posts = await Post.find(filter);
+    // Obtener los posts
+    let posts = await Post.find(filter).lean();
+
+    // Obtener todos los authorIds únicos
+    const authorIds = [...new Set(posts.map(post => post.authorId))];
+
+    // Obtener todos los usuarios correspondientes en una sola consulta
+    const users = await User.find({ _id: { $in: authorIds } }, 'photo _id').lean();
+
+    // Crear un mapa de userId a photo para acceso rápido
+    const userPhotoMap = users.reduce((map, user) => {
+      map[user._id.toString()] = user.photo;
+      return map;
+    }, {});
+
+    // Función para añadir authorImg
+    const addAuthorImg = (item) => ({
+      ...item,
+      authorImg: item.authorId && userPhotoMap[item.authorId.toString()] || null
+    });
+
+    // Añadir authorImg a cada post y sus comentarios
+    posts = posts.map(post => ({
+      ...addAuthorImg(post),
+      comments: post.comments.map(addAuthorImg)
+    }));
+
     res.status(200).json(posts);
   } catch (err) {
     console.error('Error fetching posts:', err.message);
@@ -114,11 +140,35 @@ exports.reportComment = async (req, res) => {
   }
 };
 
+// Reportar post
+exports.reportPost = async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    post.reportCount += 1
+
+    const savedPost = await post.save();
+
+    res.status(200).json({ 
+      message: 'Post reported successfully'
+    });
+  } catch (err) {
+    console.error('Error fetching posts:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.uploadImg = upload.single('image');
 
 // Crear un nuevo post
 exports.createPost = async (req, res) => {
-  const { title, content, author, agency } = req.body;
+  const { title, content, author, agency, authorId } = req.body;
   console.log(req.body);
   if (!title || !content || !author || !agency) {
     return res.status(400).json({ error: 'All required fields must be filled' });
@@ -135,11 +185,22 @@ exports.createPost = async (req, res) => {
       content, 
       author, 
       image: url, 
-      agency 
+      agency,
+      authorId
     });
 
     const savedPost = await newPost.save();
-    res.status(201).json(savedPost);
+    const user = await User.findById(authorId);
+
+    let authorImg = null;
+    if (user && user.photo) {
+      authorImg = user.photo;
+    }
+
+    const postResponse = savedPost.toObject(); 
+    postResponse.authorImg = authorImg;
+
+    res.status(201).json(postResponse);
   } catch (err) {
     console.error('Error creating post:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -189,18 +250,38 @@ exports.updatePost = async (req, res) => {
 // Agregar un comentario por ID
 exports.uploadComment = async (req, res) => {
   const { id } = req.params;
-  const { author, text } = req.body;
+  const { author, text, authorId } = req.body;
 
   try {
-    const post = await Post.findById(id);
+    let post = await Post.findById(id);
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    post.comments.push({author: author,text: text})
-    const updatedPost = await post.save();
+    post.comments.push({author: author,text: text, authorId: authorId})
+    post = await post.save();
 
-    res.status(200).json(updatedPost);
+    // Obtener todos los authorIds únicos de los comentarios
+    const authorIds = [...new Set(post.comments.map(comment => comment.authorId))];
+
+    // Obtener todos los usuarios correspondientes en una sola consulta
+    const users = await User.find({ _id: { $in: authorIds } }, 'photo _id').lean();
+
+    // Crear un mapa de userId a photo para acceso rápido
+    const userPhotoMap = users.reduce((map, user) => {
+      map[user._id.toString()] = user.photo;
+      return map;
+    }, {});
+
+    // Crear una versión del post con authorImg en cada comentario
+    const postWithCommentImages = post.toObject(); // Convertir a objeto plano
+    postWithCommentImages.comments = postWithCommentImages.comments.map(comment => ({
+      ...comment,
+      authorImg: userPhotoMap[comment.authorId.toString()] || null
+    }));
+
+    // Enviar el post completo con las imágenes de los autores en los comentarios
+    res.status(200).json(postWithCommentImages);
   } catch (err) {
     console.error('Error updating post:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });

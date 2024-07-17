@@ -22,6 +22,7 @@ router.put('/update-profile/:id', userController.updateProfile);
 router.put('/:id/block', userController.updateBlock);
 router.put('/update-entrevista/:id', userController.updateUserEntrevista);
 router.put('/update-dstest/:id', userController.updateUserDsTest);
+router.get('/:id/postscomments', userController.getPostsAndComments);
 
 
 

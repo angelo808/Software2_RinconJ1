@@ -9,6 +9,10 @@ const commentSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Text is required'],
   },
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User'
+  },  
   reportCount : {
     type: Number,
     default: 0
@@ -34,6 +38,10 @@ const postEmbajadaSchema = new mongoose.Schema({
     required: [true, 'Author is required'],
     trim: true,
   },
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User'
+  },
   image: {
     type: String,
     trim: true,
@@ -45,6 +53,10 @@ const postEmbajadaSchema = new mongoose.Schema({
   dislikes: {
     type: Number,
     default: 0,
+  },
+  reportCount : {
+    type: Number,
+    default: 0
   },
   reactions: [{
     user: {

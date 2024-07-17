@@ -55,7 +55,7 @@ const PanelRegistro = ({ scheduler }) => {
   const [state, setState] = useState({
     title: event?.title || "",
     enlace: event?.enlace || "",
-    email: event?.email || "", // Añadir campo de correo electrónico
+    email: user.email || "", // Añadir campo de correo electrónico
   });
   const [error, setError] = useState("");
   
@@ -244,8 +244,8 @@ const PanelRegistro = ({ scheduler }) => {
               onChange={(e) => setType(e.target.value)}
             >
               <MenuItem value="Pago">Pago</MenuItem>
-              <MenuItem value="Entrevista">Entrevista con el empleador</MenuItem>
-              <MenuItem value="Cita">Cita con el embajada</MenuItem>
+              {/* <MenuItem value="Entrevista">Entrevista con el empleador</MenuItem> */}
+              <MenuItem value="Cita">Cita con la embajada</MenuItem>
             </Select>
           </FormControl>
         </Box>
