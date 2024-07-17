@@ -38,9 +38,8 @@ const AdminPanel = () => {
 
         try {
             const response = await axios.get(`http://localhost:5001/api/users/${usuario._id}/postscomments`);
-            console.log(response.data)
-            // setListaPosts(response.data. || [])
-            // setListaComments(response1.data || [])
+            setListaPosts(response.data.posts || [])
+            setListaComments(response.data.comments || [])
         } catch (error) {
             console.error('Error al listar comentarios', error);
         }
@@ -66,21 +65,20 @@ const AdminPanel = () => {
         }
     }
 
-    // const eliminarComment = async (tipo, id) => {
-    //     try {
-    //         if (tipo == 'AGENCY') {
-    //             const response = await axios.delete(`http://localhost:5001/api/posts/${id}/comment`);
-    //             setListaComments(comments => comments.filter(comment => comment._id !== id))
-    //             console.log(response.message)
-    //         } else if (tipo == 'EMPLOYER') {
-    //             const response = await axios.delete(`http://localhost:5001/api/postsEmp/${id}/comment`);
-    //             setListaCommentsEmp(comments => comments.filter(comment => comment._id !== id))
-    //             console.log(response.message)
-    //         }            
-    //     } catch (error) {
-    //     console.error('Error al aprobar', error);
-    //     }
-    // }
+    const eliminarPostComment = async (tipo, obj) => {
+        try {
+            if (tipo == 'POST') {
+                const response = await axios.delete(`http://localhost:5001/api/users/${selectedUser._id}/post/${obj._id}`);
+                setListaPosts(post => post.filter(post => post._id !== obj._id))
+            } else if (tipo == 'COMMENT') {
+                const response = await axios.delete(`http://localhost:5001/api/users/${selectedUser._id}/comment/${obj.postId}/${obj.comment._id}`);
+                setListaComments(comments => comments.filter(comment => comment.comment._id !== obj.comment._id))
+            }
+            
+        } catch (error) {
+            console.error('Error al eliminar', error);
+        }
+    }
 
     const handleClick = async (tipo) => {
         setFeedbackType(tipo)
@@ -260,18 +258,28 @@ const AdminPanel = () => {
                         <h4 className="text-xl mt-2">Posts del usuario:</h4>
                         {
                             listaPosts.map((post)=> {
-                                return <div className="flex">
-                                    <p className=" px-4 py-1">- <b>{post.text}</b> ({post.reportCount} Reporte(s))</p>
-                                    {/* <button className="text-red-500 mx-16" onClick={()=>eliminarComment('AGENCY', post._id)}>Eliminar comentario</button> */}
+                                return <div>
+                                    <div className="flex">
+                                        <p className=" px-4 py-1">- <b>{post.title}</b> ({post.reportCount} Reporte(s))</p>
+                                        <button className="text-red-500 mx-16" onClick={()=>eliminarPostComment('POST', post)}>Eliminar post</button>
+                                    </div>
+                                    <p className="px-8 py-1">{post.content}</p>
+                                    {
+                                        post.image ? 
+                                        <img className="w-32 h-32" src={post.image}/> :
+                                        <></>
+                                    }
                                 </div>
                             })
                         }
-                        <h4 className="text-xl mt-2">Comentarios en Foro de Empleador:</h4>
+                        <h4 className="text-xl mt-2">Comentarios del usuario:</h4>
                         {
                             listaComments.map((comentario)=> {
-                                return <div className="flex">
-                                    <p className=" px-4 py-1">- <b>{comentario.text}</b> ({comentario.reportCount} Reporte(s))</p>
-                                    {/* <button className="text-red-500 mx-16" onClick={()=>eliminarComment('EMPLOYER', comentario._id)}>Eliminar comentario</button> */}
+                                return <div>
+                                    <div className="flex">
+                                        <p className=" px-4 py-1">- <b>{comentario.comment.text}</b> ({comentario.comment.reportCount} Reporte(s))</p>
+                                        <button className="text-red-500 mx-16" onClick={()=>eliminarPostComment('COMMENT', comentario)}>Eliminar comentario</button>
+                                    </div>
                                 </div>
                             })
                         }

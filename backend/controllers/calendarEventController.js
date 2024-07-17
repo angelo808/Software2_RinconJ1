@@ -44,22 +44,27 @@ exports.assignInterview = async (req, res) => {
     date = new Date("2024-07-22T00:00:00Z");
     start = new Date("2024-07-22T12:00:00Z");
     end = new Date("2024-07-22T13:00:00Z");
+
   } else if (employer == 'Aspen Meadows Resort') {
     date = new Date("2024-07-23T00:00:00Z");
     start = new Date("2024-07-23T13:00:00Z");
     end = new Date("2024-07-23T14:00:00Z");
+
   } else if (employer == 'Cafe Rio Resort') {
     date = new Date("2024-07-24T00:00:00Z");
     start = new Date("2024-07-24T14:00:00Z");
     end = new Date("2024-07-24T15:00:00Z");
+
   } else if (employer == 'Crystal Mountain Resort') {
     date = new Date("2024-07-25T00:00:00Z");
     start = new Date("2024-07-25T15:00:00Z");
     end = new Date("2024-07-25T16:00:00Z");
+
   } else if (employer == 'Montage Big Sky') {
     date = new Date("2024-07-26T00:00:00Z");
     start = new Date("2024-07-26T16:00:00Z");
     end = new Date("2024-07-26T17:00:00Z");
+    
   }
   
   try {

@@ -46,6 +46,7 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 exports.updateUserAgency = async (req, res) => {
     try {
         const { userId, selectedAgency } = req.body;
@@ -401,6 +402,7 @@ exports.updateUserDsTest = async (req, res) => {
     }
   };
 
+//FUNCION DE ADMIN
 exports.getPostsAndComments = async (req, res) => {
     try {
         const { id } = req.params;
@@ -423,7 +425,6 @@ exports.getPostsAndComments = async (req, res) => {
         ];
 
         const commentsAgency = await Post.aggregate(commentsQuery);
-        console.log(commentsAgency)
         const commentsEmbassy = await PostEmbajada.aggregate(commentsQuery);
         const commentsEmployer = await PostEmp.aggregate(commentsQuery);
         const allComments = [...commentsAgency, ...commentsEmbassy, ...commentsEmployer];
@@ -432,6 +433,56 @@ exports.getPostsAndComments = async (req, res) => {
             posts: allPosts,
             comments: allComments
         });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+//FUNCION DE ADMIN
+exports.deletePost = async (req, res) => {
+    try {
+        const { id, postid } = req.params;
+        
+        const deleteOperations = [
+            Post.findByIdAndDelete(postid),
+            PostEmbajada.findByIdAndDelete(postid),
+            PostEmp.findByIdAndDelete(postid)
+        ];
+
+        await Promise.all(deleteOperations);
+
+        res.status(200).json({ message: 'Post deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+//FUNCION DE ADMIN
+exports.deleteComment = async (req, res) => {
+    try {
+        const { id, postid, commentid } = req.params;
+        
+        // Definir la operación de eliminación de comentarios
+        const deleteCommentQuery = { _id: postid };
+        const deleteCommentUpdate = { $pull: { comments: { _id: commentid } } };
+
+        // Ejecutar las eliminaciones en paralelo
+        const deleteOperations = [
+            Post.updateOne(deleteCommentQuery, deleteCommentUpdate),
+            PostEmbajada.updateOne(deleteCommentQuery, deleteCommentUpdate),
+            PostEmp.updateOne(deleteCommentQuery, deleteCommentUpdate)
+        ];
+
+        const results = await Promise.all(deleteOperations);
+
+        // Comprobar si algún comentario fue eliminado
+        const wasDeleted = results.some(result => result.modifiedCount > 0);
+
+        if (wasDeleted) {
+            res.status(200).json({ message: 'Comment deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Comment not found' });
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

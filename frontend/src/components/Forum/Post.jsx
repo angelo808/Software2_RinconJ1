@@ -24,6 +24,7 @@ const Post = ({ post, setPosts, posts }) => {
   const [dislikes, setDislikes] = useState(post.dislikes || 0);
   const [userReaction, setUserReaction] = useState(null);
   const [comments, setComments] = useState(post.comments);
+  const [errorCreateComment, setErrorCreateComment] = useState(null);
 
   useEffect(() => {
     if (post.reactions) {

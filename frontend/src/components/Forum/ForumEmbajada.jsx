@@ -15,6 +15,7 @@ const ForumEmbajada = () => {
   const [newPostImage, setNewPostImage] = useState(null);
   const [urlPostImage, setURLPostImage] = useState(null);
   const [query, setQuery] = useState('');
+  const [errorCreate, setErrorCreate] = useState(null);
 
   const fetchPosts = async () => {
     try {
@@ -32,6 +33,13 @@ const ForumEmbajada = () => {
   }, [query]);
 
   const handleCreatePost = async () => {
+    if (newPostTitle == "" || newPostContent == "") {
+      setErrorCreate("Los campos no pueden estar vacíos")
+      return;
+    } else {
+      setErrorCreate(null)
+    }
+    
     const formData = new FormData();
     formData.append('title', newPostTitle);
     formData.append('content', newPostContent);
@@ -167,6 +175,9 @@ const ForumEmbajada = () => {
               />
             </Box>
           )}
+          {
+            errorCreate && <p className="text-red-500 text-xs mt-4 italic">{errorCreate}</p>
+          }
           <Box display="flex" justifyContent="flex-end" mt={2}>
             <Button
               color="error"
